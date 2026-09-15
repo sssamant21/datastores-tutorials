@@ -1,0 +1,162 @@
+name: Elasticsearch Scenario 001 Validation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'elasticsearch/troubleshooting-scenarios/01-node-loss-yellow-red-recovery/**'
+      - 'elasticsearch/hands-on-labs/lab-001-kubernetes-multi-node-cluster/**'
+      - '.github/workflows/elasticsearch-scenario-001.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      LAB: elasticsearch/hands-on-labs/lab-001-kubernetes-multi-node-cluster
+      SCENARIO: elasticsearch/troubleshooting-scenarios/01-node-loss-yellow-red-recovery
+      ES_PASSWORD: LabOnly-ChangeMe-9x5-3
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Host prerequisite
+        run: |
+          set -euxo pipefail
+          sudo sysctl -w vm.max_map_count=1048576
+
+      - name: Create kind cluster
+        uses: helm/kind-action@v1
+        with:
+          cluster_name: es-scenario
+          wait: 120s
+
+      - name: Verify runtime prerequisite
+        run: |
+          set -euxo pipefail
+          kubectl version
+          test "$(docker exec es-scenario-control-plane sysctl -n vm.max_map_count | tr -d '\r')" -eq 1048576
+
+      - name: Generate disposable lab TLS certificates
+        run: |
+          set -euxo pipefail
+          mkdir -p /tmp/es-tls
+          cat >/tmp/es-tls/openssl-san.cnf <<'EOF'
+          [req]
+          distinguished_name = dn
+          req_extensions = req_ext
+          prompt = no
+          [dn]
+          CN = elasticsearch-lab
+          [req_ext]
+          subjectAltName = @alt_names
+          [alt_names]
+          DNS.1 = elasticsearch
+          DNS.2 = elasticsearch.elasticsearch-lab.svc
+          DNS.3 = elasticsearch-headless
+          DNS.4 = elasticsearch-headless.elasticsearch-lab.svc
+          DNS.5 = elasticsearch-0.elasticsearch-headless.elasticsearch-lab.svc.cluster.local
+          DNS.6 = elasticsearch-1.elasticsearch-headless.elasticsearch-lab.svc.cluster.local
+          DNS.7 = elasticsearch-2.elasticsearch-headless.elasticsearch-lab.svc.cluster.local
+          DNS.8 = localhost
+          IP.1 = 127.0.0.1
+          EOF
+          openssl genrsa -out /tmp/es-tls/ca.key 4096
+          openssl req -x509 -new -nodes -key /tmp/es-tls/ca.key -sha256 -days 1 -subj '/CN=Elasticsearch Scenario 001 CA' -out /tmp/es-tls/ca.crt
+          openssl genrsa -out /tmp/es-tls/tls.key 2048
+          openssl req -new -key /tmp/es-tls/tls.key -out /tmp/es-tls/tls.csr -config /tmp/es-tls/openssl-san.cnf
+          openssl x509 -req -in /tmp/es-tls/tls.csr -CA /tmp/es-tls/ca.crt -CAkey /tmp/es-tls/ca.key -CAcreateserial -out /tmp/es-tls/tls.crt -days 1 -sha256 -extensions req_ext -extfile /tmp/es-tls/openssl-san.cnf
+          openssl verify -CAfile /tmp/es-tls/ca.crt /tmp/es-tls/tls.crt
+          chmod 0644 /tmp/es-tls/ca.crt /tmp/es-tls/tls.crt
+          chmod 0640 /tmp/es-tls/tls.key
+
+      - name: Deploy Elasticsearch Lab 01 foundation
+        run: |
+          set -euxo pipefail
+          kubectl apply -f "$LAB/manifests/00-namespace.yaml"
+          kubectl apply -f "$LAB/manifests/01-service-headless.yaml"
+          kubectl apply -f "$LAB/manifests/02-configmap.yaml"
+          kubectl -n elasticsearch-lab create secret generic elasticsearch-credentials --from-literal=ELASTIC_PASSWORD="$ES_PASSWORD"
+          kubectl -n elasticsearch-lab create secret generic elasticsearch-tls --from-file=ca.crt=/tmp/es-tls/ca.crt --from-file=tls.crt=/tmp/es-tls/tls.crt --from-file=tls.key=/tmp/es-tls/tls.key
+          kubectl apply -f "$LAB/manifests/04-statefulset.yaml"
+          kubectl rollout status statefulset/elasticsearch -n elasticsearch-lab --timeout=15m
+          kubectl wait --for=condition=Ready pod -l app=elasticsearch -n elasticsearch-lab --timeout=2m
+
+      - name: Consolidate bootstrap configuration
+        run: |
+          set -euxo pipefail
+          kubectl apply -f "$LAB/manifests/05-configmap-runtime.yaml"
+          kubectl delete pod elasticsearch-2 -n elasticsearch-lab
+          kubectl wait --for=condition=Ready pod/elasticsearch-2 -n elasticsearch-lab --timeout=10m
+          kubectl exec -n elasticsearch-lab elasticsearch-2 -- sh -c '! grep -q "cluster.initial_master_nodes" /usr/share/elasticsearch/config/elasticsearch.yml'
+
+      - name: Start secured API access on surviving ordinal
+        run: |
+          set -euxo pipefail
+          cp /tmp/es-tls/ca.crt /tmp/http_ca.crt
+          kubectl -n elasticsearch-lab port-forward pod/elasticsearch-0 9200:9200 >/tmp/es-port-forward.log 2>&1 &
+          echo $! >/tmp/es-port-forward.pid
+          for i in $(seq 1 60); do
+            curl --silent --show-error --fail --cacert /tmp/http_ca.crt -u "elastic:$ES_PASSWORD" https://localhost:9200/ >/tmp/es-root.json && exit 0
+            sleep 2
+          done
+          exit 1
+
+      - name: Baseline Lab 01 validation
+        working-directory: ${{ env.LAB }}
+        env:
+          ES_CA: /tmp/http_ca.crt
+          ES_URL: https://localhost:9200
+          ES_USER: elastic
+        run: bash scripts/validate.sh
+
+      - name: Execute Scenario 01 validation
+        working-directory: ${{ env.SCENARIO }}
+        env:
+          ES_CA: /tmp/http_ca.crt
+          ES_URL: https://localhost:9200
+          ES_USER: elastic
+        run: bash scripts/validate-scenario.sh
+
+      - name: Final safety matrix
+        run: |
+          set -euxo pipefail
+          health=$(curl --fail --silent --show-error --cacert /tmp/http_ca.crt -u "elastic:$ES_PASSWORD" https://localhost:9200/_cluster/health)
+          echo "$health"
+          echo "$health" | python3 -c 'import json,sys; h=json.load(sys.stdin); assert h["status"]=="green" and h["number_of_nodes"]==3 and h["unassigned_shards"]==0, h'
+          settings=$(curl --fail --silent --show-error --cacert /tmp/http_ca.crt -u "elastic:$ES_PASSWORD" 'https://localhost:9200/_cluster/settings?flat_settings=true')
+          echo "$settings"
+          echo "$settings" | python3 -c 'import json,sys; s=json.load(sys.stdin); assert "cluster.routing.allocation.disk.watermark.low" not in s.get("transient",{}), s'
+          echo 'SCENARIO 001 FINAL SAFETY MATRIX PASS'
+
+      - name: Diagnostics on failure
+        if: failure()
+        run: |
+          mkdir -p "$SCENARIO/validation-output/diagnostics"
+          kubectl get all,pvc,pv -n elasticsearch-lab -o wide | tee "$SCENARIO/validation-output/diagnostics/resources.txt" || true
+          kubectl get events -n elasticsearch-lab --sort-by=.lastTimestamp | tee "$SCENARIO/validation-output/diagnostics/events.txt" || true
+          curl --silent --show-error --cacert /tmp/http_ca.crt -u "elastic:$ES_PASSWORD" https://localhost:9200/_cluster/health?pretty >"$SCENARIO/validation-output/diagnostics/health.json" || true
+          curl --silent --show-error --cacert /tmp/http_ca.crt -u "elastic:$ES_PASSWORD" 'https://localhost:9200/_cat/shards?v' >"$SCENARIO/validation-output/diagnostics/shards.txt" || true
+          curl --silent --show-error --cacert /tmp/http_ca.crt -u "elastic:$ES_PASSWORD" 'https://localhost:9200/_cluster/settings?flat_settings=true&include_defaults=true&pretty' >"$SCENARIO/validation-output/diagnostics/settings.json" || true
+          for pod in elasticsearch-0 elasticsearch-1 elasticsearch-2; do
+            kubectl describe pod "$pod" -n elasticsearch-lab >"$SCENARIO/validation-output/diagnostics/${pod}-describe.txt" 2>&1 || true
+            kubectl logs "$pod" -n elasticsearch-lab --tail=300 >"$SCENARIO/validation-output/diagnostics/${pod}.log" 2>&1 || true
+          done
+
+      - name: Upload Scenario 01 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: elasticsearch-scenario-001-validation
+          path: |
+            ${{ env.SCENARIO }}/validation-output/
+            /tmp/es-root.json
+            /tmp/es-port-forward.log
+          if-no-files-found: ignore
+
+      - name: Cleanup
+        if: always()
+        working-directory: ${{ env.LAB }}
+        run: bash cleanup/cleanup.sh || true
