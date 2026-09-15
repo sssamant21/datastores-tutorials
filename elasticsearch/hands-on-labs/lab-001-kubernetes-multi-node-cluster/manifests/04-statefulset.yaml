@@ -71,18 +71,25 @@ spec:
             - name: config
               mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
               subPath: elasticsearch.yml
+            - name: certs
+              mountPath: /usr/share/elasticsearch/config/certs
+              readOnly: true
             - name: data
               mountPath: /usr/share/elasticsearch/data
       volumes:
         - name: config
           configMap:
             name: elasticsearch-config
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: 10Gi
+        - name: certs
+          secret:
+            secretName: elasticsearch-tls
+            defaultMode: 0440
+      volumeClaimTemplates:
+        - metadata:
+            name: data
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 10Gi
