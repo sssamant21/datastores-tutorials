@@ -22,6 +22,10 @@ Mapping and query performance are included explicitly in this track. They are no
 
 The operations track therefore covers both governance and troubleshooting while application teams remain responsible for their business search requirements and query semantics.
 
+## Master Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for the 12-module Elasticsearch Administrator / DBRE / SRE learning roadmap.
+
 ## Planned Structure
 
 ```text
@@ -30,7 +34,10 @@ elasticsearch/
 ├── hands-on-labs/
 ├── runbooks/
 ├── use-cases/
+├── troubleshooting/
+├── automation/
 ├── examples/
+├── ROADMAP.md
 └── README.md
 ```
 
@@ -38,4 +45,8 @@ elasticsearch/
 
 **Elasticsearch for Administrator / DBRE / SRE**
 
-The track will progress from architecture and administration fundamentals into index/shard management, mapping governance, query performance, production operations, troubleshooting, capacity planning, and realistic hands-on incidents.
+The track progresses from architecture and administration fundamentals into index/shard management, mapping governance, query performance, production operations, troubleshooting, capacity planning, automation, and realistic hands-on incidents.
+
+## Next Tutorial
+
+**Tutorial 01 — Elasticsearch Production Architecture for Administrator / DBRE / SRE**
