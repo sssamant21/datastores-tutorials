@@ -34,19 +34,28 @@ elasticsearch/
 ├── hands-on-labs/
 ├── runbooks/
 ├── use-cases/
-├── troubleshooting/
+├── troubleshooting-scenarios/
 ├── automation/
 ├── examples/
 ├── ROADMAP.md
 └── README.md
 ```
 
-## First Track
+## Track Progress
 
-**Elasticsearch for Administrator / DBRE / SRE**
+### Module 01 — Production Architecture & Cluster Fundamentals
 
-The track progresses from architecture and administration fundamentals into index/shard management, mapping governance, query performance, production operations, troubleshooting, capacity planning, automation, and realistic hands-on incidents.
+- Tutorial 01 — **CANONICAL / COMMITTED / VERIFIED**
+- Hands-On Lab 01 — **CANONICAL / COMMITTED / VERIFIED**
+- Real-World Use Case 01 — **CANONICAL / COMMITTED / VERIFIED**
+- Production Runbook 01 — **CANONICAL / COMMITTED / VERIFIED**
+- Troubleshooting Scenario 01 — **CANONICAL / COMMITTED / VERIFIED**
 
-## Next Tutorial
+### Module 02 — Production Installation & Configuration
 
-**Tutorial 01 — Elasticsearch Production Architecture for Administrator / DBRE / SRE**
+- Tutorial 02 — **CANONICAL / COMMITTED / VERIFIED**
+- Hands-On Lab 02 — **NEXT**
+
+## Next Workflow Stage
+
+**Hands-On Lab 02 — Production Installation & Configuration → Draft**
