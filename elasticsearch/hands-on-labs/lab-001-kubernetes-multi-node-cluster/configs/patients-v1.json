@@ -1,0 +1,17 @@
+{
+  "settings": {
+    "number_of_shards": 3,
+    "number_of_replicas": 1
+  },
+  "mappings": {
+    "dynamic": "strict",
+    "properties": {
+      "patient_id": { "type": "keyword" },
+      "first_name": { "type": "text" },
+      "last_name": { "type": "text" },
+      "status": { "type": "keyword" },
+      "city": { "type": "keyword" },
+      "event_date": { "type": "date" }
+    }
+  }
+}

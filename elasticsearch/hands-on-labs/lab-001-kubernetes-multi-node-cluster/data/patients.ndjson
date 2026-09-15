@@ -1,0 +1,8 @@
+{"index":{"_index":"patients-v1","_id":"P10001"}}
+{"patient_id":"P10001","first_name":"Ava","last_name":"Carter","status":"ACTIVE","city":"Charlotte","event_date":"2026-09-01"}
+{"index":{"_index":"patients-v1","_id":"P10002"}}
+{"patient_id":"P10002","first_name":"Noah","last_name":"Brooks","status":"ACTIVE","city":"Raleigh","event_date":"2026-09-02"}
+{"index":{"_index":"patients-v1","_id":"P10003"}}
+{"patient_id":"P10003","first_name":"Mia","last_name":"Reed","status":"INACTIVE","city":"Durham","event_date":"2026-09-03"}
+{"index":{"_index":"patients-v1","_id":"P10004"}}
+{"patient_id":"P10004","first_name":"Liam","last_name":"Parker","status":"ACTIVE","city":"Concord","event_date":"2026-09-04"}
