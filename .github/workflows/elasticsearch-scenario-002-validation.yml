@@ -45,6 +45,7 @@ jobs:
           kubectl apply -f manifests/03-configmap-bootstrap.yaml
 
           ES_PASSWORD="$(openssl rand -hex 24)"
+          export ES_PASSWORD
           echo "::add-mask::$ES_PASSWORD"
           echo "ES_PASSWORD=$ES_PASSWORD" >> "$GITHUB_ENV"
           kubectl -n elasticsearch-lab-002 create secret generic elasticsearch-credentials --from-literal=ELASTIC_PASSWORD="$ES_PASSWORD"
