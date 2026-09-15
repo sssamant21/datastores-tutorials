@@ -22,8 +22,9 @@ jobs:
 
       - name: Host prerequisite
         run: |
+          set -euxo pipefail
           sudo sysctl -w vm.max_map_count=1048576
-          sysctl vm.max_map_count
+          test "$(sysctl -n vm.max_map_count)" -eq 1048576
 
       - name: Create kind cluster
         uses: helm/kind-action@v1
@@ -31,26 +32,88 @@ jobs:
           cluster_name: es-lab
           wait: 120s
 
-      - name: Deploy namespace and services
+      - name: Verify Kubernetes runtime prerequisite
         run: |
+          set -euxo pipefail
+          kubectl version
+          docker exec es-lab-control-plane sysctl vm.max_map_count
+          test "$(docker exec es-lab-control-plane sysctl -n vm.max_map_count | tr -d '\r')" -eq 1048576
+
+      - name: Generate lab TLS certificates
+        run: |
+          set -euxo pipefail
+          mkdir -p /tmp/es-tls
+          cat >/tmp/es-tls/openssl-san.cnf <<'EOF'
+          [req]
+          distinguished_name = dn
+          req_extensions = req_ext
+          prompt = no
+          [dn]
+          CN = elasticsearch-lab
+          [req_ext]
+          subjectAltName = @alt_names
+          [alt_names]
+          DNS.1 = elasticsearch
+          DNS.2 = elasticsearch.elasticsearch-lab.svc
+          DNS.3 = elasticsearch-headless
+          DNS.4 = elasticsearch-headless.elasticsearch-lab.svc
+          DNS.5 = elasticsearch-0.elasticsearch-headless.elasticsearch-lab.svc.cluster.local
+          DNS.6 = elasticsearch-1.elasticsearch-headless.elasticsearch-lab.svc.cluster.local
+          DNS.7 = elasticsearch-2.elasticsearch-headless.elasticsearch-lab.svc.cluster.local
+          DNS.8 = localhost
+          IP.1 = 127.0.0.1
+          EOF
+          openssl genrsa -out /tmp/es-tls/ca.key 4096
+          openssl req -x509 -new -nodes -key /tmp/es-tls/ca.key -sha256 -days 1 \
+            -subj '/CN=Elasticsearch Lab 001 CA' -out /tmp/es-tls/ca.crt
+          openssl genrsa -out /tmp/es-tls/tls.key 2048
+          openssl req -new -key /tmp/es-tls/tls.key -out /tmp/es-tls/tls.csr \
+            -config /tmp/es-tls/openssl-san.cnf
+          openssl x509 -req -in /tmp/es-tls/tls.csr -CA /tmp/es-tls/ca.crt \
+            -CAkey /tmp/es-tls/ca.key -CAcreateserial -out /tmp/es-tls/tls.crt \
+            -days 1 -sha256 -extensions req_ext -extfile /tmp/es-tls/openssl-san.cnf
+          openssl verify -CAfile /tmp/es-tls/ca.crt /tmp/es-tls/tls.crt
+          openssl x509 -in /tmp/es-tls/tls.crt -noout -subject -issuer -ext subjectAltName
+          chmod 0644 /tmp/es-tls/ca.crt /tmp/es-tls/tls.crt
+          chmod 0640 /tmp/es-tls/tls.key
+
+      - name: Deploy namespace, TLS, credentials, services and Elasticsearch
+        run: |
+          set -euxo pipefail
           kubectl apply -f "$LAB/manifests/00-namespace.yaml"
           kubectl apply -f "$LAB/manifests/01-service-headless.yaml"
           kubectl apply -f "$LAB/manifests/02-configmap.yaml"
           kubectl -n elasticsearch-lab create secret generic elasticsearch-credentials \
             --from-literal=ELASTIC_PASSWORD="$ES_PASSWORD"
+          kubectl -n elasticsearch-lab create secret generic elasticsearch-tls \
+            --from-file=ca.crt=/tmp/es-tls/ca.crt \
+            --from-file=tls.crt=/tmp/es-tls/tls.crt \
+            --from-file=tls.key=/tmp/es-tls/tls.key
           kubectl apply -f "$LAB/manifests/04-statefulset.yaml"
 
       - name: Wait for Elasticsearch pods
         run: |
-          kubectl wait --for=condition=Ready pod -l app=elasticsearch -n elasticsearch-lab --timeout=15m
+          set -euxo pipefail
+          kubectl rollout status statefulset/elasticsearch -n elasticsearch-lab --timeout=15m
+          kubectl wait --for=condition=Ready pod -l app=elasticsearch -n elasticsearch-lab --timeout=2m
           kubectl get pods,pvc -n elasticsearch-lab -o wide
 
-      - name: Capture Elasticsearch CA and start port-forward
+      - name: Capture CA and start port-forward
         run: |
-          kubectl cp elasticsearch-lab/elasticsearch-0:/usr/share/elasticsearch/config/certs/http_ca.crt /tmp/http_ca.crt
+          set -euxo pipefail
+          cp /tmp/es-tls/ca.crt /tmp/http_ca.crt
           kubectl -n elasticsearch-lab port-forward service/elasticsearch 9200:9200 >/tmp/es-port-forward.log 2>&1 &
           echo $! >/tmp/es-port-forward.pid
-          sleep 5
+          for i in $(seq 1 30); do
+            if curl --silent --show-error --fail --cacert /tmp/http_ca.crt \
+              -u "elastic:$ES_PASSWORD" https://localhost:9200/ >/tmp/es-root.json; then
+              cat /tmp/es-root.json
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/es-port-forward.log || true
+          exit 1
 
       - name: Baseline validation
         working-directory: ${{ env.LAB }}
@@ -71,9 +134,17 @@ jobs:
       - name: Diagnostics on failure
         if: failure()
         run: |
-          kubectl get all,pvc -n elasticsearch-lab -o wide || true
-          kubectl get events -n elasticsearch-lab --sort-by=.lastTimestamp || true
-          kubectl logs -n elasticsearch-lab -l app=elasticsearch --all-containers --tail=300 || true
+          mkdir -p "$LAB/validation-output/diagnostics"
+          kubectl get nodes -o wide | tee "$LAB/validation-output/diagnostics/nodes.txt" || true
+          kubectl get all,pvc,pv -n elasticsearch-lab -o wide | tee "$LAB/validation-output/diagnostics/resources.txt" || true
+          kubectl describe statefulset elasticsearch -n elasticsearch-lab >"$LAB/validation-output/diagnostics/statefulset.txt" 2>&1 || true
+          kubectl get events -n elasticsearch-lab --sort-by=.lastTimestamp | tee "$LAB/validation-output/diagnostics/events.txt" || true
+          for pod in elasticsearch-0 elasticsearch-1 elasticsearch-2; do
+            kubectl describe pod "$pod" -n elasticsearch-lab >"$LAB/validation-output/diagnostics/${pod}-describe.txt" 2>&1 || true
+            kubectl logs "$pod" -n elasticsearch-lab --tail=500 >"$LAB/validation-output/diagnostics/${pod}.log" 2>&1 || true
+            kubectl logs "$pod" -n elasticsearch-lab --previous --tail=500 >"$LAB/validation-output/diagnostics/${pod}-previous.log" 2>&1 || true
+          done
+          cat /tmp/es-port-forward.log || true
 
       - name: Upload validation evidence
         if: always()
@@ -82,6 +153,7 @@ jobs:
           name: elasticsearch-lab-001-validation
           path: |
             ${{ env.LAB }}/validation-output/
+            /tmp/es-root.json
             /tmp/es-port-forward.log
           if-no-files-found: ignore
 
