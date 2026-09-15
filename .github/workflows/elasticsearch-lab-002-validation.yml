@@ -29,14 +29,21 @@ jobs:
           kubectl apply -f manifests/01-headless-service.yaml
           kubectl apply -f manifests/02-client-service.yaml
           kubectl apply -f manifests/03-configmap-bootstrap.yaml
-          kubectl -n elasticsearch-lab-002 create secret generic elasticsearch-credentials --from-literal=ELASTIC_PASSWORD='Lab002-Only-Password-ChangeMe-9x!'
+
+          ES_PASSWORD="$(openssl rand -hex 24)"
+          export ES_PASSWORD
+          echo "::add-mask::$ES_PASSWORD"
+          kubectl -n elasticsearch-lab-002 create secret generic elasticsearch-credentials \
+            --from-literal=ELASTIC_PASSWORD="$ES_PASSWORD"
+
           ./scripts/generate-tls.sh
           kubectl apply -f manifests/05-statefulset.yaml
           kubectl -n elasticsearch-lab-002 rollout status statefulset/elasticsearch --timeout=600s
           kubectl -n elasticsearch-lab-002 port-forward pod/elasticsearch-0 9200:9200 > /tmp/es-pf.log 2>&1 &
           echo $! > /tmp/es-pf.pid
           sleep 5
-          export ES_URL=https://localhost:9200 ES_USER=elastic ES_CA="$PWD/artifacts/http-ca.crt" ES_PASSWORD='Lab002-Only-Password-ChangeMe-9x!'
+          export ES_URL=https://localhost:9200 ES_USER=elastic ES_CA="$PWD/artifacts/http-ca.crt"
+
           for i in $(seq 1 60); do
             code=$(curl --silent --output evidence/cluster-identity-before.json --write-out '%{http_code}' --cacert "$ES_CA" -u "$ES_USER:$ES_PASSWORD" "$ES_URL/" || true)
             uuid=$(jq -r '.cluster_uuid // empty' evidence/cluster-identity-before.json 2>/dev/null || true)
@@ -45,10 +52,41 @@ jobs:
           done
           export EXPECTED_CLUSTER_UUID="$(jq -r '.cluster_uuid // empty' evidence/cluster-identity-before.json)"
           [ -n "$EXPECTED_CLUSTER_UUID" ] && [ "$EXPECTED_CLUSTER_UUID" != _na_ ] || { echo 'FAIL: cluster did not form a valid UUID'; exit 1; }
+
+          bad_auth_code=$(curl --silent --output evidence/negative-auth-response.json --write-out '%{http_code}' \
+            --cacert "$ES_CA" -u "$ES_USER:deliberately-wrong-password" "$ES_URL/" || true)
+          [ "$bad_auth_code" = 401 ] || { echo "FAIL: invalid credentials returned HTTP $bad_auth_code instead of 401"; exit 1; }
+          echo 'PASS: invalid credentials rejected with HTTP 401'
+
+          if curl --silent --show-error --fail -u "$ES_USER:$ES_PASSWORD" "$ES_URL/" \
+            > evidence/negative-tls-unexpected-success.txt 2> evidence/negative-tls-error.txt; then
+            echo 'FAIL: HTTPS request unexpectedly succeeded without the trusted lab CA'
+            exit 1
+          fi
+          rm -f evidence/negative-tls-unexpected-success.txt
+          echo 'PASS: TLS trust validation failed without the lab CA as expected'
+
           ./scripts/validate-index.sh
           ./scripts/transition-runtime.sh
           ./scripts/restart-rejoin-test.sh
           ./scripts/validate-runtime.sh
+
+          curl --silent --show-error --fail --cacert "$ES_CA" -u "$ES_USER:$ES_PASSWORD" \
+            "$ES_URL/_cluster/health?pretty" > evidence/final-cluster-health.json
+          curl --silent --show-error --fail --cacert "$ES_CA" -u "$ES_USER:$ES_PASSWORD" \
+            "$ES_URL/patients-v1/_count?pretty" > evidence/final-index-count.json
+          kubectl -n elasticsearch-lab-002 get pods -o wide > evidence/final-pods.txt
+          kubectl -n elasticsearch-lab-002 get pvc -o wide > evidence/final-pvcs.txt
+          kubectl get pv -o wide > evidence/final-pvs.txt
+
+          final_status=$(jq -r '.status' evidence/final-cluster-health.json)
+          final_unassigned=$(jq -r '.unassigned_shards' evidence/final-cluster-health.json)
+          final_count=$(jq -r '.count' evidence/final-index-count.json)
+          [ "$final_status" = green ] || { echo "FAIL: final cluster status is $final_status"; exit 1; }
+          [ "$final_unassigned" -eq 0 ] || { echo "FAIL: final unassigned shards=$final_unassigned"; exit 1; }
+          [ "$final_count" -eq 4 ] || { echo "FAIL: final patients-v1 count=$final_count"; exit 1; }
+          echo 'PASS: final cluster/index/storage evidence gate'
+
           ./scripts/sanitize-evidence.sh evidence
       - name: Capture failure diagnostics
         if: failure()
@@ -57,6 +95,7 @@ jobs:
           mkdir -p evidence
           kubectl -n elasticsearch-lab-002 get pods -o wide > evidence/pods-failure.txt 2>&1 || true
           kubectl -n elasticsearch-lab-002 get pvc -o wide > evidence/pvc-failure.txt 2>&1 || true
+          kubectl get pv -o wide > evidence/pv-failure.txt 2>&1 || true
           for pod in elasticsearch-0 elasticsearch-1 elasticsearch-2; do
             kubectl -n elasticsearch-lab-002 logs "$pod" --tail=300 > "evidence/${pod}-failure.log" 2>&1 || true
           done
@@ -68,3 +107,8 @@ jobs:
           name: elasticsearch-lab-002-validation
           path: elasticsearch/hands-on-labs/lab-002-production-installation-configuration/evidence/
           if-no-files-found: warn
+      - name: Cleanup Lab 002
+        if: always()
+        working-directory: elasticsearch/hands-on-labs/lab-002-production-installation-configuration
+        run: |
+          ./scripts/cleanup.sh
