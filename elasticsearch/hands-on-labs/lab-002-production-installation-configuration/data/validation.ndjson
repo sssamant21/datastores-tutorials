@@ -1,0 +1,8 @@
+{"index":{"_index":"installation-validation-v1","_id":"1"}}
+{"patient_id":"P001","facility":"north","event_time":"2026-09-15T12:00:00Z","description":"Synthetic installation validation event one"}
+{"index":{"_index":"installation-validation-v1","_id":"2"}}
+{"patient_id":"P002","facility":"south","event_time":"2026-09-15T12:01:00Z","description":"Synthetic installation validation event two"}
+{"index":{"_index":"installation-validation-v1","_id":"3"}}
+{"patient_id":"P003","facility":"east","event_time":"2026-09-15T12:02:00Z","description":"Synthetic installation validation event three"}
+{"index":{"_index":"installation-validation-v1","_id":"4"}}
+{"patient_id":"P004","facility":"west","event_time":"2026-09-15T12:03:00Z","description":"Synthetic installation validation event four"}

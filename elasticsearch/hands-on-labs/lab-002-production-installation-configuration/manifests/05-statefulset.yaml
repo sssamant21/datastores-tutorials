@@ -1,0 +1,122 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: elasticsearch
+  namespace: elasticsearch-lab-002
+spec:
+  serviceName: elasticsearch-headless
+  replicas: 3
+  selector:
+    matchLabels:
+      app: elasticsearch-lab-002
+  template:
+    metadata:
+      labels:
+        app: elasticsearch-lab-002
+    spec:
+      terminationGracePeriodSeconds: 120
+      initContainers:
+        - name: install-node-transport-cert
+          image: busybox:1.37
+          command: ["sh","-ec"]
+          args:
+            - |
+              cp /transport-source/${POD_NAME}.crt /transport/tls.crt
+              cp /transport-source/${POD_NAME}.key /transport/tls.key
+              chmod 0440 /transport/tls.crt /transport/tls.key
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          volumeMounts:
+            - name: transport-source
+              mountPath: /transport-source
+              readOnly: true
+            - name: transport-cert
+              mountPath: /transport
+      containers:
+        - name: elasticsearch
+          image: docker.elastic.co/elasticsearch/elasticsearch:9.5.3
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: node.name
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ELASTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: elasticsearch-credentials
+                  key: ELASTIC_PASSWORD
+            - name: ES_JAVA_OPTS
+              value: "-Xms512m -Xmx512m"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 1Gi
+            limits:
+              memory: 2Gi
+          ports:
+            - name: http
+              containerPort: 9200
+            - name: transport
+              containerPort: 9300
+          startupProbe:
+            tcpSocket:
+              port: transport
+            periodSeconds: 10
+            failureThreshold: 30
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+            failureThreshold: 6
+          livenessProbe:
+            tcpSocket:
+              port: transport
+            periodSeconds: 20
+            failureThreshold: 6
+          volumeMounts:
+            - name: config
+              mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+              subPath: elasticsearch.yml
+              readOnly: true
+            - name: ca-cert
+              mountPath: /usr/share/elasticsearch/config/certs/ca
+              readOnly: true
+            - name: http-cert
+              mountPath: /usr/share/elasticsearch/config/certs/http
+              readOnly: true
+            - name: transport-cert
+              mountPath: /usr/share/elasticsearch/config/certs/transport
+              readOnly: true
+            - name: data
+              mountPath: /usr/share/elasticsearch/data
+      volumes:
+        - name: config
+          configMap:
+            name: elasticsearch-config
+        - name: ca-cert
+          secret:
+            secretName: elasticsearch-ca
+        - name: http-cert
+          secret:
+            secretName: elasticsearch-http-tls
+        - name: transport-source
+          secret:
+            secretName: elasticsearch-transport-tls
+        - name: transport-cert
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
