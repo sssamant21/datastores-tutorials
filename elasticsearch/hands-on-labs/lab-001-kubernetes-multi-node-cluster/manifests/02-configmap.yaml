@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: elasticsearch-config
+  namespace: elasticsearch-lab
+data:
+  elasticsearch.yml: |
+    cluster.name: lab-es-cluster
+    node.name: ${NODE_NAME}
+    node.roles: [ master, data, ingest ]
+    network.host: 0.0.0.0
+    discovery.seed_hosts:
+      - elasticsearch-0.elasticsearch-headless.elasticsearch-lab.svc.cluster.local
+      - elasticsearch-1.elasticsearch-headless.elasticsearch-lab.svc.cluster.local
+      - elasticsearch-2.elasticsearch-headless.elasticsearch-lab.svc.cluster.local
+    cluster.initial_master_nodes:
+      - elasticsearch-0
+      - elasticsearch-1
+      - elasticsearch-2
