@@ -56,8 +56,9 @@ elasticsearch/
 - Tutorial 02 — **CANONICAL / COMMITTED / VERIFIED**
 - Hands-On Lab 02 — **CANONICAL / COMMITTED / VERIFIED**
 - Real-World Use Case 02 — **CANONICAL / COMMITTED / VERIFIED**
-- Production Runbook 02 — **NEXT**
+- Production Runbook 02 — **CANONICAL / COMMITTED / VERIFIED**
+- Troubleshooting Scenario 02 — **NEXT**
 
 ## Next Workflow Stage
 
-**Production Runbook 02 — Production Installation & Configuration → Draft**
+**Troubleshooting Scenario 02 — Production Installation & Configuration Failure → Draft**
