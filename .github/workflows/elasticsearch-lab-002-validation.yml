@@ -1,0 +1,53 @@
+name: Elasticsearch Lab 002 Validation
+on:
+  pull_request:
+    paths:
+      - 'elasticsearch/hands-on-labs/lab-002-production-installation-configuration/**'
+      - '.github/workflows/elasticsearch-lab-002-validation.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install kind
+        run: |
+          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.31.0/kind-linux-amd64
+          chmod +x ./kind && sudo mv ./kind /usr/local/bin/kind
+      - name: Configure kernel and create cluster
+        run: |
+          sudo sysctl -w vm.max_map_count=1048576
+          kind create cluster --name es-lab-002 --image kindest/node:v1.35.0
+          docker exec es-lab-002-control-plane sysctl -w vm.max_map_count=1048576
+      - name: Deploy and validate Lab 002
+        working-directory: elasticsearch/hands-on-labs/lab-002-production-installation-configuration
+        run: |
+          set -euo pipefail
+          mkdir -p evidence artifacts
+          ./scripts/preflight.sh
+          kubectl apply -f manifests/00-namespace.yaml
+          kubectl apply -f manifests/01-headless-service.yaml
+          kubectl apply -f manifests/02-client-service.yaml
+          kubectl apply -f manifests/03-configmap-bootstrap.yaml
+          kubectl -n elasticsearch-lab-002 create secret generic elasticsearch-credentials --from-literal=ELASTIC_PASSWORD='Lab002-Only-Password-ChangeMe-9x!'
+          ./scripts/generate-tls.sh
+          kubectl apply -f manifests/05-statefulset.yaml
+          kubectl -n elasticsearch-lab-002 rollout status statefulset/elasticsearch --timeout=600s
+          kubectl -n elasticsearch-lab-002 port-forward pod/elasticsearch-0 9200:9200 > /tmp/es-pf.log 2>&1 &
+          echo $! > /tmp/es-pf.pid
+          sleep 5
+          export ES_URL=https://localhost:9200 ES_USER=elastic ES_CA="$PWD/artifacts/http-ca.crt" ES_PASSWORD='Lab002-Only-Password-ChangeMe-9x!'
+          curl --fail --silent --cacert "$ES_CA" -u "$ES_USER:$ES_PASSWORD" "$ES_URL/" > evidence/cluster-identity-before.json
+          export EXPECTED_CLUSTER_UUID="$(jq -r '.cluster_uuid' evidence/cluster-identity-before.json)"
+          ./scripts/validate-index.sh
+          ./scripts/transition-runtime.sh
+          ./scripts/restart-rejoin-test.sh
+          ./scripts/validate-runtime.sh
+          ./scripts/sanitize-evidence.sh evidence
+      - name: Upload sanitized evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: elasticsearch-lab-002-validation
+          path: elasticsearch/hands-on-labs/lab-002-production-installation-configuration/evidence/
+          if-no-files-found: warn
