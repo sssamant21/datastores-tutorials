@@ -7,6 +7,7 @@ data:
   elasticsearch.yml: |
     cluster.name: es-production-installation-lab
     network.host: 0.0.0.0
+    transport.publish_host: ${POD_NAME}.elasticsearch-headless
     discovery.seed_hosts:
       - elasticsearch-0.elasticsearch-headless
       - elasticsearch-1.elasticsearch-headless
