@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+  namespace: elasticsearch-lab-002
+spec:
+  selector:
+    app: elasticsearch-lab-002
+  ports:
+    - name: https
+      port: 9200
+      targetPort: 9200
