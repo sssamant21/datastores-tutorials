@@ -72,9 +72,9 @@ jobs:
           ./scripts/validate-runtime.sh
 
           curl --silent --show-error --fail --cacert "$ES_CA" -u "$ES_USER:$ES_PASSWORD" \
-            "$ES_URL/_cluster/health?pretty" > evidence/final-cluster-health.json
+            "$ES_URL/_cluster/health/installation-validation-v1?wait_for_status=green&timeout=120s&pretty" > evidence/final-cluster-health.json
           curl --silent --show-error --fail --cacert "$ES_CA" -u "$ES_USER:$ES_PASSWORD" \
-            "$ES_URL/patients-v1/_count?pretty" > evidence/final-index-count.json
+            "$ES_URL/installation-validation-v1/_count?pretty" > evidence/final-index-count.json
           kubectl -n elasticsearch-lab-002 get pods -o wide > evidence/final-pods.txt
           kubectl -n elasticsearch-lab-002 get pvc -o wide > evidence/final-pvcs.txt
           kubectl get pv -o wide > evidence/final-pvs.txt
@@ -82,9 +82,9 @@ jobs:
           final_status=$(jq -r '.status' evidence/final-cluster-health.json)
           final_unassigned=$(jq -r '.unassigned_shards' evidence/final-cluster-health.json)
           final_count=$(jq -r '.count' evidence/final-index-count.json)
-          [ "$final_status" = green ] || { echo "FAIL: final cluster status is $final_status"; exit 1; }
-          [ "$final_unassigned" -eq 0 ] || { echo "FAIL: final unassigned shards=$final_unassigned"; exit 1; }
-          [ "$final_count" -eq 4 ] || { echo "FAIL: final patients-v1 count=$final_count"; exit 1; }
+          [ "$final_status" = green ] || { echo "FAIL: final validation-index status is $final_status"; exit 1; }
+          [ "$final_unassigned" -eq 0 ] || { echo "FAIL: final validation-index unassigned shards=$final_unassigned"; exit 1; }
+          [ "$final_count" -eq 4 ] || { echo "FAIL: final installation-validation-v1 count=$final_count"; exit 1; }
           echo 'PASS: final cluster/index/storage evidence gate'
 
           ./scripts/sanitize-evidence.sh evidence
