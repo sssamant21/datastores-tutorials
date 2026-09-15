@@ -1,0 +1,127 @@
+name: Elasticsearch Scenario 002 Validation
+
+on:
+  pull_request:
+    paths:
+      - 'elasticsearch/troubleshooting-scenarios/02-production-installation-configuration-failure/**'
+      - 'elasticsearch/hands-on-labs/lab-002-production-installation-configuration/**'
+      - '.github/workflows/elasticsearch-scenario-002-validation.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      LAB: elasticsearch/hands-on-labs/lab-002-production-installation-configuration
+      SCENARIO: elasticsearch/troubleshooting-scenarios/02-production-installation-configuration-failure
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install kind
+        run: |
+          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.31.0/kind-linux-amd64
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/kind
+
+      - name: Configure kernel and create cluster
+        run: |
+          set -euo pipefail
+          sudo sysctl -w vm.max_map_count=1048576
+          kind create cluster --name es-scenario-002 --image kindest/node:v1.35.0
+          docker exec es-scenario-002-control-plane sysctl -w vm.max_map_count=1048576
+
+      - name: Deploy Elasticsearch 9.5.3 Lab 002 foundation
+        working-directory: ${{ env.LAB }}
+        run: |
+          set -euo pipefail
+          mkdir -p evidence artifacts
+          ./scripts/preflight.sh
+          kubectl apply -f manifests/00-namespace.yaml
+          kubectl apply -f manifests/01-headless-service.yaml
+          kubectl apply -f manifests/02-client-service.yaml
+          kubectl apply -f manifests/03-configmap-bootstrap.yaml
+
+          ES_PASSWORD="$(openssl rand -hex 24)"
+          echo "::add-mask::$ES_PASSWORD"
+          echo "ES_PASSWORD=$ES_PASSWORD" >> "$GITHUB_ENV"
+          kubectl -n elasticsearch-lab-002 create secret generic elasticsearch-credentials --from-literal=ELASTIC_PASSWORD="$ES_PASSWORD"
+
+          ./scripts/generate-tls.sh
+          kubectl apply -f manifests/05-statefulset.yaml
+          kubectl -n elasticsearch-lab-002 rollout status statefulset/elasticsearch --timeout=600s
+
+          kubectl -n elasticsearch-lab-002 port-forward pod/elasticsearch-0 9200:9200 >/tmp/es-scenario-002-pf.log 2>&1 &
+          echo $! >/tmp/es-scenario-002-pf.pid
+          sleep 5
+          echo "ES_URL=https://localhost:9200" >> "$GITHUB_ENV"
+          echo "ES_USER=elastic" >> "$GITHUB_ENV"
+          echo "ES_CA=$PWD/artifacts/http-ca.crt" >> "$GITHUB_ENV"
+
+          for i in $(seq 1 60); do
+            if curl --silent --show-error --fail --cacert artifacts/http-ca.crt -u "elastic:$ES_PASSWORD" https://localhost:9200/ >/tmp/root.json; then break; fi
+            sleep 5
+            [ "$i" -lt 60 ] || exit 1
+          done
+
+          export ES_URL=https://localhost:9200 ES_USER=elastic ES_CA="$PWD/artifacts/http-ca.crt"
+          export EXPECTED_CLUSTER_UUID="$(jq -r '.cluster_uuid' /tmp/root.json)"
+          ./scripts/validate-index.sh
+          ./scripts/transition-runtime.sh
+          ./scripts/restart-rejoin-test.sh
+          ./scripts/validate-runtime.sh
+
+      - name: Execute Scenario 02 deterministic failure and recovery validation
+        working-directory: ${{ env.SCENARIO }}
+        run: |
+          set -euo pipefail
+          chmod +x scripts/validate-scenario.sh
+          bash scripts/validate-scenario.sh
+
+      - name: Final acceptance gate
+        run: |
+          set -euo pipefail
+          health=$(curl --silent --show-error --fail --cacert "$ES_CA" -u "$ES_USER:$ES_PASSWORD" "$ES_URL/_cluster/health/installation-validation-v1")
+          echo "$health" | jq -e '.status=="green" and .number_of_nodes==3 and .unassigned_shards==0' >/dev/null
+          count=$(curl --silent --show-error --fail --cacert "$ES_CA" -u "$ES_USER:$ES_PASSWORD" "$ES_URL/installation-validation-v1/_count" | jq -r '.count')
+          [ "$count" -eq 4 ]
+          for p in elasticsearch-0 elasticsearch-1 elasticsearch-2; do
+            kubectl exec -n elasticsearch-lab-002 "$p" -- sh -c '! grep -q "cluster.initial_master_nodes" /usr/share/elasticsearch/config/elasticsearch.yml'
+          done
+          echo 'SCENARIO 002 FINAL ACCEPTANCE GATE PASS'
+
+      - name: Capture failure diagnostics
+        if: failure()
+        run: |
+          mkdir -p "$SCENARIO/validation-output/diagnostics"
+          kubectl -n elasticsearch-lab-002 get pods,pvc -o wide > "$SCENARIO/validation-output/diagnostics/resources.txt" 2>&1 || true
+          kubectl get pv -o wide > "$SCENARIO/validation-output/diagnostics/pvs.txt" 2>&1 || true
+          kubectl -n elasticsearch-lab-002 get events --sort-by=.lastTimestamp > "$SCENARIO/validation-output/diagnostics/events.txt" 2>&1 || true
+          for p in elasticsearch-0 elasticsearch-1 elasticsearch-2; do
+            kubectl -n elasticsearch-lab-002 logs "$p" --tail=400 > "$SCENARIO/validation-output/diagnostics/${p}.log" 2>&1 || true
+            kubectl -n elasticsearch-lab-002 logs "$p" --previous --tail=400 > "$SCENARIO/validation-output/diagnostics/${p}-previous.log" 2>&1 || true
+          done
+
+      - name: Sanitize evidence
+        if: always()
+        run: |
+          set -euo pipefail
+          if [ -d "$SCENARIO/validation-output" ]; then
+            find "$SCENARIO/validation-output" -type f -print0 | xargs -0 -r sed -i -E 's/(Authorization: Basic )[A-Za-z0-9+\/=]+/\1[REDACTED]/g'
+            ! grep -R -n -E 'BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|Authorization: Basic [A-Za-z0-9+\/=]+' "$SCENARIO/validation-output"
+          fi
+
+      - name: Upload Scenario 02 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: elasticsearch-scenario-002-validation
+          path: elasticsearch/troubleshooting-scenarios/02-production-installation-configuration-failure/validation-output/
+          if-no-files-found: warn
+
+      - name: Cleanup
+        if: always()
+        working-directory: ${{ env.LAB }}
+        run: ./scripts/cleanup.sh || true
