@@ -1,0 +1,91 @@
+name: Elasticsearch Lab 001 Validation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'elasticsearch/hands-on-labs/lab-001-kubernetes-multi-node-cluster/**'
+      - '.github/workflows/elasticsearch-lab-001.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      LAB: elasticsearch/hands-on-labs/lab-001-kubernetes-multi-node-cluster
+      ES_PASSWORD: LabOnly-ChangeMe-9x5-3
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Host prerequisite
+        run: |
+          sudo sysctl -w vm.max_map_count=1048576
+          sysctl vm.max_map_count
+
+      - name: Create kind cluster
+        uses: helm/kind-action@v1
+        with:
+          cluster_name: es-lab
+          wait: 120s
+
+      - name: Deploy namespace and services
+        run: |
+          kubectl apply -f "$LAB/manifests/00-namespace.yaml"
+          kubectl apply -f "$LAB/manifests/01-service-headless.yaml"
+          kubectl apply -f "$LAB/manifests/02-configmap.yaml"
+          kubectl -n elasticsearch-lab create secret generic elasticsearch-credentials \
+            --from-literal=ELASTIC_PASSWORD="$ES_PASSWORD"
+          kubectl apply -f "$LAB/manifests/04-statefulset.yaml"
+
+      - name: Wait for Elasticsearch pods
+        run: |
+          kubectl wait --for=condition=Ready pod -l app=elasticsearch -n elasticsearch-lab --timeout=15m
+          kubectl get pods,pvc -n elasticsearch-lab -o wide
+
+      - name: Capture Elasticsearch CA and start port-forward
+        run: |
+          kubectl cp elasticsearch-lab/elasticsearch-0:/usr/share/elasticsearch/config/certs/http_ca.crt /tmp/http_ca.crt
+          kubectl -n elasticsearch-lab port-forward service/elasticsearch 9200:9200 >/tmp/es-port-forward.log 2>&1 &
+          echo $! >/tmp/es-port-forward.pid
+          sleep 5
+
+      - name: Baseline validation
+        working-directory: ${{ env.LAB }}
+        env:
+          ES_CA: /tmp/http_ca.crt
+          ES_URL: https://localhost:9200
+          ES_USER: elastic
+        run: bash scripts/validate.sh
+
+      - name: Failure and recovery validation
+        working-directory: ${{ env.LAB }}
+        env:
+          ES_CA: /tmp/http_ca.crt
+          ES_URL: https://localhost:9200
+          ES_USER: elastic
+        run: bash scripts/failure-test.sh
+
+      - name: Diagnostics on failure
+        if: failure()
+        run: |
+          kubectl get all,pvc -n elasticsearch-lab -o wide || true
+          kubectl get events -n elasticsearch-lab --sort-by=.lastTimestamp || true
+          kubectl logs -n elasticsearch-lab -l app=elasticsearch --all-containers --tail=300 || true
+
+      - name: Upload validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: elasticsearch-lab-001-validation
+          path: |
+            ${{ env.LAB }}/validation-output/
+            /tmp/es-port-forward.log
+          if-no-files-found: ignore
+
+      - name: Cleanup
+        if: always()
+        working-directory: ${{ env.LAB }}
+        run: bash cleanup/cleanup.sh || true
