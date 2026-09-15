@@ -54,8 +54,9 @@ elasticsearch/
 ### Module 02 — Production Installation & Configuration
 
 - Tutorial 02 — **CANONICAL / COMMITTED / VERIFIED**
-- Hands-On Lab 02 — **NEXT**
+- Hands-On Lab 02 — **CANONICAL / COMMITTED / VERIFIED**
+- Real-World Use Case 02 — **NEXT**
 
 ## Next Workflow Stage
 
-**Hands-On Lab 02 — Production Installation & Configuration → Draft**
+**Real-World Use Case 02 — Production Installation & Configuration → Draft**
