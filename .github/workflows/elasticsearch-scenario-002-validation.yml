@@ -54,8 +54,8 @@ jobs:
           kubectl apply -f manifests/05-statefulset.yaml
           kubectl -n elasticsearch-lab-002 rollout status statefulset/elasticsearch --timeout=600s
 
-          kubectl -n elasticsearch-lab-002 port-forward pod/elasticsearch-0 9200:9200 >/tmp/es-scenario-002-pf.log 2>&1 &
-          echo $! >/tmp/es-scenario-002-pf.pid
+          kubectl -n elasticsearch-lab-002 port-forward pod/elasticsearch-0 9200:9200 >/tmp/es-pf.log 2>&1 &
+          echo $! >/tmp/es-pf.pid
           sleep 5
           echo "ES_URL=https://localhost:9200" >> "$GITHUB_ENV"
           echo "ES_USER=elastic" >> "$GITHUB_ENV"
