@@ -92,10 +92,11 @@ jobs:
           kubectl wait --for=condition=Ready pod/elasticsearch-2 -n elasticsearch-lab --timeout=10m
           kubectl exec -n elasticsearch-lab elasticsearch-2 -- sh -c '! grep -q "cluster.initial_master_nodes" /usr/share/elasticsearch/config/elasticsearch.yml'
 
-      - name: Start secured API access
+      - name: Start secured API access on surviving ordinal
         run: |
+          set -euxo pipefail
           cp /tmp/es-tls/ca.crt /tmp/http_ca.crt
-          kubectl -n elasticsearch-lab port-forward service/elasticsearch 9200:9200 >/tmp/es-port-forward.log 2>&1 &
+          kubectl -n elasticsearch-lab port-forward pod/elasticsearch-0 9200:9200 >/tmp/es-port-forward.log 2>&1 &
           echo $! >/tmp/es-port-forward.pid
           for i in $(seq 1 60); do
             curl --silent --show-error --fail --cacert /tmp/http_ca.crt -u "elastic:$ES_PASSWORD" https://localhost:9200/ >/tmp/es-root.json && exit 0
