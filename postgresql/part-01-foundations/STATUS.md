@@ -1,6 +1,6 @@
 # PostgreSQL Part 1 — Foundations Status
 
-**Canonical progress:** `9/15 canonical + merged`
+**Canonical progress:** `10/15 canonical + merged`
 
 | Part | Topic | Status |
 |---|---|---|
@@ -13,11 +13,11 @@
 | 1.7 | Create Your First Schema and Table | Canonical + merged |
 | 1.8 | INSERT, SELECT, UPDATE & DELETE | Canonical + merged |
 | 1.9 | PostgreSQL Data Types | Canonical + merged |
-| 1.10 | Pending | Not started |
-| 1.11 | Pending | Not started |
-| 1.12 | Pending | Not started |
-| 1.13 | Pending | Not started |
-| 1.14 | Pending | Not started |
-| 1.15 | Pending | Not started |
+| 1.10 | Constraints and Keys | Canonical + merged |
+| 1.11 | Users and Roles — Introduction | Not started |
+| 1.12 | PostgreSQL Processes — Introduction | Not started |
+| 1.13 | PostgreSQL Files and Directories — Introduction | Not started |
+| 1.14 | postgresql.conf and pg_hba.conf — Introduction | Not started |
+| 1.15 | Part 1 Hands-On Project | Not started |
 
 Status is advanced only after the canonical manuscript and required lab artifacts are committed to `main`.
