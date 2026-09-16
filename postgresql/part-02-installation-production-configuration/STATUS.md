@@ -1,6 +1,6 @@
 # Part 2 — Installation & Production Configuration — Status
 
-**Canonical + merged:** 5/15
+**Canonical + merged:** 6/15
 
 | Section | Title | Status |
 | --- | --- | --- |
@@ -9,7 +9,7 @@
 | 2.3 | Package-Based PostgreSQL Installation | CANONICAL + MERGED |
 | 2.4 | Source Installation and Build Fundamentals | CANONICAL + MERGED |
 | 2.5 | Cluster Initialization with `initdb` | CANONICAL + MERGED |
-| 2.6 | Data Directory, Tablespace, and Filesystem Design | Not started |
+| 2.6 | Data Directory, Tablespace, and Filesystem Design | CANONICAL + MERGED |
 | 2.7 | PostgreSQL Service Management with systemd | Not started |
 | 2.8 | Memory and Resource Configuration | Not started |
 | 2.9 | Connection, Session, and Process Configuration | Not started |
@@ -54,4 +54,11 @@
 - Initialization classification: `[TUTORIAL-OPERATOR-ACTION — MUTATING]`
 - Acceptance classification: `[TUTORIAL-ACCEPTANCE — SAFE-READ]`
 
-**Next workflow stage:** Part 2.6 — Data Directory, Tablespace, and Filesystem Design → Draft + Hands-On Lab.
+## Canonical Evidence — 2.6
+
+- Manuscript: `2.6-data-directory-tablespace-and-filesystem-design.md`
+- Acceptance artifact: `labs/storage-layout-check.sh`
+- Storage configuration classification: `[TUTORIAL-OPERATOR-ACTION — MUTATING]`
+- Acceptance classification: `[TUTORIAL-ACCEPTANCE — SAFE-READ]`
+
+**Next workflow stage:** Part 2.7 — PostgreSQL Service Management with systemd → Draft + Hands-On Lab.
