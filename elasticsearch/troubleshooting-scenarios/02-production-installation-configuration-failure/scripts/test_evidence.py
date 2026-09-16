@@ -51,6 +51,10 @@ class Gates(unittest.TestCase):
         self.tls_fixture({"message": "SSLHandshakeException at 10.0.0.99:9300"}, node="elasticsearch-0")
         with self.assertRaises(ValueError): self.e.tls()
 
+    def test_related_peer_only_failure_fails(self):
+        self.tls_fixture({"message": "SSLHandshakeException at 10.0.0.2:9300"}, node="elasticsearch-0")
+        with self.assertRaisesRegex(ValueError, "elasticsearch-2 itself"): self.e.tls()
+
     def test_separate_records_cannot_supply_context(self):
         self.tls_fixture({"message": "ordinary transport at :9300"})
         with (self.root / "elasticsearch-2-transport.log").open("a") as f:
@@ -123,6 +127,86 @@ class Gates(unittest.TestCase):
     def test_empty_pvc_inventory_fails(self):
         self.put("pvc.json", {"items": []})
         with self.assertRaises(ValueError): self.e.storage("pvc.json", "pv.json")
+
+    def recovery_fixture(self):
+        self.put("recovery-start-millis.txt", "1000")
+        self.put("recovery-before.json", [])
+        shards = [{"index": verifier.INDEX, "shard": str(i), "prirep": role,
+                   "state": "UNASSIGNED" if role == "r" and i < 2 else "STARTED",
+                   "node": "elasticsearch-0" if role == "p" else "elasticsearch-2"}
+                  for i in range(3) for role in ("p", "r")]
+        self.put("rejoined-shards.json", shards)
+        for shard in shards:
+            shard["state"] = "STARTED"
+        self.put("final-shards.json", shards)
+        (self.root / "recovery").mkdir()
+        rows = [{"index": verifier.INDEX, "shard": str(i), "type": "peer", "stage": "done",
+                 "source_node": "elasticsearch-0", "target_node": "elasticsearch-2",
+                 "start_time_millis": "1010", "stop_time_millis": "1020"} for i in range(2)]
+        self.recovery_sample(rows)
+        return rows
+
+    def recovery_sample(self, rows):
+        self.put("recovery/0001.json", {"captured_at_millis": 1100, "recoveries": rows})
+        self.put("24-recovery.json", rows)
+
+    def test_fast_completed_recovery_passes(self):
+        self.recovery_fixture()
+        self.e.recovery()
+
+    def test_active_recovery_passes(self):
+        rows = self.recovery_fixture()
+        for row in rows:
+            row.update(stage="translog", stop_time_millis="0")
+        self.recovery_sample(rows)
+        self.e.recovery()
+
+    def test_empty_recovery_fails(self):
+        self.recovery_fixture()
+        self.recovery_sample([])
+        with self.assertRaisesRegex(ValueError, "missing fresh peer"): self.e.recovery()
+
+    def test_stale_completed_recovery_fails(self):
+        rows = self.recovery_fixture()
+        for row in rows:
+            row.update(start_time_millis="500", stop_time_millis="600")
+        self.recovery_sample(rows)
+        with self.assertRaisesRegex(ValueError, "missing fresh peer"): self.e.recovery()
+
+    def test_preexisting_recovery_fails(self):
+        rows = self.recovery_fixture()
+        self.put("recovery-before.json", rows)
+        with self.assertRaisesRegex(ValueError, "missing fresh peer"): self.e.recovery()
+
+    def test_unrelated_recovery_target_fails(self):
+        rows = self.recovery_fixture()
+        for row in rows:
+            row["target_node"] = "elasticsearch-1"
+        self.recovery_sample(rows)
+        with self.assertRaisesRegex(ValueError, "missing fresh peer"): self.e.recovery()
+
+    def test_one_missing_recovery_fails(self):
+        rows = self.recovery_fixture()
+        self.recovery_sample(rows[:1])
+        with self.assertRaisesRegex(ValueError, "missing fresh peer"): self.e.recovery()
+
+    def test_missing_recovery_file_fails(self):
+        self.recovery_fixture()
+        (self.root / "24-recovery.json").unlink()
+        with self.assertRaises(OSError): self.e.recovery()
+
+    def test_recovery_without_timestamps_fails(self):
+        rows = self.recovery_fixture()
+        del rows[0]["start_time_millis"]
+        self.recovery_sample(rows)
+        with self.assertRaises(KeyError): self.e.recovery()
+
+    def test_future_recovery_fails(self):
+        rows = self.recovery_fixture()
+        for row in rows:
+            row.update(start_time_millis="2000", stop_time_millis="2100")
+        self.recovery_sample(rows)
+        with self.assertRaisesRegex(ValueError, "missing fresh peer"): self.e.recovery()
 
 
 if __name__ == "__main__":

@@ -208,9 +208,32 @@ jq -e '.number_of_nodes==3 and .status=="yellow" and .unassigned_shards>0' "$OUT
 
 # 5. Restore exact prior allocation state.
 python3 "$SCRIPT_DIR/verify-evidence.py" rejoined "$OUT"
+RECOVERY_URL="$ES_URL/_cat/recovery/$INDEX?format=json&h=index,shard,type,stage,source_node,target_node,start_time_millis,stop_time_millis"
+api "$RECOVERY_URL" > "$OUT/recovery-before.json"
+date +%s%3N > "$OUT/recovery-start-millis.txt"
 api -X PUT -H 'Content-Type: application/json' "$ES_URL/_cluster/settings" --data-binary @"$TMP/restore-allocation.json" > "$OUT/23-allocation-restored.json"
-api "$ES_URL/_cat/recovery/$INDEX?format=json" > "$OUT/24-recovery.json"
-api "$ES_URL/_cluster/health?wait_for_status=green&wait_for_no_relocating_shards=true&wait_for_no_initializing_shards=true&timeout=180s&pretty" > "$OUT/25-final-health.json"
+mkdir -p "$OUT/recovery"
+sample=0
+capture_recovery() {
+  api --max-time 15 "$RECOVERY_URL" > "$TMP/recovery.json"
+  sample=$((sample + 1))
+  jq --argjson captured_at "$(date +%s%3N)" '{captured_at_millis:$captured_at,recoveries:.}' "$TMP/recovery.json" > "$OUT/recovery/$(printf '%04d' "$sample").json"
+}
+deadline=$((SECONDS + 180))
+while :; do
+  capture_recovery
+  api --max-time 15 "$ES_URL/_cluster/health?pretty" > "$TMP/recovery-health.json"
+  if jq -e '.timed_out==false and .status=="green" and .number_of_nodes==3 and .unassigned_shards==0 and .initializing_shards==0 and .relocating_shards==0' "$TMP/recovery-health.json" >/dev/null; then
+    cp "$TMP/recovery-health.json" "$OUT/25-final-health.json"
+    break
+  fi
+  [ "$SECONDS" -lt "$deadline" ] || { echo 'FAIL: recovery did not reach GREEN within timeout'; exit 1; }
+  sleep 2
+done
+# A tiny index can finish between polls. Include a post-GREEN sample so fresh
+# completed recoveries are accepted without requiring an artificial slow-down.
+capture_recovery
+cp "$TMP/recovery.json" "$OUT/24-recovery.json"
 api "$ES_URL/_cluster/settings?flat_settings=true&include_defaults=true&pretty" > "$OUT/26-final-cluster-settings.json"
 api "$ES_URL/$INDEX/_count?pretty" > "$OUT/27-final-index-count.json"
 kubectl -n "$NS" get pvc -o json > "$OUT/28-final-pvcs.json"

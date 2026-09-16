@@ -157,7 +157,8 @@ class Evidence:
                     (pod["status"]["podIP"], "elasticsearch-2", "Scenario-002-Untrusted-CA"))
                 if fresh and related and TRANSPORT.search(record) and TLS_ERROR.search(record):
                     matches.append(f"{node}: {line}")
-        require(matches, "no fresh, node-2-related transport TLS failure record")
+        require(any(line.startswith("elasticsearch-2: ") for line in matches),
+                "no fresh transport TLS failure record from elasticsearch-2 itself")
         return "\n".join(matches) + "\n"
 
     def explain(self, filename, shards_file):
@@ -192,12 +193,53 @@ class Evidence:
         require(self.data("repaired-pod.json")["metadata"]["uid"] != self.data("failure-pod.json")["metadata"]["uid"],
                 "repaired pod not recreated")
 
+    def recovery(self):
+        boundary = int(self.text("recovery-start-millis.txt").strip())
+        require(boundary > 0, "missing recovery phase boundary")
+        before = self.data("recovery-before.json")
+        require(isinstance(before, list), "invalid pre-recovery snapshot")
+        def identity(row):
+            return (row["index"], str(row["shard"]), row["target_node"], int(row["start_time_millis"]))
+        previous = {identity(row) for row in before}
+        unassigned = {s["shard"] for s in self.shards("rejoined-shards.json", yellow=True)
+                      if s["prirep"] == "r" and s["state"] == "UNASSIGNED"}
+        expected = {(s["shard"], s["node"]) for s in self.shards("final-shards.json")
+                    if s["prirep"] == "r" and s["shard"] in unassigned}
+        require(expected and len(expected) == len(unassigned), "missing recovery targets")
+        snapshots = sorted((self.directory / "recovery").glob("*.json"))
+        require(snapshots, "missing recovery monitoring samples")
+        covered = set()
+        last_capture = boundary
+        last_rows = None
+        for path in snapshots:
+            snapshot = self.data(path.relative_to(self.directory).as_posix())
+            captured = snapshot["captured_at_millis"]
+            rows = snapshot["recoveries"]
+            require(isinstance(captured, int) and captured >= last_capture and isinstance(rows, list),
+                    "invalid recovery sample time/payload")
+            last_capture, last_rows = captured, rows
+            for row in rows:
+                key = identity(row)
+                if (row["index"] != INDEX or row["type"] != "peer" or key in previous
+                        or not boundary <= key[3] <= captured):
+                    continue
+                require(row["source_node"] in NODES and row["source_node"] != row["target_node"],
+                        "invalid peer recovery source")
+                require(row["stage"] in {"init", "index", "verify_index", "translog", "finalize", "done"},
+                        "invalid recovery stage")
+                if row["stage"] == "done":
+                    require(key[3] <= int(row["stop_time_millis"]) <= captured, "invalid recovery completion time")
+                covered.add((str(row["shard"]), row["target_node"]))
+        require(self.data("24-recovery.json") == last_rows, "final recovery snapshot differs from monitoring evidence")
+        require(expected <= covered, f"missing fresh peer recovery evidence for {sorted(expected - covered)}")
+
     def all(self):
         self.baseline()
         self.failure()
         self.rejoined()
         self.phase("final", 3, "green")
         self.shards("final-shards.json")
+        self.recovery()
         require(self.storage("07-baseline-pvcs.json", "08-baseline-pvs.json") == self.storage("28-final-pvcs.json", "29-final-pvs.json"),
                 "PVC/PV identity or storage source changed")
         before, after = self.data("original-allocation-state.json"), self.data("final-settings.json")
