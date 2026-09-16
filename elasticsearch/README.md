@@ -67,6 +67,10 @@ elasticsearch/
 
 - [Tutorial 04](tutorials/04-mapping-governance-data-modeling/README.md) — **CANONICAL / COMPLETE / COMMITTED / VERIFIED**
 
+### Module 05 — Query DSL for DBRE/SRE
+
+- [Tutorial 05](tutorials/05-query-dsl-for-dbre-sre/README.md) — **CANONICAL / COMPLETE / COMMITTED / VERIFIED**
+
 ## Next Workflow Stage
 
-**Tutorial 04 is complete. Further tutorial work has not started.**
+**Tutorial 05 is complete. Further tutorial work has not started.**
