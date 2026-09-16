@@ -2,8 +2,10 @@
 set -euo pipefail
 
 NAMESPACE="${NAMESPACE:-elasticsearch-lab-002}"
-OUT="${OUT:-$(mktemp -d)}"
-trap 'rm -rf "$OUT"' EXIT
+umask 077
+# Only remove a private directory created by this process, never a caller's OUT.
+OUT="$(mktemp -d)"
+trap 'rm -rf -- "$OUT"' EXIT
 
 openssl req -x509 -newkey rsa:2048 -sha256 -nodes -days 1 \
   -subj '/CN=Elasticsearch Lab 002 CA' \
@@ -39,6 +41,7 @@ kubectl -n "$NAMESPACE" create secret generic elasticsearch-transport-tls \
 mkdir -p artifacts
 cp "$OUT/ca.crt" artifacts/http-ca.crt
 openssl x509 -in "$OUT/http.crt" -noout -subject -issuer -serial -dates -fingerprint -sha256 > artifacts/http-certificate-metadata.txt
+: > artifacts/transport-certificate-metadata.txt
 for ordinal in 0 1 2; do
   openssl x509 -in "$OUT/elasticsearch-${ordinal}.crt" -noout -subject -issuer -serial -dates -fingerprint -sha256 >> artifacts/transport-certificate-metadata.txt
 done

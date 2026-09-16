@@ -2,7 +2,7 @@
 set -euo pipefail
 : "${ES_URL:?}" "${ES_USER:?}" "${ES_PASSWORD:?}" "${ES_CA:?}" "${EXPECTED_CLUSTER_UUID:?}"
 NS=elasticsearch-lab-002
-CURL=(curl --fail --silent --show-error --cacert "$ES_CA" -u "$ES_USER:$ES_PASSWORD")
+CURL=(curl --connect-timeout 5 --max-time 140 --fail --silent --show-error --cacert "$ES_CA" -u "$ES_USER:$ES_PASSWORD")
 
 start_port_forward() {
   local pod="$1"
@@ -14,7 +14,7 @@ start_port_forward() {
   echo $! > /tmp/es-pf.pid
 
   for _ in $(seq 1 30); do
-    if "${CURL[@]}" "$ES_URL/" >/dev/null 2>&1; then
+    if kill -0 "$(cat /tmp/es-pf.pid)" 2>/dev/null && "${CURL[@]}" "$ES_URL/" >/dev/null 2>&1; then
       echo "PASS: API tunnel active through $pod"
       return 0
     fi
@@ -56,15 +56,29 @@ for pod in elasticsearch-2 elasticsearch-1 elasticsearch-0; do
   pvc="data-$pod"
   pvc_uid="$(kubectl -n "$NS" get pvc "$pvc" -o jsonpath='{.metadata.uid}')"
   pv="$(kubectl -n "$NS" get pvc "$pvc" -o jsonpath='{.spec.volumeName}')"
-  kubectl -n "$NS" delete pod "$pod" --wait=true
+  kubectl -n "$NS" delete pod "$pod" --wait=true --timeout=150s
+  # A named wait can fail with NotFound between deletion and recreation.
+  for i in $(seq 1 60); do
+    new_uid="$(kubectl -n "$NS" get pod "$pod" -o jsonpath='{.metadata.uid}' 2>/dev/null || true)"
+    [ -n "$new_uid" ] && [ "$new_uid" != "$old_uid" ] && break
+    [ "$i" -lt 60 ] || { echo 'FAIL: replacement pod not created'; exit 1; }
+    sleep 2
+  done
   kubectl -n "$NS" wait --for=condition=Ready "pod/$pod" --timeout=300s
   new_uid="$(kubectl -n "$NS" get pod "$pod" -o jsonpath='{.metadata.uid}')"
   [ "$new_uid" != "$old_uid" ] || { echo 'FAIL: pod UID did not change'; exit 1; }
   [ "$(kubectl -n "$NS" get pvc "$pvc" -o jsonpath='{.metadata.uid}')" = "$pvc_uid" ] || { echo 'FAIL: PVC UID changed'; exit 1; }
   [ "$(kubectl -n "$NS" get pvc "$pvc" -o jsonpath='{.spec.volumeName}')" = "$pv" ] || { echo 'FAIL: PV changed'; exit 1; }
-  if kubectl -n "$NS" exec "$pod" -- grep -q '^cluster.initial_master_nodes:' /usr/share/elasticsearch/config/elasticsearch.yml; then
-    echo 'FAIL: bootstrap setting present after runtime restart'; exit 1
+  runtime_config="$(kubectl -n "$NS" exec "$pod" -c elasticsearch -- cat /usr/share/elasticsearch/config/elasticsearch.yml)"
+  if [ -z "$runtime_config" ] || grep -q 'cluster.initial_master_nodes' <<<"$runtime_config"; then
+    echo 'FAIL: invalid runtime config'; exit 1
   fi
-  precheck
+  # TCP readiness precedes discovery; retry the full precheck in a subshell
+  # so its explicit failures remain failures inside the conditional.
+  for i in $(seq 1 60); do
+    if (precheck); then break; fi
+    [ "$i" -lt 60 ] || { echo 'FAIL: node did not rejoin'; exit 1; }
+    sleep 2
+  done
   echo "PASS: $pod restart/rejoin with persistent storage and same cluster UUID"
 done

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 : "${ES_URL:?}" "${ES_USER:?}" "${ES_PASSWORD:?}" "${ES_CA:?}"
-CURL=(curl --fail --silent --show-error --cacert "$ES_CA" -u "$ES_USER:$ES_PASSWORD")
+CURL=(curl --connect-timeout 5 --max-time 140 --fail --silent --show-error --cacert "$ES_CA" -u "$ES_USER:$ES_PASSWORD")
 
 "${CURL[@]}" -X PUT "$ES_URL/installation-validation-v1" -H 'Content-Type: application/json' -d '{"settings":{"number_of_shards":3,"number_of_replicas":1},"mappings":{"properties":{"patient_id":{"type":"keyword"},"facility":{"type":"keyword"},"event_time":{"type":"date"},"description":{"type":"text"}}}}' >/dev/null
 bulk="$("${CURL[@]}" -X POST "$ES_URL/_bulk?refresh=true" -H 'Content-Type: application/x-ndjson' --data-binary @data/validation.ndjson)"

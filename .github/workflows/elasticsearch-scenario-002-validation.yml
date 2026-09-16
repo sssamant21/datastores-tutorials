@@ -1,0 +1,152 @@
+name: Elasticsearch Scenario 002 Validation
+
+on:
+  pull_request:
+    paths:
+      - 'elasticsearch/troubleshooting-scenarios/02-production-installation-configuration-failure/**'
+      - 'elasticsearch/hands-on-labs/lab-002-production-installation-configuration/**'
+      - '.github/workflows/elasticsearch-scenario-002-validation.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      LAB: elasticsearch/hands-on-labs/lab-002-production-installation-configuration
+      SCENARIO: elasticsearch/troubleshooting-scenarios/02-production-installation-configuration-failure
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Verify exact PR head and shell syntax
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          for script in "$LAB"/scripts/*.sh "$SCENARIO"/scripts/*.sh; do bash -n "$script"; done
+          python3 -m unittest discover -s "$SCENARIO/scripts" -p 'test_*.py'
+          mkdir -p "$RUNNER_TEMP/scenario-provenance"
+          jq -n --arg head "$EXPECTED_HEAD" --arg run "$GITHUB_RUN_ID" --arg attempt "$GITHUB_RUN_ATTEMPT" \
+            '{head_sha:$head,run_id:$run,run_attempt:$attempt}' > "$RUNNER_TEMP/scenario-provenance/source.json"
+
+      - name: Install kind
+        run: |
+          curl --fail --show-error --location --connect-timeout 10 --max-time 120 -o ./kind https://kind.sigs.k8s.io/dl/v0.31.0/kind-linux-amd64
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/kind
+
+      - name: Configure kernel and create cluster
+        run: |
+          set -euo pipefail
+          sudo sysctl -w vm.max_map_count=1048576
+          kind create cluster --name es-scenario-002 --image kindest/node:v1.35.0
+          docker exec es-scenario-002-control-plane sysctl -w vm.max_map_count=1048576
+
+      - name: Deploy Elasticsearch 9.5.3 Lab 002 foundation
+        working-directory: ${{ env.LAB }}
+        run: |
+          set -euo pipefail
+          mkdir -p evidence artifacts
+          ./scripts/preflight.sh
+          kubectl apply -f manifests/00-namespace.yaml
+          kubectl apply -f manifests/01-headless-service.yaml
+          kubectl apply -f manifests/02-client-service.yaml
+          kubectl apply -f manifests/03-configmap-bootstrap.yaml
+
+          ES_PASSWORD="$(openssl rand -hex 24)"
+          export ES_PASSWORD
+          echo "::add-mask::$ES_PASSWORD"
+          echo "ES_PASSWORD=$ES_PASSWORD" >> "$GITHUB_ENV"
+          kubectl -n elasticsearch-lab-002 create secret generic elasticsearch-credentials --from-literal=ELASTIC_PASSWORD="$ES_PASSWORD"
+
+          ./scripts/generate-tls.sh
+          kubectl apply -f manifests/05-statefulset.yaml
+          kubectl -n elasticsearch-lab-002 rollout status statefulset/elasticsearch --timeout=600s
+
+          kubectl -n elasticsearch-lab-002 port-forward pod/elasticsearch-0 9200:9200 >/tmp/es-pf.log 2>&1 &
+          echo $! >/tmp/es-pf.pid
+          sleep 5
+          echo "ES_URL=https://localhost:9200" >> "$GITHUB_ENV"
+          echo "ES_USER=elastic" >> "$GITHUB_ENV"
+          echo "ES_CA=$PWD/artifacts/http-ca.crt" >> "$GITHUB_ENV"
+
+          for i in $(seq 1 60); do
+            if curl --connect-timeout 5 --max-time 200 --silent --show-error --fail --cacert artifacts/http-ca.crt -u "elastic:$ES_PASSWORD" https://localhost:9200/ >/tmp/root.json; then break; fi
+            sleep 5
+            [ "$i" -lt 60 ] || exit 1
+          done
+
+          export ES_URL=https://localhost:9200 ES_USER=elastic ES_CA="$PWD/artifacts/http-ca.crt"
+          export EXPECTED_CLUSTER_UUID="$(jq -r '.cluster_uuid' /tmp/root.json)"
+          ./scripts/validate-index.sh
+          ./scripts/transition-runtime.sh
+          ./scripts/restart-rejoin-test.sh
+          ./scripts/validate-runtime.sh
+
+      - name: Execute Scenario 02 deterministic failure and recovery validation
+        working-directory: ${{ env.SCENARIO }}
+        run: |
+          set -euo pipefail
+          chmod +x scripts/validate-scenario.sh
+          bash scripts/validate-scenario.sh
+
+      - name: Independently verify saved acceptance evidence
+        run: |
+          set -euo pipefail
+          python3 "$SCENARIO/scripts/verify-evidence.py" all "$SCENARIO/validation-output"
+          cp "$RUNNER_TEMP/scenario-provenance/source.json" "$SCENARIO/validation-output/source.json"
+          cp "$SCENARIO/scripts/verify-evidence.py" "$SCENARIO/validation-output/verify-evidence.py"
+
+      - name: Capture failure diagnostics
+        if: failure()
+        run: |
+          mkdir -p "$SCENARIO/validation-output/diagnostics"
+          kubectl -n elasticsearch-lab-002 get pods,pvc -o wide > "$SCENARIO/validation-output/diagnostics/resources.txt" 2>&1 || true
+          kubectl get pv -o wide > "$SCENARIO/validation-output/diagnostics/pvs.txt" 2>&1 || true
+          kubectl -n elasticsearch-lab-002 get events --sort-by=.lastTimestamp > "$SCENARIO/validation-output/diagnostics/events.txt" 2>&1 || true
+          for p in elasticsearch-0 elasticsearch-1 elasticsearch-2; do
+            kubectl -n elasticsearch-lab-002 logs "$p" --tail=400 > "$SCENARIO/validation-output/diagnostics/${p}.log" 2>&1 || true
+            kubectl -n elasticsearch-lab-002 logs "$p" --previous --tail=400 > "$SCENARIO/validation-output/diagnostics/${p}-previous.log" 2>&1 || true
+          done
+
+      - name: Cleanup and record result
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$SCENARIO/validation-output"
+          rc=0
+          kind delete cluster --name es-scenario-002 > "$SCENARIO/validation-output/cleanup.log" 2>&1 || rc=$?
+          kind get clusters > "$SCENARIO/validation-output/remaining-kind-clusters.txt" 2>&1 || rc=$?
+          if grep -Fxq es-scenario-002 "$SCENARIO/validation-output/remaining-kind-clusters.txt"; then rc=1; fi
+          printf '%s\n' "$rc" > "$SCENARIO/validation-output/cleanup-status.txt"
+          if [ "$rc" -ne 0 ]; then rm -f "$SCENARIO/validation-output/32-validation-result.txt"; fi
+          exit "$rc"
+
+      - name: Sanitize evidence
+        id: sanitation
+        if: always()
+        run: |
+          set -euo pipefail
+          test -d "$SCENARIO/validation-output"
+          python3 "$SCENARIO/scripts/verify-evidence.py" sanitize "$SCENARIO/validation-output"
+          cd "$SCENARIO/validation-output"
+          find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 -r sha256sum > SHA256SUMS
+
+      - name: Verify complete artifact after cleanup
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: python3 "$SCENARIO/scripts/verify-evidence.py" artifact "$SCENARIO/validation-output" "$EXPECTED_HEAD"
+
+      - name: Upload Scenario 02 evidence
+        if: always() && steps.sanitation.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: elasticsearch-scenario-002-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: elasticsearch/troubleshooting-scenarios/02-production-installation-configuration-failure/validation-output/
+          if-no-files-found: error
