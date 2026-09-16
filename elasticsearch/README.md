@@ -59,6 +59,10 @@ elasticsearch/
 - Production Runbook 02 — **CANONICAL / COMMITTED / VERIFIED**
 - Troubleshooting Scenario 02 — **CANONICAL / COMMITTED / VERIFIED**
 
+### Module 03 — Index, Shard & Replica Administration
+
+- [Tutorial 03](tutorials/03-index-shard-replica-administration/README.md) — **CANONICAL / COMPLETE / COMMITTED / VERIFIED**
+
 ## Next Workflow Stage
 
-**Module 03 — Index, Shard & Replica Administration → Tutorial 03 — Draft**
+**Tutorial 03 is complete. Further tutorial work has not started.**
