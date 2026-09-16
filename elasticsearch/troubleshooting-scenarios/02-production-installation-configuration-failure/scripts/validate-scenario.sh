@@ -30,12 +30,10 @@ for p in elasticsearch-0 elasticsearch-1 elasticsearch-2; do
   kubectl exec -n "$NS" "$p" -- sh -c '! grep -q "cluster.initial_master_nodes" /usr/share/elasticsearch/config/elasticsearch.yml'
 done
 
-# Preserve storage identities and the exact explicit allocation setting.
 jq -r '.items[] | [.metadata.name,.metadata.uid,.spec.volumeName] | @tsv' "$OUT/07-baseline-pvcs.json" | sort > /tmp/scenario-002/pvc-before.tsv
 ORIGINAL_ALLOCATION="$(api "$ES_URL/_cluster/settings?flat_settings=true" | jq -r '.persistent["cluster.routing.allocation.enable"] // "__ABSENT__"')"
 printf '%s\n' "$ORIGINAL_ALLOCATION" > "$OUT/original-allocation-state.txt"
 
-# Preserve the valid node-2 transport material before controlled lab-only injection.
 kubectl -n "$NS" get secret elasticsearch-transport-tls -o jsonpath='{.data.elasticsearch-2\.crt}' | base64 -d > /tmp/scenario-002/elasticsearch-2.crt
 kubectl -n "$NS" get secret elasticsearch-transport-tls -o jsonpath='{.data.elasticsearch-2\.key}' | base64 -d > /tmp/scenario-002/elasticsearch-2.key
 
@@ -63,7 +61,6 @@ kubectl -n "$NS" patch secret elasticsearch-transport-tls --type merge \
   -p "{\"data\":{\"elasticsearch-2.crt\":\"$BAD_CRT\",\"elasticsearch-2.key\":\"$BAD_KEY\"}}"
 kubectl delete pod elasticsearch-2 -n "$NS" --wait=true
 
-# Wait until Elasticsearch membership is 2 and the validation index is yellow.
 for i in $(seq 1 90); do
   nodes="$(api "$ES_URL/_cluster/health" | jq -r '.number_of_nodes' || echo 0)"
   status="$(api "$ES_URL/_cluster/health/$INDEX" | jq -r '.status' || echo unknown)"
@@ -72,21 +69,23 @@ for i in $(seq 1 90); do
   [ "$i" -lt 90 ] || { echo 'FAIL: deterministic 2-node/YELLOW state not observed'; exit 1; }
 done
 
-# Membership/YELLOW can be observed before the replacement pod has even started.
-# Wait for node-2 to leave init and emit the intended transport-security failure evidence.
+# Require concrete transport TLS failure evidence. Generic feature/configuration
+# strings containing words such as "certificate" must never satisfy this gate.
 TLS_EVIDENCE=0
+TLS_FAILURE_RE='SSLHandshakeException|javax\.net\.ssl\.SSLException|failed to establish trust with server|failed to establish trust with client|certificate_unknown|bad_certificate|unknown_ca|unable to find valid certification path|PKIX path|CertPathValidatorException|certificate verify failed|No subject alternative DNS name matching|No subject alternative names matching|x509.*(unknown|invalid|verify|verification|trust)|handshake.*(failed|failure|exception)|SSL.*handshake.*(failed|failure|exception)'
 for i in $(seq 1 90); do
   kubectl -n "$NS" logs elasticsearch-2 --tail=400 > "$OUT/12-elasticsearch-2-current.log" 2>&1 || true
   kubectl -n "$NS" logs elasticsearch-2 --previous --tail=400 > "$OUT/13-elasticsearch-2-previous.log" 2>&1 || true
   cat "$OUT/12-elasticsearch-2-current.log" "$OUT/13-elasticsearch-2-previous.log" > /tmp/scenario-002/node2-all.log
-  if grep -Eiq 'SSL|TLS|certificate|CertPath|trust|handshake|PKIX|x509' /tmp/scenario-002/node2-all.log; then
+  if grep -Eiq "$TLS_FAILURE_RE" /tmp/scenario-002/node2-all.log; then
     TLS_EVIDENCE=1
+    grep -Ei "$TLS_FAILURE_RE" /tmp/scenario-002/node2-all.log > "$OUT/transport-tls-failure-evidence.txt" || true
     break
   fi
   sleep 5
   [ "$i" -lt 90 ] || break
 done
-[ "$TLS_EVIDENCE" -eq 1 ] || { echo 'FAIL: node-2 did not emit transport TLS/certificate evidence within timeout'; exit 1; }
+[ "$TLS_EVIDENCE" -eq 1 ] || { echo 'FAIL: node-2 did not emit concrete transport TLS handshake/trust/certificate-validation failure evidence within timeout'; exit 1; }
 
 kubectl -n "$NS" get pods -o wide > "$OUT/10-failure-pods.txt"
 kubectl -n "$NS" describe pod elasticsearch-2 > "$OUT/11-elasticsearch-2-describe.txt" 2>&1 || true
@@ -148,10 +147,8 @@ done
 FINAL_EXPLICIT="$(api "$ES_URL/_cluster/settings?flat_settings=true" | jq -r '.persistent["cluster.routing.allocation.enable"] // "__ABSENT__"')"
 [ "$FINAL_EXPLICIT" = "$ORIGINAL_ALLOCATION" ] || { echo "FAIL: allocation state not restored: original=$ORIGINAL_ALLOCATION final=$FINAL_EXPLICIT"; exit 1; }
 
-# Security acceptance: invalid credentials remain rejected.
 BAD_AUTH="$(curl --silent --output "$OUT/31-negative-auth.json" --write-out '%{http_code}' --cacert "$ES_CA" -u "$ES_USER:deliberately-wrong-password" "$ES_URL/" || true)"
 [ "$BAD_AUTH" = 401 ]
 
-# Never retain injected private keys/CA material in evidence.
 rm -rf /tmp/scenario-002
 printf 'SCENARIO 002 IMPLEMENTATION VALIDATION PASS\n' | tee "$OUT/32-validation-result.txt"
