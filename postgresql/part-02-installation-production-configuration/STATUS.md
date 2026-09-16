@@ -1,6 +1,6 @@
 # Part 2 — Installation & Production Configuration — Status
 
-**Canonical + merged:** 6/15
+**Canonical + merged:** 7/15
 
 | Section | Title | Status |
 | --- | --- | --- |
@@ -10,7 +10,7 @@
 | 2.4 | Source Installation and Build Fundamentals | CANONICAL + MERGED |
 | 2.5 | Cluster Initialization with `initdb` | CANONICAL + MERGED |
 | 2.6 | Data Directory, Tablespace, and Filesystem Design | CANONICAL + MERGED |
-| 2.7 | PostgreSQL Service Management with systemd | Not started |
+| 2.7 | PostgreSQL Service Management with systemd | CANONICAL + MERGED |
 | 2.8 | Memory and Resource Configuration | Not started |
 | 2.9 | Connection, Session, and Process Configuration | Not started |
 | 2.10 | Authentication and Network Access Baseline | Not started |
@@ -61,4 +61,11 @@
 - Storage configuration classification: `[TUTORIAL-OPERATOR-ACTION — MUTATING]`
 - Acceptance classification: `[TUTORIAL-ACCEPTANCE — SAFE-READ]`
 
-**Next workflow stage:** Part 2.7 — PostgreSQL Service Management with systemd → Draft + Hands-On Lab.
+## Canonical Evidence — 2.7
+
+- Manuscript: `2.7-postgresql-service-management-with-systemd.md`
+- Acceptance artifact: `labs/systemd-service-check.sh`
+- Service-operation classification: `[TUTORIAL-OPERATOR-ACTION — MUTATING]`
+- Acceptance classification: `[TUTORIAL-ACCEPTANCE — SAFE-READ]`
+
+**Next workflow stage:** Part 2.8 — Memory and Resource Configuration → Draft + Hands-On Lab.
