@@ -115,6 +115,19 @@ jobs:
             kubectl -n elasticsearch-lab-002 logs "$p" --previous --tail=400 > "$SCENARIO/validation-output/diagnostics/${p}-previous.log" 2>&1 || true
           done
 
+      - name: Cleanup and record result
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$SCENARIO/validation-output"
+          rc=0
+          kind delete cluster --name es-scenario-002 > "$SCENARIO/validation-output/cleanup.log" 2>&1 || rc=$?
+          kind get clusters > "$SCENARIO/validation-output/remaining-kind-clusters.txt" 2>&1 || rc=$?
+          if grep -Fxq es-scenario-002 "$SCENARIO/validation-output/remaining-kind-clusters.txt"; then rc=1; fi
+          printf '%s\n' "$rc" > "$SCENARIO/validation-output/cleanup-status.txt"
+          if [ "$rc" -ne 0 ]; then rm -f "$SCENARIO/validation-output/32-validation-result.txt"; fi
+          exit "$rc"
+
       - name: Sanitize evidence
         id: sanitation
         if: always()
@@ -125,6 +138,11 @@ jobs:
           cd "$SCENARIO/validation-output"
           find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 -r sha256sum > SHA256SUMS
 
+      - name: Verify complete artifact after cleanup
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: python3 "$SCENARIO/scripts/verify-evidence.py" artifact "$SCENARIO/validation-output" "$EXPECTED_HEAD"
+
       - name: Upload Scenario 02 evidence
         if: always() && steps.sanitation.outcome == 'success'
         uses: actions/upload-artifact@v4
@@ -132,12 +150,3 @@ jobs:
           name: elasticsearch-scenario-002-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
           path: elasticsearch/troubleshooting-scenarios/02-production-installation-configuration-failure/validation-output/
           if-no-files-found: error
-
-      - name: Cleanup
-        if: always()
-        working-directory: ${{ env.LAB }}
-        run: |
-          set -euo pipefail
-          # The kind cluster belongs only to this job, including all PVC backing data.
-          kind delete cluster --name es-scenario-002
-          ! kind get clusters | grep -Fx es-scenario-002

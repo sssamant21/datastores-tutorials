@@ -2,6 +2,7 @@
 """Fail-closed, offline assertions over Scenario 02's saved API/log evidence."""
 import base64
 from datetime import datetime
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -157,7 +158,7 @@ class Evidence:
                 if fresh and related and TRANSPORT.search(record) and TLS_ERROR.search(record):
                     matches.append(f"{node}: {line}")
         require(matches, "no fresh, node-2-related transport TLS failure record")
-        (self.directory / "transport-tls-failure-evidence.txt").write_text("\n".join(matches) + "\n", encoding="utf-8")
+        return "\n".join(matches) + "\n"
 
     def explain(self, filename, shards_file):
         data = self.data(filename)
@@ -173,7 +174,7 @@ class Evidence:
 
     def failure(self):
         self.phase("failure", 2, "yellow")
-        self.tls()
+        require(self.text("transport-tls-failure-evidence.txt") == self.tls(), "TLS excerpt differs from source logs")
         self.restricted("failure")
         self.explain("20-allocation-explain.json", "17-failure-shards.json")
 
@@ -223,11 +224,32 @@ class Evidence:
                     f"unsanitized evidence: {path.name}")
         print("PASS: evidence sanitation")
 
+    def artifact(self, expected_head):
+        require(re.fullmatch(r"[a-f0-9]{40}", expected_head), "expected head must be a full commit SHA")
+        require(self.data("source.json")["head_sha"] == expected_head, "artifact belongs to another commit")
+        listed = set()
+        for line in self.text("SHA256SUMS").splitlines():
+            digest, name = line.split("  ", 1)
+            name = name.removeprefix("./")
+            path = self.directory / name
+            require(path.resolve().is_relative_to(self.directory.resolve()) and not path.is_symlink(), "unsafe manifest path")
+            require(name not in listed and hashlib.sha256(path.read_bytes()).hexdigest() == digest, f"hash mismatch: {name}")
+            listed.add(name)
+        require(listed == {p.relative_to(self.directory).as_posix() for p in self.directory.rglob("*") if p.is_file() and p.name != "SHA256SUMS"},
+                "manifest does not cover every evidence file")
+        require(self.text("cleanup-status.txt").strip() == "0" and "es-scenario-002" not in self.text("remaining-kind-clusters.txt"), "job cluster cleanup not proven")
+        require(self.text("32-validation-result.txt").strip() == "SCENARIO 002 IMPLEMENTATION VALIDATION PASS", "missing completion marker")
+        self.all()
+        self.sanitize()
+        print(f"PASS: independently verified artifact for {expected_head}")
+
 
 if __name__ == "__main__":
     try:
         evidence = Evidence(sys.argv[2])
-        getattr(evidence, sys.argv[1])(*sys.argv[3:])
+        result = getattr(evidence, sys.argv[1])(*sys.argv[3:])
+        if sys.argv[1] == "tls":
+            (evidence.directory / "transport-tls-failure-evidence.txt").write_text(result, encoding="utf-8", newline="\n")
     except (ValueError, KeyError, TypeError, OSError, IndexError) as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         sys.exit(1)
