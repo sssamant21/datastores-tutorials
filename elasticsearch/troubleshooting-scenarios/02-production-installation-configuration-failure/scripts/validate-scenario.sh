@@ -171,7 +171,7 @@ collect_tls() {
 retry 450 collect_tls
 
 kubectl -n "$NS" get pods -o wide > "$OUT/10-failure-pods.txt"
-kubectl -n "$NS" describe pod elasticsearch-2 > "$OUT/11-elasticsearch-2-describe.txt" 2>&1 || true
+kubectl -n "$NS" get pod elasticsearch-2 -o json | jq '{metadata:{name:.metadata.name,uid:.metadata.uid},containers:[.spec.containers[]|{name,image,resources}],status:.status}' > "$OUT/11-elasticsearch-2-diagnostics.json"
 api "$ES_URL/" > "$OUT/14-failure-cluster-identity.json"
 api "$ES_URL/_cat/nodes?format=json" > "$OUT/15-failure-nodes.json"
 api "$ES_URL/_cluster/health/$INDEX?pretty" > "$OUT/16-failure-health.json"
