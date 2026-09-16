@@ -72,10 +72,24 @@ for i in $(seq 1 90); do
   [ "$i" -lt 90 ] || { echo 'FAIL: deterministic 2-node/YELLOW state not observed'; exit 1; }
 done
 
+# Membership/YELLOW can be observed before the replacement pod has even started.
+# Wait for node-2 to leave init and emit the intended transport-security failure evidence.
+TLS_EVIDENCE=0
+for i in $(seq 1 90); do
+  kubectl -n "$NS" logs elasticsearch-2 --tail=400 > "$OUT/12-elasticsearch-2-current.log" 2>&1 || true
+  kubectl -n "$NS" logs elasticsearch-2 --previous --tail=400 > "$OUT/13-elasticsearch-2-previous.log" 2>&1 || true
+  cat "$OUT/12-elasticsearch-2-current.log" "$OUT/13-elasticsearch-2-previous.log" > /tmp/scenario-002/node2-all.log
+  if grep -Eiq 'SSL|TLS|certificate|CertPath|trust|handshake|PKIX|x509' /tmp/scenario-002/node2-all.log; then
+    TLS_EVIDENCE=1
+    break
+  fi
+  sleep 5
+  [ "$i" -lt 90 ] || break
+done
+[ "$TLS_EVIDENCE" -eq 1 ] || { echo 'FAIL: node-2 did not emit transport TLS/certificate evidence within timeout'; exit 1; }
+
 kubectl -n "$NS" get pods -o wide > "$OUT/10-failure-pods.txt"
 kubectl -n "$NS" describe pod elasticsearch-2 > "$OUT/11-elasticsearch-2-describe.txt" 2>&1 || true
-kubectl -n "$NS" logs elasticsearch-2 --tail=400 > "$OUT/12-elasticsearch-2-current.log" 2>&1 || true
-kubectl -n "$NS" logs elasticsearch-2 --previous --tail=400 > "$OUT/13-elasticsearch-2-previous.log" 2>&1 || true
 api "$ES_URL/" > "$OUT/14-failure-cluster-identity.json"
 api "$ES_URL/_cat/nodes?format=json" > "$OUT/15-failure-nodes.json"
 api "$ES_URL/_cluster/health/$INDEX?pretty" > "$OUT/16-failure-health.json"
@@ -89,13 +103,6 @@ SHARD="$(jq -r '[.[] | select(.prirep=="r" and .state=="UNASSIGNED")][0].shard' 
 api -X POST -H 'Content-Type: application/json' "$ES_URL/_cluster/allocation/explain?pretty" \
   -d "{\"index\":\"$INDEX\",\"shard\":$SHARD,\"primary\":false}" > "$OUT/20-allocation-explain.json"
 jq -e '.allocate_explanation and ([.node_allocation_decisions[]?.deciders[]? | select(.decision=="NO")] | length > 0)' "$OUT/20-allocation-explain.json" >/dev/null
-
-# TLS evidence must show the intended transport-security class of failure.
-cat "$OUT/12-elasticsearch-2-current.log" "$OUT/13-elasticsearch-2-previous.log" > /tmp/scenario-002/node2-all.log
-if ! grep -Eiq 'SSL|TLS|certificate|CertPath|trust|handshake' /tmp/scenario-002/node2-all.log; then
-  echo 'FAIL: node-2 logs do not contain transport TLS/certificate evidence'
-  exit 1
-fi
 
 # 4. Repair only TLS and prove node rejoin is not full recovery.
 GOOD_CRT="$(base64 -w0 /tmp/scenario-002/elasticsearch-2.crt)"
