@@ -1,12 +1,12 @@
 # Part 2 — Installation & Production Configuration — Status
 
-**Canonical + merged:** 2/15
+**Canonical + merged:** 3/15
 
 | Section | Title | Status |
 | --- | --- | --- |
 | 2.1 | PostgreSQL Installation Architecture and Planning | CANONICAL + MERGED |
 | 2.2 | Linux Host Preparation and Prerequisites | CANONICAL + MERGED |
-| 2.3 | Package-Based PostgreSQL Installation | Not started |
+| 2.3 | Package-Based PostgreSQL Installation | CANONICAL + MERGED |
 | 2.4 | Source Installation and Build Fundamentals | Not started |
 | 2.5 | Cluster Initialization with `initdb` | Not started |
 | 2.6 | Data Directory, Tablespace, and Filesystem Design | Not started |
@@ -32,4 +32,11 @@
 - Acceptance artifact: `labs/host-readiness-check.sh`
 - Lab classification: `[TUTORIAL-ACCEPTANCE — SAFE-READ]`
 
-**Next workflow stage:** Part 2.3 — Package-Based PostgreSQL Installation → Draft + Hands-On Lab.
+## Canonical Evidence — 2.3
+
+- Manuscript: `2.3-package-based-postgresql-installation.md`
+- Acceptance artifact: `labs/postgres-install-check.sh`
+- Installation classification: `[TUTORIAL-OPERATOR-ACTION — MUTATING]`
+- Acceptance classification: `[TUTORIAL-ACCEPTANCE — SAFE-READ]`
+
+**Next workflow stage:** Part 2.4 — Source Installation and Build Fundamentals → Draft + Hands-On Lab.
