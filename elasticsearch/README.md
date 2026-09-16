@@ -63,6 +63,10 @@ elasticsearch/
 
 - [Tutorial 03](tutorials/03-index-shard-replica-administration/README.md) — **CANONICAL / COMPLETE / COMMITTED / VERIFIED**
 
+### Module 04 — Mapping Governance & Data Modeling
+
+- [Tutorial 04](tutorials/04-mapping-governance-data-modeling/README.md) — **CANONICAL / COMPLETE / COMMITTED / VERIFIED**
+
 ## Next Workflow Stage
 
-**Tutorial 03 is complete. Further tutorial work has not started.**
+**Tutorial 04 is complete. Further tutorial work has not started.**
