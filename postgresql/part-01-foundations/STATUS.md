@@ -1,6 +1,6 @@
 # PostgreSQL Part 1 — Foundations Status
 
-**Canonical progress:** `13/15 canonical + merged`
+**Canonical progress:** `14/15 canonical + merged`
 
 | Part | Topic | Status |
 |---|---|---|
@@ -17,7 +17,7 @@
 | 1.11 | Users and Roles — Introduction | Canonical + merged |
 | 1.12 | PostgreSQL Processes — Introduction | Canonical + merged |
 | 1.13 | PostgreSQL Files and Directories — Introduction | Canonical + merged |
-| 1.14 | postgresql.conf and pg_hba.conf — Introduction | Not started |
+| 1.14 | postgresql.conf and pg_hba.conf — Introduction | Canonical + merged |
 | 1.15 | Part 1 Hands-On Project | Not started |
 
 Status is advanced only after the canonical manuscript and required lab artifacts are committed to `main`.
