@@ -19,10 +19,25 @@ jobs:
       SCENARIO: elasticsearch/troubleshooting-scenarios/02-production-installation-configuration-failure
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Verify exact PR head and shell syntax
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          for script in "$LAB"/scripts/*.sh "$SCENARIO"/scripts/*.sh; do bash -n "$script"; done
+          python3 -m unittest discover -s "$SCENARIO/scripts" -p 'test_*.py'
+          mkdir -p "$RUNNER_TEMP/scenario-provenance"
+          jq -n --arg head "$EXPECTED_HEAD" --arg run "$GITHUB_RUN_ID" --arg attempt "$GITHUB_RUN_ATTEMPT" \
+            '{head_sha:$head,run_id:$run,run_attempt:$attempt}' > "$RUNNER_TEMP/scenario-provenance/source.json"
 
       - name: Install kind
         run: |
-          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.31.0/kind-linux-amd64
+          curl --fail --show-error --location --connect-timeout 10 --max-time 120 -o ./kind https://kind.sigs.k8s.io/dl/v0.31.0/kind-linux-amd64
           chmod +x ./kind
           sudo mv ./kind /usr/local/bin/kind
 
@@ -62,7 +77,7 @@ jobs:
           echo "ES_CA=$PWD/artifacts/http-ca.crt" >> "$GITHUB_ENV"
 
           for i in $(seq 1 60); do
-            if curl --silent --show-error --fail --cacert artifacts/http-ca.crt -u "elastic:$ES_PASSWORD" https://localhost:9200/ >/tmp/root.json; then break; fi
+            if curl --connect-timeout 5 --max-time 200 --silent --show-error --fail --cacert artifacts/http-ca.crt -u "elastic:$ES_PASSWORD" https://localhost:9200/ >/tmp/root.json; then break; fi
             sleep 5
             [ "$i" -lt 60 ] || exit 1
           done
@@ -81,17 +96,12 @@ jobs:
           chmod +x scripts/validate-scenario.sh
           bash scripts/validate-scenario.sh
 
-      - name: Final acceptance gate
+      - name: Independently verify saved acceptance evidence
         run: |
           set -euo pipefail
-          health=$(curl --silent --show-error --fail --cacert "$ES_CA" -u "$ES_USER:$ES_PASSWORD" "$ES_URL/_cluster/health/installation-validation-v1")
-          echo "$health" | jq -e '.status=="green" and .number_of_nodes==3 and .unassigned_shards==0' >/dev/null
-          count=$(curl --silent --show-error --fail --cacert "$ES_CA" -u "$ES_USER:$ES_PASSWORD" "$ES_URL/installation-validation-v1/_count" | jq -r '.count')
-          [ "$count" -eq 4 ]
-          for p in elasticsearch-0 elasticsearch-1 elasticsearch-2; do
-            kubectl exec -n elasticsearch-lab-002 "$p" -- sh -c '! grep -q "cluster.initial_master_nodes" /usr/share/elasticsearch/config/elasticsearch.yml'
-          done
-          echo 'SCENARIO 002 FINAL ACCEPTANCE GATE PASS'
+          python3 "$SCENARIO/scripts/verify-evidence.py" all "$SCENARIO/validation-output"
+          cp "$RUNNER_TEMP/scenario-provenance/source.json" "$SCENARIO/validation-output/source.json"
+          cp "$SCENARIO/scripts/verify-evidence.py" "$SCENARIO/validation-output/verify-evidence.py"
 
       - name: Capture failure diagnostics
         if: failure()
@@ -106,23 +116,28 @@ jobs:
           done
 
       - name: Sanitize evidence
+        id: sanitation
         if: always()
         run: |
           set -euo pipefail
-          if [ -d "$SCENARIO/validation-output" ]; then
-            find "$SCENARIO/validation-output" -type f -print0 | xargs -0 -r sed -i -E 's/(Authorization: Basic )[A-Za-z0-9+\/=]+/\1[REDACTED]/g'
-            ! grep -R -n -E 'BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|Authorization: Basic [A-Za-z0-9+\/=]+' "$SCENARIO/validation-output"
-          fi
+          test -d "$SCENARIO/validation-output"
+          python3 "$SCENARIO/scripts/verify-evidence.py" sanitize "$SCENARIO/validation-output"
+          cd "$SCENARIO/validation-output"
+          find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 -r sha256sum > SHA256SUMS
 
       - name: Upload Scenario 02 evidence
-        if: always()
+        if: always() && steps.sanitation.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: elasticsearch-scenario-002-validation
+          name: elasticsearch-scenario-002-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
           path: elasticsearch/troubleshooting-scenarios/02-production-installation-configuration-failure/validation-output/
-          if-no-files-found: warn
+          if-no-files-found: error
 
       - name: Cleanup
         if: always()
         working-directory: ${{ env.LAB }}
-        run: ./scripts/cleanup.sh || true
+        run: |
+          set -euo pipefail
+          # The kind cluster belongs only to this job, including all PVC backing data.
+          kind delete cluster --name es-scenario-002
+          ! kind get clusters | grep -Fx es-scenario-002
