@@ -1,14 +1,14 @@
 # Part 3 — Database, Schema & Object Administration — Status
 
 **Target:** PostgreSQL 18  
-**Canonical progress:** **2/15 canonical + merged**
+**Canonical progress:** **3/15 canonical + merged**
 
 | Section | Title | Status |
 | --- | --- | --- |
 | 3.1 | Database Administration Fundamentals | CANONICAL / MERGED |
 | 3.2 | Schema Design and Administration | CANONICAL / MERGED |
-| 3.3 | Table Design and Lifecycle Administration | NEXT |
-| 3.4 | Constraints and Data Integrity | PLANNED |
+| 3.3 | Table Design and Lifecycle Administration | CANONICAL / MERGED |
+| 3.4 | Constraints and Data Integrity | NEXT |
 | 3.5 | Sequences and Identity Columns | PLANNED |
 | 3.6 | Generated Columns and Default Values | PLANNED |
 | 3.7 | ALTER TABLE and Safe Schema Evolution | PLANNED |
@@ -31,6 +31,11 @@
 - `3.2-schema-design-and-administration.md`
 - `labs/schema-admin-check.sql`
 
+## Canonical artifacts for 3.3
+
+- `3.3-table-design-and-lifecycle-administration.md`
+- `labs/table-lifecycle-check.sql`
+
 ## Next workflow stage
 
-Part 3.3 — Table Design and Lifecycle Administration → Draft + Hands-On Lab.
+Part 3.4 — Constraints and Data Integrity → Draft + Hands-On Lab.
