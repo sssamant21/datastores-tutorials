@@ -1,0 +1,31 @@
+# Part 3 — Database, Schema & Object Administration — Status
+
+**Target:** PostgreSQL 18  
+**Canonical progress:** **1/15 canonical + merged**
+
+| Section | Title | Status |
+| --- | --- | --- |
+| 3.1 | Database Administration Fundamentals | CANONICAL / MERGED |
+| 3.2 | Schema Design and Administration | NEXT |
+| 3.3 | Table Design and Lifecycle Administration | PLANNED |
+| 3.4 | Constraints and Data Integrity | PLANNED |
+| 3.5 | Sequences and Identity Columns | PLANNED |
+| 3.6 | Generated Columns and Default Values | PLANNED |
+| 3.7 | ALTER TABLE and Safe Schema Evolution | PLANNED |
+| 3.8 | Views and View Administration | PLANNED |
+| 3.9 | Materialized Views and Refresh Operations | PLANNED |
+| 3.10 | Functions and Procedures — Administration Fundamentals | PLANNED |
+| 3.11 | Extensions and Extension Lifecycle Administration | PLANNED |
+| 3.12 | Object Ownership, Dependencies, and Safe DROP Operations | PLANNED |
+| 3.13 | Object Metadata and Catalog-Based Administration | PLANNED |
+| 3.14 | Application Database Administration Baseline and Validation | PLANNED |
+| 3.15 | Integrated Project — Build and Administer an Application Database | PLANNED |
+
+## Canonical artifacts for 3.1
+
+- `3.1-database-administration-fundamentals.md`
+- `labs/database-admin-check.sql`
+
+## Next workflow stage
+
+Part 3.2 — Schema Design and Administration → Draft + Hands-On Lab.
