@@ -9,12 +9,12 @@
 
 ## Part 1 — Fundamentals
 
-**Progress: 2/6 canonical; 1/6 merged to main**
+**Progress: 2/6 canonical + merged**
 
 | ID | Tutorial | Draft | Technical Review | Production/Safety Review | Canonical | Merged to main |
 |---|---|---:|---:|---:|---:|---:|
 | 1.1 | What Is Databricks? | PASS | PASS | PASS | YES | YES |
-| 1.2 | Lakehouse Architecture Fundamentals | PASS | PASS | PASS | YES | NO |
+| 1.2 | Lakehouse Architecture Fundamentals | PASS | PASS | PASS | YES | YES |
 | 1.3 | Databricks Platform Architecture | — | — | — | — | — |
 | 1.4 | Workspace Fundamentals | — | — | — | — | — |
 | 1.5 | Compute Fundamentals | — | — | — | — | — |
@@ -22,4 +22,4 @@
 
 ## Next workflow stage
 
-Validate and merge Part 1.2 to `main`, fetch the canonical tutorial and SAFE-READ lab back for exact verification, then advance to Part 1.3 — Databricks Platform Architecture → Draft + Hands-On Lab.
+Part 1.3 — Databricks Platform Architecture → Draft + Hands-On Lab.
