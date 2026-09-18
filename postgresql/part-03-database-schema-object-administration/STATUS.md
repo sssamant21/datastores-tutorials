@@ -1,7 +1,7 @@
 # Part 3 — Database, Schema & Object Administration — Status
 
 **Target:** PostgreSQL 18  
-**Canonical progress:** **5/15 canonical + merged**
+**Canonical progress:** **6/15 canonical + merged**
 
 | Section | Title | Status |
 | --- | --- | --- |
@@ -10,8 +10,8 @@
 | 3.3 | Table Design and Lifecycle Administration | CANONICAL / MERGED |
 | 3.4 | Constraints and Data Integrity | CANONICAL / MERGED |
 | 3.5 | Sequences and Identity Columns | CANONICAL / MERGED |
-| 3.6 | Generated Columns and Default Values | NEXT |
-| 3.7 | ALTER TABLE and Safe Schema Evolution | PLANNED |
+| 3.6 | Generated Columns and Default Values | CANONICAL / MERGED |
+| 3.7 | ALTER TABLE and Safe Schema Evolution | NEXT |
 | 3.8 | Views and View Administration | PLANNED |
 | 3.9 | Materialized Views and Refresh Operations | PLANNED |
 | 3.10 | Functions and Procedures — Administration Fundamentals | PLANNED |
@@ -46,6 +46,11 @@
 - `3.5-sequences-and-identity-columns.md`
 - `labs/sequences-identity-lab.sql`
 
+## Canonical artifacts for 3.6
+
+- `3.6-generated-columns-and-default-values.md`
+- `labs/generated-defaults-lab.sql`
+
 ## Next workflow stage
 
-Part 3.6 — Generated Columns and Default Values → Draft + Hands-On Lab.
+Part 3.7 — ALTER TABLE and Safe Schema Evolution → Draft + Hands-On Lab.
