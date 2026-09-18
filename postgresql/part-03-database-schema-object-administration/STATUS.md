@@ -1,7 +1,7 @@
 # Part 3 — Database, Schema & Object Administration — Status
 
 **Target:** PostgreSQL 18  
-**Canonical progress:** **9/15 canonical + merged**
+**Canonical progress:** **10/15 canonical + merged**
 
 | Section | Title | Status |
 | --- | --- | --- |
@@ -14,8 +14,8 @@
 | 3.7 | ALTER TABLE and Safe Schema Evolution | CANONICAL / MERGED |
 | 3.8 | Views and View Administration | CANONICAL / MERGED |
 | 3.9 | Materialized Views and Refresh Operations | CANONICAL / MERGED |
-| 3.10 | Functions and Procedures — Administration Fundamentals | NEXT |
-| 3.11 | Extensions and Extension Lifecycle Administration | PLANNED |
+| 3.10 | Functions and Procedures — Administration Fundamentals | CANONICAL / MERGED |
+| 3.11 | Extensions and Extension Lifecycle Administration | NEXT |
 | 3.12 | Object Ownership, Dependencies, and Safe DROP Operations | PLANNED |
 | 3.13 | Object Metadata and Catalog-Based Administration | PLANNED |
 | 3.14 | Application Database Administration Baseline and Validation | PLANNED |
@@ -66,6 +66,11 @@
 - `3.9-materialized-views-and-refresh-operations.md`
 - `labs/materialized-views-refresh-lab.sql`
 
+## Canonical artifacts for 3.10
+
+- `3.10-functions-and-procedures-administration-fundamentals.md`
+- `labs/functions-procedures-check.sql`
+
 ## Next workflow stage
 
-Part 3.10 — Functions and Procedures — Administration Fundamentals → Draft + Hands-On Lab.
+Part 3.11 — Extensions and Extension Lifecycle Administration → Draft + Hands-On Lab.
