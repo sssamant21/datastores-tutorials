@@ -22,11 +22,11 @@
 
 ## Part 2 — Delta Lake & Data Fundamentals
 
-**Progress: 1/6 canonical; 0/6 merged to main**
+**Progress: 1/6 canonical + merged**
 
 | ID | Tutorial | Draft | Technical Review | Production/Safety Review | Canonical | Merged to main |
 |---|---|---:|---:|---:|---:|---:|
-| 2.1 | Delta Lake Fundamentals | PASS | PASS | PASS | YES | NO |
+| 2.1 | Delta Lake Fundamentals | PASS | PASS | PASS | YES | YES |
 | 2.2 | Catalog → Schema → Table | — | — | — | — | — |
 | 2.3 | Managed vs External Tables | — | — | — | — | — |
 | 2.4 | Bronze, Silver & Gold | — | — | — | — | — |
@@ -35,4 +35,4 @@
 
 ## Next workflow stage
 
-Part 2.1 — repository PR validation and merge; after verification mark Part 2.1 canonical + merged and advance to Part 2.2 — Catalog → Schema → Table → Draft + Hands-On Lab.
+Part 2.2 — Catalog → Schema → Table → Draft + Hands-On Lab.
