@@ -1,7 +1,7 @@
 # Part 3 — Database, Schema & Object Administration — Status
 
 **Target:** PostgreSQL 18  
-**Canonical progress:** **11/15 canonical + merged**
+**Canonical progress:** **12/15 canonical + merged**
 
 | Section | Title | Status |
 | --- | --- | --- |
@@ -16,8 +16,8 @@
 | 3.9 | Materialized Views and Refresh Operations | CANONICAL / MERGED |
 | 3.10 | Functions and Procedures — Administration Fundamentals | CANONICAL / MERGED |
 | 3.11 | Extensions and Extension Lifecycle Administration | CANONICAL / MERGED |
-| 3.12 | Object Ownership, Dependencies, and Safe DROP Operations | NEXT |
-| 3.13 | Object Metadata and Catalog-Based Administration | PLANNED |
+| 3.12 | Object Ownership, Dependencies, and Safe DROP Operations | CANONICAL / MERGED |
+| 3.13 | Object Metadata and Catalog-Based Administration | NEXT |
 | 3.14 | Application Database Administration Baseline and Validation | PLANNED |
 | 3.15 | Integrated Project — Build and Administer an Application Database | PLANNED |
 
@@ -76,6 +76,11 @@
 - `3.11-extensions-and-extension-lifecycle-administration.md`
 - `labs/extensions-lifecycle-lab.sql`
 
+## Canonical artifacts for 3.12
+
+- `3.12-object-ownership-dependencies-and-safe-drop-operations.md`
+- `labs/ownership-dependency-check.sql`
+
 ## Next workflow stage
 
-Part 3.12 — Object Ownership, Dependencies, and Safe DROP Operations → Draft + Hands-On Lab.
+Part 3.13 — Object Metadata and Catalog-Based Administration → Draft + Hands-On Lab.
