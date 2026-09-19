@@ -1,7 +1,9 @@
 # Part 3 — Database, Schema & Object Administration — Status
 
+**Status:** CLOSED
+**Canonical + merged:** **15/15**
 **Target:** PostgreSQL 18  
-**Canonical progress:** **14/15 canonical + merged**
+**Authoritative layout:** `MASTER-LAYOUT.md` — LOCKED, Master Layout v1.0
 
 | Section | Title | Status |
 | --- | --- | --- |
@@ -19,7 +21,7 @@
 | 3.12 | Object Ownership, Dependencies, and Safe DROP Operations | CANONICAL / MERGED |
 | 3.13 | Object Metadata and Catalog-Based Administration | CANONICAL / MERGED |
 | 3.14 | Application Database Administration Baseline and Validation | CANONICAL / MERGED |
-| 3.15 | Integrated Project — Build and Administer an Application Database | NEXT |
+| 3.15 | Integrated Project — Build and Administer an Application Database | CANONICAL / MERGED |
 
 ## Canonical artifacts for 3.1
 
@@ -91,6 +93,24 @@
 - `3.14-application-database-administration-baseline-and-validation.md`
 - `labs/object-baseline-check.sql`
 
+## Canonical artifacts for 3.15
+
+- `3.15-integrated-project-build-and-administer-an-application-database.md`
+- `labs/application-database-acceptance.sql`
+
+## Closure evidence
+
+- All sections 3.1–3.15 are present on `main` and map to the locked Part 3 progression.
+- Every section has its planned canonical hands-on or acceptance artifact under `labs/`.
+- Mutating database and object operations remain explicit lab actions in the tutorials.
+- Acceptance and inspection artifacts remain SAFE-READ and do not intentionally change database state.
+- Part 3.14 defines the reusable administration baseline.
+- Part 3.15 integrates database, schema, table, constraint, identity, generated-column, view, materialized-view, routine, extension, ownership, metadata, dependency, and decommission-planning concepts.
+
+## Part 3 closure
+
+Part 3 — Database, Schema & Object Administration is **15/15 CANONICAL + MERGED** and **CLOSED**.
+
 ## Next workflow stage
 
-Part 3.15 — Integrated Project: Build and Administer an Application Database → Draft + Acceptance Lab.
+Design and lock the Part 4 — Users, Roles & Security master layout before drafting Part 4.1.
