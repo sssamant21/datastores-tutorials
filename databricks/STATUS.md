@@ -5,7 +5,7 @@
 - Track: Databricks Production Tutorials
 - Source of truth: this repository
 - Publication target: team Confluence
-- Current canonical tutorials: **13**
+- Current canonical tutorials: **14**
 
 ## Part 1 — Fundamentals
 
@@ -35,12 +35,12 @@
 
 ## Part 3 — Data Ingestion & ETL/ELT Pipelines
 
-**Progress: 1/15 canonical + merged**
+**Progress: 2/15 canonical + merged**
 
 | ID | Tutorial | Draft | Technical Review | Production/Safety Review | Canonical | Merged to main |
 |---|---|---:|---:|---:|---:|---:|
 | 3.1 | Data Ingestion Fundamentals | PASS | PASS | PASS | YES | YES |
-| 3.2 | Ingesting Files from Cloud Object Storage | — | — | — | — | — |
+| 3.2 | Ingesting Files from Cloud Object Storage | PASS | PASS | PASS | YES | YES |
 | 3.3 | Auto Loader Fundamentals | — | — | — | — | — |
 | 3.4 | Schema Inference & Schema Evolution | — | — | — | — | — |
 | 3.5 | Building Bronze Ingestion Pipelines | — | — | — | — | — |
@@ -57,4 +57,4 @@
 
 ## Next workflow stage
 
-Part 3.2 — Ingesting Files from Cloud Object Storage → Draft + Hands-On Lab.
+Part 3.3 — Auto Loader Fundamentals → Draft + Hands-On Lab.
