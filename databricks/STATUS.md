@@ -5,7 +5,7 @@
 - Track: Databricks Production Tutorials
 - Source of truth: this repository
 - Publication target: team Confluence
-- Current canonical tutorials: **12**
+- Current canonical tutorials: **13**
 
 ## Part 1 — Fundamentals
 
@@ -33,6 +33,28 @@
 | 2.5 | Reading/Writing Data | PASS | PASS | PASS | YES | YES |
 | 2.6 | Batch vs Streaming | PASS | PASS | PASS | YES | YES |
 
+## Part 3 — Data Ingestion & ETL/ELT Pipelines
+
+**Progress: 1/15 canonical + merged**
+
+| ID | Tutorial | Draft | Technical Review | Production/Safety Review | Canonical | Merged to main |
+|---|---|---:|---:|---:|---:|---:|
+| 3.1 | Data Ingestion Fundamentals | PASS | PASS | PASS | YES | YES |
+| 3.2 | Ingesting Files from Cloud Object Storage | — | — | — | — | — |
+| 3.3 | Auto Loader Fundamentals | — | — | — | — | — |
+| 3.4 | Schema Inference & Schema Evolution | — | — | — | — | — |
+| 3.5 | Building Bronze Ingestion Pipelines | — | — | — | — | — |
+| 3.6 | Silver Transformation Pipelines | — | — | — | — | — |
+| 3.7 | Gold Aggregation Pipelines | — | — | — | — | — |
+| 3.8 | Lakeflow Declarative Pipelines Fundamentals | — | — | — | — | — |
+| 3.9 | Pipeline Data Quality Expectations | — | — | — | — | — |
+| 3.10 | Incremental Processing & CDC Fundamentals | — | — | — | — | — |
+| 3.11 | MERGE-Based Incremental Pipelines | — | — | — | — | — |
+| 3.12 | Pipeline Orchestration with Lakeflow Jobs | — | — | — | — | — |
+| 3.13 | Pipeline Monitoring & Troubleshooting | — | — | — | — | — |
+| 3.14 | Backfills, Replay & Recovery | — | — | — | — | — |
+| 3.15 | End-to-End Bronze → Silver → Gold Pipeline | — | — | — | — | — |
+
 ## Next workflow stage
 
-Part 3 → define tutorial layout and begin Part 3.1 → Draft + Hands-On Lab.
+Part 3.2 — Ingesting Files from Cloud Object Storage → Draft + Hands-On Lab.
