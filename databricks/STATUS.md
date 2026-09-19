@@ -5,7 +5,7 @@
 - Track: Databricks Production Tutorials
 - Source of truth: this repository
 - Publication target: team Confluence
-- Current canonical tutorials: **7**
+- Current canonical tutorials: **8**
 
 ## Part 1 — Fundamentals
 
@@ -22,12 +22,12 @@
 
 ## Part 2 — Delta Lake & Data Fundamentals
 
-**Progress: 1/6 canonical + merged**
+**Progress: 2/6 canonical + merged**
 
 | ID | Tutorial | Draft | Technical Review | Production/Safety Review | Canonical | Merged to main |
 |---|---|---:|---:|---:|---:|---:|
 | 2.1 | Delta Lake Fundamentals | PASS | PASS | PASS | YES | YES |
-| 2.2 | Catalog → Schema → Table | — | — | — | — | — |
+| 2.2 | Catalog → Schema → Table | PASS | PASS | PASS | YES | YES |
 | 2.3 | Managed vs External Tables | — | — | — | — | — |
 | 2.4 | Bronze, Silver & Gold | — | — | — | — | — |
 | 2.5 | Reading/Writing Data | — | — | — | — | — |
@@ -35,4 +35,4 @@
 
 ## Next workflow stage
 
-Part 2.2 — Catalog → Schema → Table → Draft + Hands-On Lab.
+Part 2.3 — Managed vs External Tables → Draft + Hands-On Lab.
