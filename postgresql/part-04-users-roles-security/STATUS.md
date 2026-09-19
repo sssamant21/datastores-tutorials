@@ -1,14 +1,14 @@
 # Part 4 — Users, Roles & Security — Status
 
 **Status:** ACTIVE
-**Canonical progress:** **0/15 canonical + merged**
+**Canonical progress:** **1/15 canonical + merged**
 **Target:** PostgreSQL 18
 **Authoritative layout:** `MASTER-LAYOUT.md` — LOCKED, Master Layout v1.0
 
 | Section | Title | Status |
 | --- | --- | --- |
-| 4.1 | PostgreSQL Security Model Fundamentals | NEXT |
-| 4.2 | Role Creation, Attributes, and Lifecycle Administration | PLANNED |
+| 4.1 | PostgreSQL Security Model Fundamentals | CANONICAL + MERGED |
+| 4.2 | Role Creation, Attributes, and Lifecycle Administration | NEXT |
 | 4.3 | Role Membership, Inheritance, and `SET ROLE` | PLANNED |
 | 4.4 | Ownership and Deployment/Runtime Role Separation | PLANNED |
 | 4.5 | Database, Schema, and Secure `search_path` Privileges | PLANNED |
@@ -45,4 +45,4 @@
 
 ## Next workflow stage
 
-Part 4.1 — PostgreSQL Security Model Fundamentals → Draft + Hands-On Lab.
+Part 4.2 — Role Creation, Attributes, and Lifecycle Administration → Draft + Hands-On Lab.
