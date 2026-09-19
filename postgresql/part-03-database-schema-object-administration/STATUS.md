@@ -1,7 +1,7 @@
 # Part 3 — Database, Schema & Object Administration — Status
 
 **Target:** PostgreSQL 18  
-**Canonical progress:** **13/15 canonical + merged**
+**Canonical progress:** **14/15 canonical + merged**
 
 | Section | Title | Status |
 | --- | --- | --- |
@@ -18,8 +18,8 @@
 | 3.11 | Extensions and Extension Lifecycle Administration | CANONICAL / MERGED |
 | 3.12 | Object Ownership, Dependencies, and Safe DROP Operations | CANONICAL / MERGED |
 | 3.13 | Object Metadata and Catalog-Based Administration | CANONICAL / MERGED |
-| 3.14 | Application Database Administration Baseline and Validation | NEXT |
-| 3.15 | Integrated Project — Build and Administer an Application Database | PLANNED |
+| 3.14 | Application Database Administration Baseline and Validation | CANONICAL / MERGED |
+| 3.15 | Integrated Project — Build and Administer an Application Database | NEXT |
 
 ## Canonical artifacts for 3.1
 
@@ -86,6 +86,11 @@
 - `3.13-object-metadata-and-catalog-based-administration.md`
 - `labs/object-inventory-check.sql`
 
+## Canonical artifacts for 3.14
+
+- `3.14-application-database-administration-baseline-and-validation.md`
+- `labs/object-baseline-check.sql`
+
 ## Next workflow stage
 
-Part 3.14 — Application Database Administration Baseline and Validation → Draft + Hands-On Lab.
+Part 3.15 — Integrated Project: Build and Administer an Application Database → Draft + Acceptance Lab.
