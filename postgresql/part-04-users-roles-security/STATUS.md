@@ -1,7 +1,7 @@
 # Part 4 — Users, Roles & Security — Status
 
 **Status:** ACTIVE
-**Canonical progress:** **8/15 canonical + merged**
+**Canonical progress:** **9/15 canonical + merged**
 **Target:** PostgreSQL 18
 **Authoritative layout:** `MASTER-LAYOUT.md` — LOCKED, Master Layout v1.0
 
@@ -15,8 +15,8 @@
 | 4.6 | Table, View, and Column Privileges | CANONICAL + MERGED |
 | 4.7 | Sequence, Routine, Type, and Maintenance Privileges | CANONICAL + MERGED |
 | 4.8 | Default Privileges and Future-Object Access | CANONICAL + MERGED |
-| 4.9 | Effective Privilege Auditing and Access Evidence | NEXT |
-| 4.10 | `SECURITY DEFINER` and Privileged Routine Hardening | PLANNED |
+| 4.9 | Effective Privilege Auditing and Access Evidence | CANONICAL + MERGED |
+| 4.10 | `SECURITY DEFINER` and Privileged Routine Hardening | NEXT |
 | 4.11 | Row-Level Security Design and Validation | PLANNED |
 | 4.12 | Authentication Architecture and `pg_hba.conf` Policy | PLANNED |
 | 4.13 | TLS, Client Certificates, and Connection Security | PLANNED |
@@ -45,4 +45,4 @@
 
 ## Next workflow stage
 
-Part 4.9 — Effective Privilege Auditing and Access Evidence → Draft + Hands-On Lab (`labs/effective-access-check.sql`).
+Part 4.10 — `SECURITY DEFINER` and Privileged Routine Hardening → Draft + Hands-On Lab (`labs/security-definer-check.sql`).
