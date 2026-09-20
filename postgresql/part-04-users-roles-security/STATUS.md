@@ -1,7 +1,7 @@
 # Part 4 — Users, Roles & Security — Status
 
-**Status:** ACTIVE
-**Canonical progress:** **14/15 canonical + merged**
+**Status:** COMPLETE
+**Canonical progress:** **15/15 canonical + merged**
 **Target:** PostgreSQL 18
 **Authoritative layout:** `MASTER-LAYOUT.md` — LOCKED, Master Layout v1.0
 
@@ -21,7 +21,7 @@
 | 4.12 | Authentication Architecture and `pg_hba.conf` Policy | CANONICAL + MERGED |
 | 4.13 | TLS, Client Certificates, and Connection Security | CANONICAL + MERGED |
 | 4.14 | Security Baseline, Drift Detection, and Access Validation | CANONICAL + MERGED |
-| 4.15 | Integrated Project — Build and Validate an Application Access Model | NEXT |
+| 4.15 | Integrated Project — Build and Validate an Application Access Model | CANONICAL + MERGED |
 
 ## Planned canonical artifacts
 
@@ -45,4 +45,4 @@
 
 ## Next workflow stage
 
-Part 4.15 — Integrated Project — Build and Validate an Application Access Model → Draft + Hands-On Lab (`labs/application-access-acceptance.sql`).
+Part 4 — COMPLETE — 15/15 canonical + merged.
