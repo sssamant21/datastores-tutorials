@@ -1,7 +1,7 @@
 # Part 4 — Users, Roles & Security — Status
 
 **Status:** ACTIVE
-**Canonical progress:** **11/15 canonical + merged**
+**Canonical progress:** **12/15 canonical + merged**
 **Target:** PostgreSQL 18
 **Authoritative layout:** `MASTER-LAYOUT.md` — LOCKED, Master Layout v1.0
 
@@ -18,8 +18,8 @@
 | 4.9 | Effective Privilege Auditing and Access Evidence | CANONICAL + MERGED |
 | 4.10 | `SECURITY DEFINER` and Privileged Routine Hardening | CANONICAL + MERGED |
 | 4.11 | Row-Level Security Design and Validation | CANONICAL + MERGED |
-| 4.12 | Authentication Architecture and `pg_hba.conf` Policy | NEXT |
-| 4.13 | TLS, Client Certificates, and Connection Security | PLANNED |
+| 4.12 | Authentication Architecture and `pg_hba.conf` Policy | CANONICAL + MERGED |
+| 4.13 | TLS, Client Certificates, and Connection Security | NEXT |
 | 4.14 | Security Baseline, Drift Detection, and Access Validation | PLANNED |
 | 4.15 | Integrated Project — Build and Validate an Application Access Model | PLANNED |
 
@@ -45,4 +45,4 @@
 
 ## Next workflow stage
 
-Part 4.12 — Authentication Architecture and `pg_hba.conf` Policy → Draft + Hands-On Lab (`labs/authentication-policy-check.sql`).
+Part 4.13 — TLS, Client Certificates, and Connection Security → Draft + Hands-On Lab (`labs/tls-connection-check.sql`).
