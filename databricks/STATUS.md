@@ -5,7 +5,7 @@
 - Track: Databricks Production Tutorials
 - Source of truth: this repository
 - Publication target: team Confluence
-- Current canonical tutorials: **17**
+- Current canonical tutorials: **18**
 
 ## Part 1 — Fundamentals
 
@@ -35,7 +35,7 @@
 
 ## Part 3 — Data Ingestion & ETL/ELT Pipelines
 
-**Progress: 5/15 canonical + merged**
+**Progress: 6/15 canonical + merged**
 
 | ID | Tutorial | Draft | Technical Review | Production/Safety Review | Canonical | Merged to main |
 |---|---|---:|---:|---:|---:|---:|
@@ -44,7 +44,7 @@
 | 3.3 | Auto Loader Fundamentals | PASS | PASS | PASS | YES | YES |
 | 3.4 | Schema Inference & Schema Evolution | PASS | PASS | PASS | YES | YES |
 | 3.5 | Building Bronze Ingestion Pipelines | PASS | PASS | PASS | YES | YES |
-| 3.6 | Silver Transformation Pipelines | — | — | — | — | — |
+| 3.6 | Silver Transformation Pipelines | PASS | PASS | PASS | YES | YES |
 | 3.7 | Gold Aggregation Pipelines | — | — | — | — | — |
 | 3.8 | Lakeflow Declarative Pipelines Fundamentals | — | — | — | — | — |
 | 3.9 | Pipeline Data Quality Expectations | — | — | — | — | — |
@@ -57,4 +57,4 @@
 
 ## Next workflow stage
 
-Part 3.6 — Silver Transformation Pipelines → Draft + Hands-On Lab.
+Part 3.7 — Gold Aggregation Pipelines → Draft + Hands-On Lab.
