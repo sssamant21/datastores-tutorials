@@ -1,7 +1,7 @@
 # Part 5 — Backup, Recovery & Disaster Recovery — Status
 
-**Status:** ACTIVE
-**Canonical progress:** **14/15 canonical + merged**
+**Status:** COMPLETE
+**Canonical progress:** **15/15 canonical + merged**
 **Target:** PostgreSQL 18
 **Authoritative layout:** `MASTER-LAYOUT.md` — LOCKED, Master Layout v1.0
 
@@ -21,7 +21,7 @@
 | 5.12 | RPO, RTO, Retention, and Backup Capacity Planning | CANONICAL + MERGED |
 | 5.13 | High Availability vs Backup vs Disaster Recovery | CANONICAL + MERGED |
 | 5.14 | Production Backup/Recovery Runbook and Recovery Readiness | CANONICAL + MERGED |
-| 5.15 | Integrated Project — Design, Validate, and Rehearse a Recovery Strategy | PLANNED |
+| 5.15 | Integrated Project — Design, Validate, and Rehearse a Recovery Strategy | CANONICAL + MERGED |
 
 ## Planned canonical artifacts
 
@@ -45,4 +45,4 @@
 
 ## Next workflow stage
 
-Part 5.15 — Integrated Project — Design, Validate, and Rehearse a Recovery Strategy → Draft + Hands-On Lab (`labs/disaster-recovery-acceptance.sql`).
+Part 5 — Backup, Recovery & Disaster Recovery → COMPLETE. All 15 sections are canonical + merged.
