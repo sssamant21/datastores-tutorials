@@ -1,7 +1,7 @@
 /*
 ===============================================================================
 Part 5.13 — High Availability vs Backup vs Disaster Recovery
-Hands-On Lab / Draft Acceptance Artifact
+Canonical Acceptance Artifact
 
 [TUTORIAL-ACCEPTANCE — SAFE-READ]
 Target: PostgreSQL 18
