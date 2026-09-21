@@ -1,7 +1,7 @@
 # Part 5 — Backup, Recovery & Disaster Recovery — Status
 
 **Status:** ACTIVE
-**Canonical progress:** **9/15 canonical + merged**
+**Canonical progress:** **11/15 canonical + merged**
 **Target:** PostgreSQL 18
 **Authoritative layout:** `MASTER-LAYOUT.md` — LOCKED, Master Layout v1.0
 
@@ -16,8 +16,8 @@
 | 5.7 | Continuous WAL Archiving and Archive Operations | CANONICAL + MERGED |
 | 5.8 | Point-in-Time Recovery — PITR | CANONICAL + MERGED |
 | 5.9 | Recovery Targets, Timelines, and Recovery Control | CANONICAL + MERGED |
-| 5.10 | Replication Slots, WAL Retention, and Disk-Risk Management | NEXT |
-| 5.11 | Backup Validation, Integrity, and Restore Testing | PLANNED |
+| 5.10 | Replication Slots, WAL Retention, and Disk-Risk Management | CANONICAL + MERGED |
+| 5.11 | Backup Validation, Integrity, and Restore Testing | CANONICAL + MERGED |
 | 5.12 | RPO, RTO, Retention, and Backup Capacity Planning | PLANNED |
 | 5.13 | High Availability vs Backup vs Disaster Recovery | PLANNED |
 | 5.14 | Production Backup/Recovery Runbook and Recovery Readiness | PLANNED |
@@ -45,4 +45,4 @@
 
 ## Next workflow stage
 
-Part 5.10 — Replication Slots, WAL Retention, and Disk-Risk Management → Draft + Hands-On Lab (`labs/wal-retention-check.sql`).
+Part 5.12 — RPO, RTO, Retention, and Backup Capacity Planning → Draft + Hands-On Lab (`labs/recovery-objectives-check.sql`).
