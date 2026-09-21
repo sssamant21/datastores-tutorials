@@ -1,7 +1,7 @@
 # Part 5 — Backup, Recovery & Disaster Recovery — Status
 
 **Status:** ACTIVE
-**Canonical progress:** **3/15 canonical + merged**
+**Canonical progress:** **4/15 canonical + merged**
 **Target:** PostgreSQL 18
 **Authoritative layout:** `MASTER-LAYOUT.md` — LOCKED, Master Layout v1.0
 
@@ -10,8 +10,8 @@
 | 5.1 | Backup and Recovery Fundamentals | CANONICAL + MERGED |
 | 5.2 | Logical Backups with `pg_dump` | CANONICAL + MERGED |
 | 5.3 | Restore and Selective Recovery with `pg_restore` | CANONICAL + MERGED |
-| 5.4 | Cluster-Wide Logical Backup with `pg_dumpall` | NEXT |
-| 5.5 | Physical Backup Architecture and `pg_basebackup` | PLANNED |
+| 5.4 | Cluster-Wide Logical Backup with `pg_dumpall` | CANONICAL + MERGED |
+| 5.5 | Physical Backup Architecture and `pg_basebackup` | NEXT |
 | 5.6 | WAL Fundamentals for Backup and Recovery | PLANNED |
 | 5.7 | Continuous WAL Archiving and Archive Operations | PLANNED |
 | 5.8 | Point-in-Time Recovery — PITR | PLANNED |
@@ -45,4 +45,4 @@
 
 ## Next workflow stage
 
-Part 5.4 — Cluster-Wide Logical Backup with `pg_dumpall` → Draft + Hands-On Lab (`labs/pg-dumpall-readiness-check.sql`).
+Part 5.5 — Physical Backup Architecture and `pg_basebackup` → Draft + Hands-On Lab (`labs/basebackup-readiness-check.sql`).
