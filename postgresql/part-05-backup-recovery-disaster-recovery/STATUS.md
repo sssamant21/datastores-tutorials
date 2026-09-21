@@ -1,7 +1,7 @@
 # Part 5 — Backup, Recovery & Disaster Recovery — Status
 
 **Status:** ACTIVE
-**Canonical progress:** **5/15 canonical + merged**
+**Canonical progress:** **6/15 canonical + merged**
 **Target:** PostgreSQL 18
 **Authoritative layout:** `MASTER-LAYOUT.md` — LOCKED, Master Layout v1.0
 
@@ -12,8 +12,8 @@
 | 5.3 | Restore and Selective Recovery with `pg_restore` | CANONICAL + MERGED |
 | 5.4 | Cluster-Wide Logical Backup with `pg_dumpall` | CANONICAL + MERGED |
 | 5.5 | Physical Backup Architecture and `pg_basebackup` | CANONICAL + MERGED |
-| 5.6 | WAL Fundamentals for Backup and Recovery | NEXT |
-| 5.7 | Continuous WAL Archiving and Archive Operations | PLANNED |
+| 5.6 | WAL Fundamentals for Backup and Recovery | CANONICAL + MERGED |
+| 5.7 | Continuous WAL Archiving and Archive Operations | NEXT |
 | 5.8 | Point-in-Time Recovery — PITR | PLANNED |
 | 5.9 | Recovery Targets, Timelines, and Recovery Control | PLANNED |
 | 5.10 | Replication Slots, WAL Retention, and Disk-Risk Management | PLANNED |
@@ -45,4 +45,4 @@
 
 ## Next workflow stage
 
-Part 5.6 — WAL Fundamentals for Backup and Recovery → Draft + Hands-On Lab (`labs/wal-recovery-readiness-check.sql`).
+Part 5.7 — Continuous WAL Archiving and Archive Operations → Draft + Hands-On Lab (`labs/wal-archive-check.sql`).
