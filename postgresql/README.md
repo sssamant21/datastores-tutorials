@@ -32,53 +32,53 @@ Login and non-login roles; inheritance; `GRANT`/`REVOKE`; database, schema, tabl
 
 **Lab:** Build Developer, Application, Read-Only, and DBA access models.
 
-## Part 5 — Storage & WAL
+## Part 5 — Backup, Recovery & Disaster Recovery
 
-Pages; blocks; tuples; heap storage; TOAST; FSM; visibility map; WAL; checkpoints; tablespaces; temporary files; storage sizing.
+Logical and physical backups; `pg_dump`; `pg_restore`; `pg_dumpall`; `pg_basebackup`; WAL archiving; PITR; recovery targets and timelines; backup validation; RPO/RTO; retention; recovery readiness.
+
+**Project:** Design, validate, and rehearse a production recovery strategy with a separate acceptance-evidence lab.
+
+## Part 6 — Streaming Replication, High Availability & Failover
+
+Physical streaming replication; primary/standby architecture; asynchronous and synchronous replication; replication lag; slots and WAL-retention safety; read-only standbys; cascading replication; monitoring; switchover; failover; fencing; rejoin; `pg_rewind`; failback.
+
+**Project:** Build a primary and standby, execute controlled switchover and failover exercises, rejoin the old primary, and produce HA acceptance evidence.
+
+## Part 7 — Storage & WAL
+
+Pages; blocks; tuples; heap storage; TOAST; FSM; visibility map; WAL internals; checkpoints; tablespaces; temporary files; storage sizing.
 
 **Lab:** Trace a transaction from SQL through buffers and WAL to storage.
 
-## Part 6 — MVCC & Transactions
+## Part 8 — MVCC & Transactions
 
 MVCC; `xmin`/`xmax`; transaction IDs; isolation; locks; deadlocks; long-running transactions; idle-in-transaction sessions; multixacts; wraparound.
 
 **Lab:** Reproduce blocking, deadlocks, and long-running transactions.
 
-## Part 7 — VACUUM & Autovacuum
+## Part 9 — VACUUM & Autovacuum
 
 Dead tuples; VACUUM; ANALYZE; autovacuum architecture and thresholds; freeze; wraparound prevention; table/index bloat; tuning methodology.
 
 **Lab:** Generate bloat and troubleshoot autovacuum.
 
-## Part 8 — Indexing
+## Part 10 — Indexing
 
 B-tree; Hash; GIN; GiST; BRIN; partial indexes; expression indexes; multicolumn indexes; covering indexes; index bloat; unused and duplicate indexes.
 
 **Lab:** Diagnose a slow query and design the appropriate index.
 
-## Part 9 — Query Performance
+## Part 11 — Query Performance
 
 Planner; statistics; `EXPLAIN`; `EXPLAIN ANALYZE`; scans; joins; sorts; parallel queries; `work_mem`; `pg_stat_statements`; slow-query investigation.
 
 **Lab:** Perform a production-style query-performance investigation.
 
-## Part 10 — Memory, CPU & Connection Management
+## Part 12 — Memory, CPU & Connection Management
 
 `shared_buffers`; `work_mem`; `maintenance_work_mem`; `effective_cache_size`; connection overhead; PgBouncer; CPU saturation; I/O bottlenecks.
 
 **Lab:** Diagnose PostgreSQL at 90–100% CPU.
-
-## Part 11 — Backup, Restore & PITR
-
-Logical and physical backups; `pg_dump`; `pg_restore`; base backups; WAL archiving; PITR; validation; restore testing.
-
-**Lab:** Delete data intentionally and recover to a point in time.
-
-## Part 12 — Replication & High Availability
-
-Streaming replication; replication slots; synchronous/asynchronous replication; failover; switchover; replication lag; Patroni concepts; HA architecture.
-
-**Lab:** Build a primary and replica and perform failover.
 
 ## Part 13 — Monitoring & Observability
 
