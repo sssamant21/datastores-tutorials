@@ -10,12 +10,12 @@ Concise tutorials for developers, data engineers, SREs, and DBREs. Each page inc
 | 04 | [Basic Cache Operations](04-basic-cache-operations.md) | Draft |
 | 05 | [TTL and Expiration](05-ttl-and-expiration.md) | Draft |
 | 06 | [Implementing Cache-Aside](06-implementing-cache-aside.md) | Draft |
-| 07 | Cache Updates and Invalidation | Planned |
-| 08 | Memory Management and Eviction | Planned |
-| 09 | Caching Performance | Planned |
-| 10 | Cache Failures and Application Resilience | Planned |
-| 11 | Monitoring and Troubleshooting | Planned |
-| 12 | Production Readiness and End-to-End Lab | Planned |
+| 07 | [Cache Updates and Invalidation](07-cache-updates-and-invalidation.md) | Draft |
+| 08 | [Memory Management and Eviction](08-memory-management-and-eviction.md) | Draft |
+| 09 | [Caching Performance](09-caching-performance.md) | Draft |
+| 10 | [Cache Failures and Application Resilience](10-cache-failures-and-application-resilience.md) | Draft |
+| 11 | [Monitoring and Troubleshooting](11-monitoring-and-troubleshooting.md) | Draft |
+| 12 | [Production Readiness and End-to-End Lab](12-production-readiness-and-end-to-end-lab.md) | Draft |
 
 ## Scope
 
@@ -23,4 +23,4 @@ Application caching foundations. Cluster installation, upgrades, disaster recove
 
 ## Workflow
 
-Draft → technical validation → production review → canonical. Planned tutorials have no placeholder content files. See [STATUS.md](STATUS.md).
+Draft → technical validation → production review → canonical. All 12 tutorials are written as drafts; live validation and production review remain pending. See [STATUS.md](STATUS.md).

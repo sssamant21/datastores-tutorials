@@ -135,4 +135,4 @@ This teaching example is not a complete production resilience implementation. In
 - [redis-py connections](https://redis.io/docs/latest/develop/clients/redis-py/connect/)
 - [Production usage](https://redis.io/docs/latest/develop/clients/redis-py/produsage/)
 
-**Next:** 07 — Cache Updates and Invalidation (planned).
+**Next:** [07 — Cache Updates and Invalidation](07-cache-updates-and-invalidation.md)
