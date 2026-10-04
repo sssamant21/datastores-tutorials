@@ -9,11 +9,11 @@ Application, administration, observability, and troubleshooting foundations. Cor
 | 03 | [Databases, Collections, Documents, and Schema Design](03-databases-collections-documents-schema-design.md) | Draft |
 | 04 | [CRUD Operations and Upserts](04-crud-operations-and-upserts.md) | Draft |
 | 05 | [Index Design and Management](05-index-design-and-management.md) | Draft |
-| 06 | Query Performance and explain() | Planned |
-| 07 | Aggregation Pipeline Fundamentals | Planned |
-| 08 | Replica Sets, Replication, and Read/Write Concerns | Planned |
-| 09 | Users, Roles, Authentication, and TLS | Planned |
-| 10 | Storage, WiredTiger, and Capacity Planning | Planned |
+| 06 | [Query Performance and explain()](06-query-performance-and-explain.md) | Draft |
+| 07 | [Aggregation Pipeline Fundamentals](07-aggregation-pipeline-fundamentals.md) | Draft |
+| 08 | [Replica Sets, Replication, and Read/Write Concerns](08-replica-sets-replication-read-write-concerns.md) | Draft |
+| 09 | [Users, Roles, Authentication, and TLS](09-users-roles-authentication-and-tls.md) | Draft |
+| 10 | [Storage, WiredTiger, and Capacity Planning](10-storage-wiredtiger-capacity-planning.md) | Draft |
 | 11 | Backup, Restore, and Recovery | Planned |
 | 12 | Ops Manager and Enterprise Management | Planned |
 | 13 | Monitoring, Dashboards, and Alerts | Planned |
