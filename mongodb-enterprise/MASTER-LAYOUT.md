@@ -14,14 +14,15 @@ Application, administration, observability, and troubleshooting foundations. Cor
 | 08 | [Replica Sets, Replication, and Read/Write Concerns](08-replica-sets-replication-read-write-concerns.md) | Draft |
 | 09 | [Users, Roles, Authentication, and TLS](09-users-roles-authentication-and-tls.md) | Draft |
 | 10 | [Storage, WiredTiger, and Capacity Planning](10-storage-wiredtiger-capacity-planning.md) | Draft |
-| 11 | Backup, Restore, and Recovery | Planned |
-| 12 | Ops Manager and Enterprise Management | Planned |
-| 13 | Monitoring, Dashboards, and Alerts | Planned |
-| 14 | Step-by-Step Slowness Troubleshooting | Planned |
-| 15 | Common Problems and Solutions | Planned |
-| 16 | Upgrades and Maintenance | Planned |
-| 17 | Production Readiness and Acceptance Lab | Planned |
+| 11 | [Backup, Restore, and Recovery](11-backup-restore-and-recovery.md) | Draft |
+| 12 | [Ops Manager and Enterprise Management](12-ops-manager-and-enterprise-management.md) | Draft |
+| 13 | [Monitoring, Dashboards, and Alerts](13-monitoring-dashboards-and-alerts.md) | Draft |
+| 14 | [Step-by-Step Slowness Troubleshooting](14-step-by-step-slowness-troubleshooting.md) | Draft |
+| 15 | [Common Problems and Solutions](15-common-problems-and-solutions.md) | Draft |
+| 16 | [Upgrades and Maintenance](16-upgrades-and-maintenance.md) | Draft |
+| 17 | [Production Readiness and Acceptance Lab](17-production-readiness-and-acceptance-lab.md) | Draft |
 
 ## Workflow
 
 Draft → technical validation → production review → canonical. See [STATUS.md](STATUS.md). Commands are educational examples; no live database validation has been performed.
+
