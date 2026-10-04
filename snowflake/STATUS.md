@@ -1,9 +1,9 @@
 # Snowflake Tutorial Status
 
 **Track:** Snowflake  
-**Canonical progress:** **5/90**  
-**Current batch:** Batch 1 — **COMPLETE**  
-**Next batch:** 06–10  
+**Canonical progress:** **10/90**  
+**Current batch:** Batch 2 — **COMPLETE**  
+**Next batch:** 11–15  
 **Workflow:** Draft → Technical Validation → Production Review → Canonical
 
 | # | Tutorial | Status | Batch |
@@ -13,7 +13,11 @@
 | 03 | Databases, Schemas, Tables & Objects | CANONICAL | 01–05 |
 | 04 | Virtual Warehouses & Compute Architecture | CANONICAL | 01–05 |
 | 05 | Snowflake Editions, Regions & Cloud Platforms | CANONICAL | 01–05 |
-| 06–10 | Data Objects & SQL | PLANNED | 06–10 |
+| 06 | Table Types — Permanent, Transient & Temporary | CANONICAL | 06–10 |
+| 07 | Snowflake Data Types & Semi-Structured Data | CANONICAL | 06–10 |
+| 08 | Views, Secure Views & Materialized Views | CANONICAL | 06–10 |
+| 09 | Sequences, Identity Columns & Generated Values | CANONICAL | 06–10 |
+| 10 | SQL Fundamentals, Joins, CTEs & Window Functions | CANONICAL | 06–10 |
 | 11–15 | Data Loading & Unloading | PLANNED | 11–15 |
 | 16–20 | Continuous Ingestion & Pipelines | PLANNED | 16–20 |
 | 21–25 | Data Engineering | PLANNED | 21–25 |
