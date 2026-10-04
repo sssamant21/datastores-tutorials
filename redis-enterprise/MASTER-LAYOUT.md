@@ -1,6 +1,8 @@
 # Redis Enterprise — Application Caching
 
-Concise tutorials for developers, data engineers, SREs, and DBREs. Each page includes concepts, examples, validation, and production practices. Run exercises in a test database.
+Concise application caching and administration tutorials for developers, data engineers, SREs, and DBREs. Each page includes concepts, examples, validation, and production practices. Run exercises in a test database.
+
+## Application caching — Tutorials 01–12
 
 | # | Tutorial | Status |
 |---|---|---|
@@ -17,10 +19,23 @@ Concise tutorials for developers, data engineers, SREs, and DBREs. Each page inc
 | 11 | [Monitoring and Troubleshooting](11-monitoring-and-troubleshooting.md) | Draft |
 | 12 | [Production Readiness and End-to-End Lab](12-production-readiness-and-end-to-end-lab.md) | Draft |
 
+## Administration — Tutorials 13–20
+
+| # | Tutorial | Status |
+|---|---|---|
+| 13 | [Cluster Administration](13-cluster-administration.md) | Draft |
+| 14 | [Database Administration](14-database-administration.md) | Draft |
+| 15 | [Security and Access Administration](15-security-and-access-administration.md) | Draft |
+| 16 | [Capacity and Shard Administration](16-capacity-and-shard-administration.md) | Draft |
+| 17 | [High Availability and Persistence](17-high-availability-and-persistence.md) | Draft |
+| 18 | [Backup and Restore Administration](18-backup-and-restore-administration.md) | Draft |
+| 19 | [Upgrades and Maintenance](19-upgrades-and-maintenance.md) | Draft |
+| 20 | [Administration Runbook and Acceptance](20-administration-runbook-and-acceptance.md) | Draft |
+
 ## Scope
 
-Application caching foundations. Cluster installation, upgrades, disaster recovery, and Active-Active administration belong in a separate administrator series.
+Application caching plus self-managed Redis Software administration. Administration labs require a staging cluster and appropriate privileges. Kubernetes and Redis Cloud use their own management procedures. Detailed installation automation and Active-Active deployment remain outside this concise foundation.
 
 ## Workflow
 
-Draft → technical validation → production review → canonical. All 12 tutorials are written as drafts; live validation and production review remain pending. See [STATUS.md](STATUS.md).
+Draft → technical validation → production review → canonical. All 20 tutorials are written as drafts; live validation and production review remain pending. See [STATUS.md](STATUS.md).

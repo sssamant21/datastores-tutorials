@@ -2,7 +2,7 @@
 
 Updated: 2026-10-03
 
-**Progress:** 12/12 drafted; 0/12 canonical.
+**Progress:** 20/20 drafted; 0/20 canonical.
 
 | # | Tutorial | Draft | Technical review | Live lab |
 |---|---|---|---|---|
@@ -18,6 +18,14 @@ Updated: 2026-10-03
 | 10 | Cache Failures and Application Resilience | Written | Pending | Not run |
 | 11 | Monitoring and Troubleshooting | Written | Pending | Not run |
 | 12 | Production Readiness and End-to-End Lab | Written | Pending | Not run |
+| 13 | Cluster Administration | Written | Pending | Not run |
+| 14 | Database Administration | Written | Pending | Not run |
+| 15 | Security and Access Administration | Written | Pending | Not run |
+| 16 | Capacity and Shard Administration | Written | Pending | Not run |
+| 17 | High Availability and Persistence | Written | Pending | Not run |
+| 18 | Backup and Restore Administration | Written | Pending | Not run |
+| 19 | Upgrades and Maintenance | Written | Pending | Not run |
+| 20 | Administration Runbook and Acceptance | Written | Pending | Not run |
 
 Documentation references are included in each draft. Live database exercises have not been executed. Tutorial 06 is an educational example requiring additional production controls.
 
