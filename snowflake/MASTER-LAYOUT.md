@@ -19,11 +19,11 @@
 | 08 | [Views, Secure Views & Materialized Views](08-views-secure-views-materialized-views.md) | Canonical |
 | 09 | [Sequences, Identity Columns & Generated Values](09-sequences-identity-columns-generated-values.md) | Canonical |
 | 10 | [SQL Fundamentals, Joins, CTEs & Window Functions](10-sql-fundamentals-joins-ctes-window-functions.md) | Canonical |
-| 11 | Stages — Internal & External | Planned |
-| 12 | File Formats | Planned |
-| 13 | COPY INTO — Bulk Data Loading | Planned |
-| 14 | Data Unloading with COPY INTO | Planned |
-| 15 | Loading Troubleshooting & Validation | Planned |
+| 11 | [Stages — Internal & External](11-stages-internal-external.md) | Canonical |
+| 12 | [File Formats](12-file-formats.md) | Canonical |
+| 13 | [COPY INTO — Bulk Data Loading](13-copy-into-bulk-data-loading.md) | Canonical |
+| 14 | [Data Unloading with COPY INTO](14-data-unloading-with-copy-into-location.md) | Canonical |
+| 15 | [Loading Troubleshooting & Validation](15-data-loading-troubleshooting-validation.md) | Canonical |
 | 16 | Snowpipe | Planned |
 | 17 | Snowpipe Streaming | Planned |
 | 18 | Streams & Change Data Capture | Planned |
@@ -102,8 +102,10 @@
 
 ## Batch checkpoints
 
-- 01–05 → Batch 1
-- 06–10 → Batch 2
+- 01–05 → Batch 1 — COMPLETE
+- 06–10 → Batch 2 — COMPLETE
+- 11–15 → Batch 3 — COMPLETE
+- 16–20 → Batch 4 — NEXT
 - Continue in five-chapter batches through 86–90.
 
 ## Scope
