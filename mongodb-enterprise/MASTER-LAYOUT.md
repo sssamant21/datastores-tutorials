@@ -22,7 +22,24 @@ Application, administration, observability, and troubleshooting foundations. Cor
 | 16 | [Upgrades and Maintenance](16-upgrades-and-maintenance.md) | Draft |
 | 17 | [Production Readiness and Acceptance Lab](17-production-readiness-and-acceptance-lab.md) | Draft |
 
+| 18 | [Transactions, Sessions, and Retries](18-transactions-sessions-and-retries.md) | Draft |
+| 19 | [Sharding and Shard-Key Design](19-sharding-and-shard-key-design.md) | Draft |
+| 20 | [Driver Integration and Connection Pools](20-driver-integration-and-connection-pools.md) | Draft |
+| 21 | [Advanced Modeling and Schema Evolution](21-advanced-modeling-and-schema-evolution.md) | Draft |
+| 22 | [Advanced Indexes and Retention](22-advanced-indexes-and-retention.md) | Draft |
+| 23 | [Change Streams and Event Recovery](23-change-streams-and-event-recovery.md) | Draft |
+| 24 | [Time Series, Capped Collections, and GridFS](24-time-series-capped-collections-and-gridfs.md) | Draft |
+| 25 | [Enterprise Security and Key Management](25-enterprise-security-and-key-management.md) | Draft |
+| 26 | [Deployment and Kubernetes Administration](26-deployment-and-kubernetes-administration.md) | Draft |
+| 27 | [Advanced Incident Recovery](27-advanced-incident-recovery.md) | Draft |
+| 28 | [Extended Acceptance and Coverage](28-extended-acceptance-and-coverage.md) | Draft |
+
+## Coverage
+
+01–17 cover core foundations; 18–27 cover advanced topics; 28 extends acceptance. The agreed practical scope is drafted, rather than an exhaustive catalog of every MongoDB feature.
+
 ## Workflow
 
 Draft → technical validation → production review → canonical. See [STATUS.md](STATUS.md). Commands are educational examples; no live database validation has been performed.
+
 

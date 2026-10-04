@@ -98,4 +98,5 @@ Unperformed tests remain Not run. Record findings and obtain deployment-owner re
 - [Security checklist](https://www.mongodb.com/docs/manual/administration/security-checklist/)
 - [Write concern](https://www.mongodb.com/docs/manual/reference/write-concern/)
 
-**Sequence:** 01–17 drafted. Live validation pending. See [STATUS.md](STATUS.md).
+**Next:** [18 — Transactions, Sessions, and Retries](18-transactions-sessions-and-retries.md). Continue acceptance with [28 — Extended Acceptance and Coverage](28-extended-acceptance-and-coverage.md). Live validation pending.
+
