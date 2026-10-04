@@ -1,9 +1,9 @@
 # Snowflake Tutorial Status
 
 **Track:** Snowflake  
-**Canonical progress:** **10/90**  
-**Current batch:** Batch 2 — **COMPLETE**  
-**Next batch:** 11–15  
+**Canonical progress:** **15/90**  
+**Current batch:** Batch 3 — **COMPLETE**  
+**Next batch:** 16–20  
 **Workflow:** Draft → Technical Validation → Production Review → Canonical
 
 | # | Tutorial | Status | Batch |
@@ -18,7 +18,11 @@
 | 08 | Views, Secure Views & Materialized Views | CANONICAL | 06–10 |
 | 09 | Sequences, Identity Columns & Generated Values | CANONICAL | 06–10 |
 | 10 | SQL Fundamentals, Joins, CTEs & Window Functions | CANONICAL | 06–10 |
-| 11–15 | Data Loading & Unloading | PLANNED | 11–15 |
+| 11 | Stages — Internal & External | CANONICAL | 11–15 |
+| 12 | File Formats | CANONICAL | 11–15 |
+| 13 | COPY INTO — Bulk Data Loading | CANONICAL | 11–15 |
+| 14 | Data Unloading with COPY INTO | CANONICAL | 11–15 |
+| 15 | Loading Troubleshooting & Validation | CANONICAL | 11–15 |
 | 16–20 | Continuous Ingestion & Pipelines | PLANNED | 16–20 |
 | 21–25 | Data Engineering | PLANNED | 21–25 |
 | 26–30 | Security & Access Control | PLANNED | 26–30 |
