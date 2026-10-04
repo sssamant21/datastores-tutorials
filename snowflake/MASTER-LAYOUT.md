@@ -14,11 +14,11 @@
 | 03 | [Databases, Schemas, Tables & Objects](03-databases-schemas-tables-objects.md) | Canonical |
 | 04 | [Virtual Warehouses & Compute Architecture](04-virtual-warehouses-compute-architecture.md) | Canonical |
 | 05 | [Snowflake Editions, Regions & Cloud Platforms](05-snowflake-editions-regions-cloud-platforms.md) | Canonical |
-| 06 | Table Types — Permanent, Transient & Temporary | Planned |
-| 07 | Snowflake Data Types & Semi-Structured Data | Planned |
-| 08 | Views, Secure Views & Materialized Views | Planned |
-| 09 | Sequences, Identity Columns & Generated Values | Planned |
-| 10 | SQL Fundamentals, Joins, CTEs & Window Functions | Planned |
+| 06 | [Table Types — Permanent, Transient & Temporary](06-table-types-permanent-transient-temporary.md) | Canonical |
+| 07 | [Snowflake Data Types & Semi-Structured Data](07-snowflake-data-types-semi-structured-data.md) | Canonical |
+| 08 | [Views, Secure Views & Materialized Views](08-views-secure-views-materialized-views.md) | Canonical |
+| 09 | [Sequences, Identity Columns & Generated Values](09-sequences-identity-columns-generated-values.md) | Canonical |
+| 10 | [SQL Fundamentals, Joins, CTEs & Window Functions](10-sql-fundamentals-joins-ctes-window-functions.md) | Canonical |
 | 11 | Stages — Internal & External | Planned |
 | 12 | File Formats | Planned |
 | 13 | COPY INTO — Bulk Data Loading | Planned |
