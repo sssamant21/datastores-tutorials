@@ -95,7 +95,7 @@ Record pass/fail/pending for each item. Missing evidence remains pending; runnin
 
 The script removes only its exact lab key. Verify GET returns nil afterward. Run staging integration and concurrency tests before declaring the application ready.
 
-The 12 tutorials now cover the application caching foundation. Next steps are environment validation and a separate administrator series if needed.
+Tutorials 01–12 cover the application caching foundation. Continue with [13 — Cluster Administration](13-cluster-administration.md), then the administration and observability tracks.
 
 ## References
 

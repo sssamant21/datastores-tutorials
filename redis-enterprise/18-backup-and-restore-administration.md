@@ -26,13 +26,15 @@ An uploaded object alone does not prove a complete usable backup.
 
 Restore into a separate compatible test database. Review the documented import behavior first; do not assume it safely merges existing data.
 
+Use a disposable restore marker without TTL so backup duration does not make the test inconclusive. Remove it from both source and restored databases when finished.
+
 Before backup:
 ```redis
-SET tutorial:backup:marker "restore-check" EX 3600
+SET tutorial:backup:marker "restore-check"
 GET tutorial:backup:marker
 ```
 
-After restore, check the marker while accounting for TTL elapsed during backup/restore. Also verify representative non-expired records, types, application reads, and recovery duration.
+After restore, check that GET tutorial:backup:marker returns restore-check. Separately verify representative expiring records with their elapsed TTL, types, application reads, and recovery duration. Clean up the marker in both databases with DEL tutorial:backup:marker.
 
 ## Cutover and rollback
 

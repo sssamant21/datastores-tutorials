@@ -47,3 +47,7 @@ Application caching plus self-managed Redis Software administration. Administrat
 ## Workflow
 
 Draft → technical validation → production review → canonical. All 23 tutorials are written as drafts; live validation and production review remain pending. See [STATUS.md](STATUS.md).
+
+## Review and validation
+
+See [REVIEW.md](REVIEW.md) for findings, fixes, and pending staging acceptance. Run [tools/validate_tutorials.py](tools/validate_tutorials.py) for offline Markdown, syntax, and simulated caching checks. These do not replace live Enterprise tests.

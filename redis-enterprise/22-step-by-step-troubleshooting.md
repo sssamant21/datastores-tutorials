@@ -90,3 +90,5 @@ Use a staging TTL mismatch or isolated denied-permission scenario. Follow the se
 - [SLOWLOG GET](https://redis.io/docs/latest/commands/slowlog-get/)
 
 **Next:** [23 — Common Problems and Solutions](23-common-problems-and-solutions.md)
+
+**Enterprise slowlog note:** Redis Software does not return the client IP, port, or client name in SLOWLOG GET output. Use application traces or protected client logs for attribution; do not assume the standalone response format. See [command compatibility](https://redis.io/docs/latest/commands/slowlog-get/).

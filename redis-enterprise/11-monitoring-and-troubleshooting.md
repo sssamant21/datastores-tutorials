@@ -70,3 +70,5 @@ Completion: produce an incident note with evidence, scope, action, and post-fix 
 - [SLOWLOG GET](https://redis.io/docs/latest/commands/slowlog-get/)
 
 **Next:** [12 — Production Readiness and Lab](12-production-readiness-and-end-to-end-lab.md)
+
+**Enterprise slowlog note:** Redis Software does not return the client IP, port, or client name in SLOWLOG GET output. Use application traces or protected client logs for attribution; do not assume the standalone response format. See [command compatibility](https://redis.io/docs/latest/commands/slowlog-get/).

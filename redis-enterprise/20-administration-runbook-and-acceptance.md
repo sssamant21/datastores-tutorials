@@ -59,3 +59,5 @@ Acceptance: operational ownership and reviewed evidence across the administratio
 
 - [Monitoring](https://redis.io/docs/latest/operate/rs/monitoring/)
 - [Troubleshooting](https://redis.io/docs/latest/operate/rs/troubleshooting/)
+
+**Enterprise slowlog note:** Redis Software does not return the client IP, port, or client name in SLOWLOG GET output. Use application traces or protected client logs for attribution; do not assume the standalone response format. See [command compatibility](https://redis.io/docs/latest/commands/slowlog-get/).

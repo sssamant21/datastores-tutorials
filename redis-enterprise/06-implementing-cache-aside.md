@@ -69,8 +69,17 @@ def get_product(product_id, fetch_from_database):
     if cached is not None:
         try:
             product = json.loads(cached)
-            logger.info("Cache hit")
-            return product
+            valid = (
+                isinstance(product, dict)
+                and product.get("id") == product_id
+                and isinstance(product.get("name"), str)
+                and isinstance(product.get("price"), (int, float))
+                and not isinstance(product.get("price"), bool)
+            )
+            if valid:
+                logger.info("Cache hit")
+                return product
+            logger.warning("Cached product schema mismatch")
         except json.JSONDecodeError:
             logger.warning("Invalid cached JSON")
 
@@ -89,6 +98,8 @@ def get_product(product_id, fetch_from_database):
 
     return product
 ```
+
+Cached responses must match the demonstrated product schema (id, name, and numeric price). Adapt validation to your application's schema; the source lookup is expected to return validated records.
 
 A Redis error falls back to the source; a cache write failure still returns the source result. Missing source records are not cached. Source database errors propagate. Adjust timeouts to the request budget.
 
