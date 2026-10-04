@@ -1,8 +1,8 @@
 # Redis Enterprise Caching — Status
 
-Updated: 2026-10-03
+Updated: 2026-10-04
 
-**Progress:** 23/23 drafted; 0/23 canonical.
+**Progress:** 36/36 drafted; 0/36 canonical.
 
 | # | Tutorial | Draft | Technical review | Live lab |
 |---|---|---|---|---|
@@ -30,6 +30,21 @@ Updated: 2026-10-03
 | 22 | Step-by-Step Troubleshooting | Written | Offline reviewed | Not run |
 | 23 | Common Problems and Solutions | Written | Offline reviewed | Not run |
 
-[Offline technical and operational review](REVIEW.md) completed; [validation script](tools/validate_tutorials.py) passed. Documentation references are included in each draft. Live database exercises have not been executed. Tutorial 06 is an educational example requiring additional production controls.
+| 24 | Installation and Deployment | Written | Pending | Not run |
+| 25 | Kubernetes Operator Administration | Written | Pending | Not run |
+| 26 | Active-Active Geo-Distribution | Written | Pending | Not run |
+| 27 | Transactions and Programmability | Written | Pending | Not run |
+| 28 | Advanced Client Integration | Written | Pending | Not run |
+| 29 | Advanced Caching and Source Protection | Written | Pending | Not run |
+| 30 | Sessions, Counters, Rate Limits, and Leaderboards | Written | Pending | Not run |
+| 31 | Streams and Messaging Recovery | Written | Pending | Not run |
+| 32 | JSON and Search | Written | Pending | Not run |
+| 33 | Management Automation and Configuration Drift | Written | Pending | Not run |
+| 34 | Flex and Auto Tiering | Written | Pending | Not run |
+| 35 | Migration and Disaster Recovery | Written | Pending | Not run |
+| 36 | Extended Acceptance and Coverage | Written | Pending | Not run |
+
+[Offline technical and operational review](REVIEW.md) completed for 01–23; 24–36 have syntax/navigation checks and documentation references, with full technical review pending. The [validation script](tools/validate_tutorials.py) passed. Documentation references are included in each draft. Live database exercises have not been executed. Tutorial 06 is an educational example requiring additional production controls.
 
 **Next:** Run staging labs and complete environment-specific production acceptance. All tutorials remain Draft; no live Enterprise validation has been performed.
+

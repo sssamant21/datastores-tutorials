@@ -40,14 +40,34 @@ Concise application caching and administration tutorials for developers, data en
 | 22 | [Step-by-Step Troubleshooting](22-step-by-step-troubleshooting.md) | Draft |
 | 23 | [Common Problems and Solutions](23-common-problems-and-solutions.md) | Draft |
 
+
+## Advanced track — Tutorials 24–36
+
+| # | Tutorial | Status |
+|---|---|---|
+| 24 | [Installation and Deployment](24-installation-and-deployment.md) | Draft |
+| 25 | [Kubernetes Operator Administration](25-kubernetes-operator-administration.md) | Draft |
+| 26 | [Active-Active Geo-Distribution](26-active-active-geo-distribution.md) | Draft |
+| 27 | [Transactions and Programmability](27-transactions-and-programmability.md) | Draft |
+| 28 | [Advanced Client Integration](28-advanced-client-integration.md) | Draft |
+| 29 | [Advanced Caching and Source Protection](29-advanced-caching-and-source-protection.md) | Draft |
+| 30 | [Sessions, Counters, Rate Limits, and Leaderboards](30-sessions-counters-rate-limits-and-leaderboards.md) | Draft |
+| 31 | [Streams and Messaging Recovery](31-streams-and-messaging-recovery.md) | Draft |
+| 32 | [JSON and Search](32-json-and-search.md) | Draft |
+| 33 | [Management Automation and Configuration Drift](33-management-automation-and-configuration-drift.md) | Draft |
+| 34 | [Flex and Auto Tiering](34-flex-and-auto-tiering.md) | Draft |
+| 35 | [Migration and Disaster Recovery](35-migration-and-disaster-recovery.md) | Draft |
+| 36 | [Extended Acceptance and Coverage](36-extended-acceptance-and-coverage.md) | Draft |
+
 ## Scope
 
-Application caching plus self-managed Redis Software administration. Administration labs require a staging cluster and appropriate privileges. Kubernetes and Redis Cloud use their own management procedures. Detailed installation automation and Active-Active deployment remain outside this concise foundation.
+Application caching plus self-managed Redis Software administration. Administration labs require a staging cluster and appropriate privileges. Kubernetes and Redis Cloud use their own management procedures. The advanced track adds installation, Kubernetes, Active-Active, programmability, clients, application patterns, Streams, JSON/Search, automation, tiering and disaster recovery. Platform mutations use deployed-version workflows. This is the agreed practical scope, not every Redis product or command.
 
 ## Workflow
 
-Draft → technical validation → production review → canonical. All 23 tutorials are written as drafts; live validation and production review remain pending. See [STATUS.md](STATUS.md).
+Draft → technical validation → production review → canonical. All 36 tutorials are written as drafts; live validation and production review remain pending. See [STATUS.md](STATUS.md).
 
 ## Review and validation
 
 See [REVIEW.md](REVIEW.md) for findings, fixes, and pending staging acceptance. Run [tools/validate_tutorials.py](tools/validate_tutorials.py) for offline Markdown, syntax, and simulated caching checks. These do not replace live Enterprise tests.
+

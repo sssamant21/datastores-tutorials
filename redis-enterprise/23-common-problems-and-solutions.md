@@ -82,3 +82,6 @@ Acceptance: diagnose both deliberate issues, apply targeted remedies, and clean 
 - [Enterprise troubleshooting](https://redis.io/docs/latest/operate/rs/troubleshooting/)
 - [Eviction policy](https://redis.io/docs/latest/operate/rs/databases/memory-performance/eviction-policy/)
 - [EXPIRE](https://redis.io/docs/latest/commands/expire/)
+
+**Next:** [24 — Installation and Deployment](24-installation-and-deployment.md).
+

@@ -60,3 +60,8 @@ Run read/write and TLS tests first. Perform failover, restore, rotation and upgr
 ## Status decision
 
 All tutorials remain Draft. Offline review is complete; live validation and environment-specific production acceptance are pending. No tutorial is declared canonical or production-ready on simulated evidence.
+
+## Advanced extension — 2026-10-04
+
+Tutorials 24–36 were added for the agreed advanced scope. Offline validation now parses eight Python blocks and checks all relative links/fences. Existing cache-aside and capstone simulations remain unchanged. Advanced transaction, stream, Search, client pool and platform labs were not executed. Full technical review, deployed-version compatibility and live acceptance remain pending for the new track. See Tutorial 36 for the evidence matrix.
+
