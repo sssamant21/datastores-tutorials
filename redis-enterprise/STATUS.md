@@ -2,7 +2,7 @@
 
 Updated: 2026-10-03
 
-**Progress:** 20/20 drafted; 0/20 canonical.
+**Progress:** 23/23 drafted; 0/23 canonical.
 
 | # | Tutorial | Draft | Technical review | Live lab |
 |---|---|---|---|---|
@@ -26,6 +26,9 @@ Updated: 2026-10-03
 | 18 | Backup and Restore Administration | Written | Pending | Not run |
 | 19 | Upgrades and Maintenance | Written | Pending | Not run |
 | 20 | Administration Runbook and Acceptance | Written | Pending | Not run |
+| 21 | Observability, Dashboards and Alerts | Written | Pending | Not run |
+| 22 | Step-by-Step Troubleshooting | Written | Pending | Not run |
+| 23 | Common Problems and Solutions | Written | Pending | Not run |
 
 Documentation references are included in each draft. Live database exercises have not been executed. Tutorial 06 is an educational example requiring additional production controls.
 

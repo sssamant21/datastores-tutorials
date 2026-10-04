@@ -32,10 +32,18 @@ Concise application caching and administration tutorials for developers, data en
 | 19 | [Upgrades and Maintenance](19-upgrades-and-maintenance.md) | Draft |
 | 20 | [Administration Runbook and Acceptance](20-administration-runbook-and-acceptance.md) | Draft |
 
+## Operations — Tutorials 21–23
+
+| # | Tutorial | Status |
+|---|---|---|
+| 21 | [Observability, Dashboards and Alerts](21-observability-dashboards-and-alerts.md) | Draft |
+| 22 | [Step-by-Step Troubleshooting](22-step-by-step-troubleshooting.md) | Draft |
+| 23 | [Common Problems and Solutions](23-common-problems-and-solutions.md) | Draft |
+
 ## Scope
 
 Application caching plus self-managed Redis Software administration. Administration labs require a staging cluster and appropriate privileges. Kubernetes and Redis Cloud use their own management procedures. Detailed installation automation and Active-Active deployment remain outside this concise foundation.
 
 ## Workflow
 
-Draft → technical validation → production review → canonical. All 20 tutorials are written as drafts; live validation and production review remain pending. See [STATUS.md](STATUS.md).
+Draft → technical validation → production review → canonical. All 23 tutorials are written as drafts; live validation and production review remain pending. See [STATUS.md](STATUS.md).
