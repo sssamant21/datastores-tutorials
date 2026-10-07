@@ -1,232 +1,363 @@
 # Chapter 15 --- Cache Stampede, Thundering Herd & Source Protection
 
-## 1. Overview
+**Status:** Canonical\
+**Track:** Redis Enterprise / Redis Software Production Engineering\
+**Part:** Part 2 --- Caching & Application Engineering\
+**Level:** Intermediate → Production Cache Reliability Engineering\
+**Audience:** Developers, SREs, DBREs, Platform Engineers, Redis
+Administrators\
+**Lab type:** Stampede reproduction, concurrent-load simulation,
+synchronized-expiration analysis, TTL jitter, single-flight loader
+locks, ownership-safe release, stale-while-revalidate, refresh-ahead,
+source protection, failure injection, recovery storms, load testing,
+troubleshooting, and production acceptance
 
-Redis is often placed in front of databases, APIs, search platforms, and
-other expensive source systems. A cache stampede occurs when many
-requests miss the same cached data at approximately the same time and
-independently regenerate it.
+------------------------------------------------------------------------
+
+# 1. Objective
+
+Caching is not production-safe merely because normal requests are fast.
+
+A production design must remain stable when:
 
 ``` text
-Normal:
-1000 requests -> 999 Redis hits -> 1 source request
-
-Stampede:
-1000 requests -> many Redis misses -> hundreds of duplicate source requests
+a hot key expires
+many keys expire together
+the cache is cold
+Redis is impaired
+the source becomes slow
+clients retry
+a deployment changes the key namespace
+traffic returns after an outage
 ```
 
-The cache itself can remain healthy while the database or API behind it
-becomes overloaded. A production cache design must therefore protect
-both Redis and the source system.
+The central engineering question is:
 
-## 2. Learning Objectives
+> When Redis cannot immediately satisfy a request, how much work is
+> allowed to reach the authoritative source?
 
-After this chapter you should be able to:
+Chapter 14 introduced stampede risk while comparing read-through and
+write patterns. This chapter makes source protection the primary
+subject.
 
--   distinguish cache stampede from the broader thundering-herd effect;
--   identify synchronized TTL expiration and hot-key risks;
--   apply TTL jitter;
--   implement request coalescing/single-flight with Redis;
--   use lock TTLs and ownership-safe lock release;
--   apply stale-while-revalidate with soft and hard TTLs;
--   use negative caching appropriately;
--   add retry backoff and jitter;
--   bound source concurrency and fallback traffic;
--   observe cache misses, refreshes, contention, and source
-    amplification;
--   reproduce and mitigate a stampede in a hands-on lab.
+By the end, you should be able to:
 
-## 3. Cache Stampede and Thundering Herd
+-   Explain cache stampede and thundering-herd mechanics.
+-   Quantify source amplification.
+-   Identify synchronized-expiration risk.
+-   Recognize hot-key regeneration risk.
+-   Apply TTL jitter correctly.
+-   Implement single-flight/request coalescing.
+-   Design ownership-safe Redis loader locks.
+-   Size lock TTLs against refresh latency.
+-   Use bounded waiter behavior.
+-   Design refresh-ahead.
+-   Use stale-while-revalidate where business semantics permit it.
+-   Apply negative caching carefully.
+-   Prevent retry amplification.
+-   Apply backoff and jitter.
+-   Bound source concurrency.
+-   Use rate limiting and circuit breaking as source-protection
+    controls.
+-   Plan cold-cache recovery and cache warming.
+-   Prevent recovery storms.
+-   Define observability and alerting.
+-   Load-test cache-loss scenarios.
+-   Troubleshoot and recover from stampede incidents.
 
-A cache-aside application normally does this:
+------------------------------------------------------------------------
+
+# 2. Core Production Principle
+
+Redis reduces source traffic only while requests are actually absorbed
+by the cache.
+
+A design that normally produces:
 
 ``` text
-GET cache key
+20,000 application reads/sec
+99% cache hit ratio
+~200 source reads/sec
+```
+
+may expose the source to thousands of reads per second when the cache
+becomes cold.
+
+Therefore:
+
+``` text
+cache capacity
+```
+
+and:
+
+``` text
+source fallback capacity
+```
+
+are separate engineering concerns.
+
+The source must be protected even when Redis is healthy but data is
+missing.
+
+------------------------------------------------------------------------
+
+# Part 1 --- Stampede Mechanics
+
+## 3. Normal Cache-Aside Path
+
+``` text
+Application
    |
-   +-- HIT  -> return cached value
+   v
+Redis
    |
-   +-- MISS -> query source -> SET cache -> return value
+ hit
+   |
+   v
+Return
 ```
 
-If a hot key expires while many requests are arriving, multiple workers
-can all observe the miss before any worker has rebuilt the key.
+On a miss:
 
 ``` text
-Request A -> MISS -> DB
-Request B -> MISS -> DB
-Request C -> MISS -> DB
-Request D -> MISS -> DB
+Application
+   |
+   v
+Redis
+   |
+ miss
+   |
+   v
+Source
+   |
+   v
+Populate Redis
+   |
+   v
+Return
 ```
 
-A **cache stampede** specifically describes concurrent cache
-regeneration. A **thundering herd** is the broader synchronization
-problem where many workers wake, retry, reconnect, or compete for the
-same resource simultaneously.
+The danger appears when many callers enter the miss path together.
 
-## 4. Why This Becomes a Production Incident
+------------------------------------------------------------------------
+
+## 4. Stampede Window
 
 Suppose:
 
 ``` text
-Application traffic: 20,000 requests/sec
-Cache hit ratio:      99%
-Normal source load:   ~200 requests/sec
+request rate = 5,000/sec
+source latency = 500 ms
 ```
 
-If the hit ratio suddenly drops to 40%:
+If a hot key expires, approximately 2,500 requests can arrive during one
+500 ms regeneration window.
+
+Without coordination, many may perform identical source work.
+
+------------------------------------------------------------------------
+
+## 5. Source Amplification
+
+Normal:
 
 ``` text
-Source load: ~12,000 requests/sec
+1,000 callers
+999 cache hits
+1 source lookup
 ```
 
-The source may never have been sized for that traffic.
-
-A typical cascade is:
+Stampede:
 
 ``` text
-cache misses increase
-        |
-source requests increase
-        |
-source latency increases
-        |
-application requests remain active longer
-        |
-worker/thread pressure increases
-        |
-retries increase
-        |
-source load increases again
+1,000 callers
+many simultaneous misses
+hundreds of source lookups
 ```
 
-This is why source protection is part of cache reliability.
+The additional source work is not new business demand.
 
-## 5. Common Triggers
+It is duplicate regeneration work.
 
-### 5.1 Synchronized expiration
+------------------------------------------------------------------------
 
-Thousands of keys written together with the same TTL can expire
-together.
+# Part 2 --- Thundering Herd
+
+## 6. Broader Meaning
+
+A thundering herd occurs when many workers become runnable or retry the
+same dependency at approximately the same time.
+
+Examples:
 
 ``` text
-SET key:1 value EX 300
-SET key:2 value EX 300
-...
-SET key:100000 value EX 300
+cache expiration
+service recovery
+lock release
+fixed-delay retries
+connection restoration
+scheduled refresh
+batch start
 ```
 
-### 5.2 Hot-key expiration
+A cache stampede is one important thundering-herd pattern.
 
-A single key such as `homepage:config` or `product:popular` may receive
-thousands of requests per second. Expiration of that one key can be
-enough to overload the source.
+------------------------------------------------------------------------
 
-### 5.3 Cache flush or mass invalidation
+# Part 3 --- Synchronized Expiration
 
-`FLUSHDB`, `FLUSHALL`, or broad deletion can instantly remove source
-protection.
+## 7. Identical TTL Population
 
-### 5.4 Cold cache after deployment
+If 100,000 keys are loaded together with:
 
-New key prefixes, schemas, serialization formats, or namespaces can make
-the existing cache unusable.
-
-### 5.5 Redis connectivity failure
-
-This fallback is dangerous at scale:
-
-``` python
-try:
-    return redis_get()
-except Exception:
-    return database_query()
+``` redis
+EX 300
 ```
 
-If Redis fails, all application traffic can fall through to the
-database.
+they may become eligible for expiration in the same time region.
 
-### 5.6 Synchronized retries
+The resulting miss wave can transfer traffic to the source.
 
-Fixed-delay retries can create recurring herds:
+------------------------------------------------------------------------
+
+## 8. Why Batch Population Is Risky
+
+Common triggers:
 
 ``` text
-failure -> all clients wait 1 second -> all retry together
+cache warm job
+deployment startup
+nightly refresh
+bulk import
+namespace migration
+mass invalidation
 ```
 
-## 6. Pattern 1 --- TTL Jitter
+The write operation may look harmless.
 
-Instead of assigning every key:
+The failure occurs one TTL later.
+
+------------------------------------------------------------------------
+
+# Part 4 --- Hot Keys
+
+## 9. Hot-Key Regeneration
+
+One key can create a stampede even when every other key has
+well-distributed TTLs.
+
+Examples:
 
 ``` text
-TTL = 300
+global configuration
+popular product
+homepage payload
+tenant metadata
+shared reference data
 ```
 
-use:
+------------------------------------------------------------------------
+
+## 10. TTL Jitter Is Not Enough for One Hot Key
+
+Jitter changes *when* the hot key expires.
+
+It does not change how many requests arrive after it expires.
+
+A hot key normally requires request coalescing, stale serving,
+refresh-ahead, or another regeneration-control strategy.
+
+------------------------------------------------------------------------
+
+# Part 5 --- TTL Jitter
+
+## 11. Formula
 
 ``` text
-TTL = base TTL + random jitter
+effective TTL =
+base TTL + random jitter
 ```
 
 Example:
 
-``` python
-import random
-
-BASE_TTL = 300
-JITTER = 60
-
-ttl = BASE_TTL + random.randint(0, JITTER)
-r.set(key, value, ex=ttl)
+``` text
+base = 300 sec
+jitter = 0..60 sec
 ```
 
-Keys now expire over a range rather than at one instant.
+------------------------------------------------------------------------
 
-TTL jitter is especially useful for bulk-loaded, batch-generated, or
-cache-warmed key populations.
+## 12. Design Guidance
 
-It does **not** fully solve expiration of one extremely hot key. That
-requires regeneration coordination.
+Jitter should be large enough to distribute load meaningfully but should
+not violate the data's freshness requirement.
 
-## 7. Pattern 2 --- Request Coalescing / Single Flight
+Do not blindly add large random TTLs to data with strict expiration
+semantics.
 
-The goal is:
+------------------------------------------------------------------------
 
-> When many requests miss the same key, only one worker should
-> regenerate it.
+# Part 6 --- Single Flight / Request Coalescing
+
+## 13. Goal
+
+For one missing logical object:
 
 ``` text
-A -> MISS -> gets lock -> source
-B -> MISS -> lock busy -> wait
-C -> MISS -> lock busy -> wait
-D -> MISS -> lock busy -> wait
-
-A -> writes cache -> releases lock
-B/C/D -> retry cache -> HIT
+many callers
+      |
+      v
+one source regeneration
 ```
 
-The source receives approximately one lookup instead of many duplicate
-lookups.
+Other callers wait, retry the cache, receive bounded stale data, or
+follow another controlled policy.
 
-## 8. Redis Lock Primitive
+------------------------------------------------------------------------
 
-A common primitive is:
+## 14. Desired Flow
 
-``` bash
-redis-cli SET lock:product:1001 worker-token NX EX 5
+``` text
+A -> MISS -> obtains loader lock -> source
+B -> MISS -> lock busy -----------+
+C -> MISS -> lock busy -----------+--> wait/retry cache
+D -> MISS -> lock busy -----------+
+
+A -> populate cache -> release
+B/C/D -> cache HIT
 ```
 
-`NX` means create only if the lock does not already exist. `EX 5` gives
-the lock a five-second expiration so a crashed owner cannot leave it
-indefinitely.
+------------------------------------------------------------------------
 
-Each owner should use a unique token.
+# Part 7 --- Loader Lock Design
 
-## 9. Safe Lock Release
+## 15. Acquisition
 
-Never blindly run `DEL lock:key` after work completes. The original lock
-may have expired and another worker may now own a new lock.
+Conceptually:
 
-Use an ownership token and compare-and-delete atomically:
+``` redis
+SET tutorial:chapter15:lock:item:1001 <unique-token> NX EX 5
+```
+
+The lock value identifies the owner.
+
+The TTL provides crash recovery.
+
+------------------------------------------------------------------------
+
+## 16. Ownership-Safe Release
+
+Do not blindly:
+
+``` redis
+DEL lock-key
+```
+
+A previous owner's lease may have expired and a new owner may now hold
+the lock.
+
+Use atomic compare-and-delete.
 
 ``` lua
 if redis.call("GET", KEYS[1]) == ARGV[1] then
@@ -236,212 +367,546 @@ else
 end
 ```
 
-Python:
+------------------------------------------------------------------------
 
-``` python
-RELEASE_LOCK = """
-if redis.call("GET", KEYS[1]) == ARGV[1] then
-    return redis.call("DEL", KEYS[1])
-else
-    return 0
-end
-"""
+## 17. Double Check
 
-r.eval(RELEASE_LOCK, 1, lock_key, token)
+After acquiring the lock:
+
+``` text
+read cache again
 ```
 
-## 10. Double-Check After Lock Acquisition
+Another worker may have populated the key between the original miss and
+lock acquisition.
 
-A worker can observe a miss, wait for a lock, then obtain the lock after
-another worker has already rebuilt the cache. Therefore recheck Redis
-after acquiring the lock:
+------------------------------------------------------------------------
 
-``` python
-value = r.get(cache_key)
-if value is not None:
-    return value
+# Part 8 --- Lock TTL Engineering
+
+## 18. Inputs
+
+Measure:
+
+``` text
+source p50 latency
+source p95 latency
+source p99 latency
+serialization time
+network time
+application pause risk
+cache write time
 ```
 
-This prevents unnecessary duplicate source queries.
+------------------------------------------------------------------------
 
-## 11. Choosing Lock TTL
+## 19. Too Short
 
-The lock TTL must exceed normal regeneration time with allowance for
-tail latency.
+If the lock expires before regeneration completes:
+
+``` text
+worker A still loading
+lock expires
+worker B obtains lock
+worker B also loads
+```
+
+Duplicate source work returns.
+
+------------------------------------------------------------------------
+
+## 20. Too Long
+
+A very long TTL delays recovery when the owner dies.
+
+Treat the lock as a bounded lease, not permanent ownership.
+
+------------------------------------------------------------------------
+
+# Part 9 --- Waiter Behavior
+
+## 21. Do Not Wait Forever
+
+Waiters require:
+
+``` text
+maximum wait time
+jittered polling
+cancellation/error behavior
+stale fallback policy
+```
+
+Unbounded waiting converts a source problem into application worker
+exhaustion.
+
+------------------------------------------------------------------------
+
+# Part 10 --- Refresh-Ahead
+
+## 22. Concept
+
+Refresh a hot object before hard expiration.
+
+``` text
+fresh
+ |
+refresh threshold reached
+ |
+one worker refreshes
+ |
+old value remains available
+```
+
+Refresh-ahead reduces the probability that user requests encounter a
+fully missing hot key.
+
+------------------------------------------------------------------------
+
+## 23. Candidate Selection
+
+Refresh-ahead is useful when:
+
+``` text
+key is predictably hot
+source regeneration is expensive
+freshness window is known
+refresh cost is acceptable
+```
+
+Do not continuously refresh cold data merely because it exists.
+
+------------------------------------------------------------------------
+
+# Part 11 --- Stale-While-Revalidate
+
+## 24. Soft and Hard Expiration
+
+``` text
+fresh window
+     |
+soft expiration
+     |
+bounded stale window
+     |
+hard expiration
+```
+
+During the stale window, callers can receive the previous value while
+one worker refreshes it.
+
+------------------------------------------------------------------------
+
+## 25. Business Constraint
+
+Stale serving is a business-data decision, not merely a Redis
+optimization.
+
+Do not serve stale values when current state is required for
+authorization, safety, financial correctness, or another strict
+contract.
+
+------------------------------------------------------------------------
+
+# Part 12 --- Negative Caching
+
+## 26. Repeated Not-Found Requests
+
+A missing entity can itself become a hot key.
+
+A short negative TTL can prevent repeated source lookups.
+
+------------------------------------------------------------------------
+
+## 27. Risk
+
+A long negative TTL can hide a newly created object.
+
+Use shorter TTLs and explicit invalidation where required.
+
+------------------------------------------------------------------------
+
+# Part 13 --- Retry Amplification
+
+## 28. Failure Multiplier
+
+Suppose:
+
+``` text
+1,000 failed cache fills
+3 immediate retries each
+```
+
+The application can generate thousands of additional dependency calls.
+
+Retries are load.
+
+------------------------------------------------------------------------
+
+## 29. Backoff and Jitter
+
+Use:
+
+``` text
+bounded attempts
+exponential backoff
+random jitter
+```
+
+Avoid synchronized fixed-delay retry loops.
+
+------------------------------------------------------------------------
+
+# Part 14 --- Source Concurrency Protection
+
+## 30. Per-Key Lock Limitation
+
+Per-key locking prevents duplicate loads for the same key.
+
+It does not protect against:
+
+``` text
+100,000 different missing keys
+```
+
+------------------------------------------------------------------------
+
+## 31. Global/Per-Service Limits
 
 Consider:
 
 ``` text
-normal source latency = 100 ms
-p99 source latency    = 700 ms
-occasional slow load  = 2 sec
+semaphore
+bounded worker pool
+rate limiter
+queue
+bulkhead
+admission control
 ```
 
-A 200 ms lock is unsafe because it may expire while the owner is still
-rebuilding the cache.
+Protect source capacity explicitly.
 
-An excessively long lock is also undesirable because expiration is the
-recovery mechanism after owner failure.
+------------------------------------------------------------------------
 
-Measure refresh latency and choose a bounded value appropriate for the
-workload.
+# Part 15 --- Rate Limiting
 
-## 12. Pattern 3 --- Stale-While-Revalidate
+## 32. Purpose
 
-For data where bounded staleness is acceptable:
+Rate limiting answers:
+
+> How much fallback traffic may enter the source during a degraded cache
+> state?
+
+Limits can be:
 
 ``` text
-fresh value -> serve normally
-
-soft-expired value ->
-    serve stale value
-    one worker refreshes
-
-hard-expired value ->
-    no longer serve stale value
+per service
+per tenant
+per source
+per operation
+per priority class
 ```
 
-This separates **freshness** from **retention**.
+------------------------------------------------------------------------
+
+# Part 16 --- Circuit Breakers
+
+## 33. Purpose
+
+When the source is already failing, repeatedly sending regeneration
+traffic can worsen recovery.
+
+A circuit breaker can temporarily stop or sharply reduce calls after a
+failure threshold.
+
+------------------------------------------------------------------------
+
+## 34. States
+
+Conceptually:
+
+``` text
+CLOSED
+  |
+failure threshold
+  v
+OPEN
+  |
+cooldown
+  v
+HALF-OPEN
+  |
+probe success/failure
+```
+
+Circuit breakers require careful thresholds and observability.
+
+------------------------------------------------------------------------
+
+# Part 17 --- Redis Failure Fallback
+
+## 35. Dangerous Design
+
+``` text
+Redis error
+   |
+   v
+unlimited source fallback
+```
+
+A Redis incident can become a database incident.
+
+------------------------------------------------------------------------
+
+## 36. Controlled Degradation
+
+Depending on workload semantics:
+
+``` text
+bounded source fallback
+local cache
+bounded stale data
+rate limiting
+circuit breaking
+optional-feature disablement
+controlled error
+```
+
+------------------------------------------------------------------------
+
+# Part 18 --- Cold Cache
+
+## 37. Causes
+
+``` text
+new deployment namespace
+cache flush
+database recreation
+migration
+major invalidation
+new region
+disaster recovery
+```
+
+Cold-cache behavior must be capacity-tested.
+
+------------------------------------------------------------------------
+
+# Part 19 --- Cache Warming
+
+## 38. Controlled Warming
+
+Prefer:
+
+``` text
+prioritize hottest objects
+limit source concurrency
+measure source latency
+ramp gradually
+stop when source degrades
+```
+
+Do not warm the entire keyspace at unlimited speed.
+
+------------------------------------------------------------------------
+
+# Part 20 --- Recovery Storm
+
+## 39. Failure Pattern
+
+``` text
+Redis/source unavailable
+requests accumulate/retry
+dependency returns
+all callers retry
+dependency fails again
+```
+
+Recovery traffic can be more dangerous than the original failure.
+
+------------------------------------------------------------------------
+
+## 40. Recovery Controls
+
+Use:
+
+``` text
+jitter
+rate limits
+gradual concurrency ramp
+circuit-breaker half-open probes
+priority
+bounded backlog drain
+```
+
+------------------------------------------------------------------------
+
+# Part 21 --- Source Capacity Model
+
+## 41. Required Inputs
+
+``` text
+peak application reads/sec
+normal cache hit ratio
+degraded cache hit ratio
+source sustainable reads/sec
+source burst capacity
+source p95/p99 latency
+maximum cache-fill concurrency
+retry policy
+number of application instances
+```
+
+------------------------------------------------------------------------
+
+## 42. Fallback Calculation
+
+Conceptually:
+
+``` text
+source QPS =
+application QPS × miss ratio
+```
+
+At:
+
+``` text
+20,000 QPS
+1% misses
+```
+
+source demand is approximately:
+
+``` text
+200 QPS
+```
+
+At 50% misses:
+
+``` text
+10,000 QPS
+```
+
+If sustainable source capacity is 2,000 QPS, unlimited fallback is
+unsafe.
+
+------------------------------------------------------------------------
+
+# Part 22 --- Protection Budget
+
+## 43. Define It Explicitly
 
 Example:
 
 ``` text
-0 sec                 300 sec                 600 sec
-|------------------------|------------------------|
-       fresh period           stale window
-                         soft TTL              hard TTL
+source sustainable = 2,000 QPS
+normal direct load = 500 QPS
+reserved headroom = 500 QPS
+cache-fill budget = 1,000 QPS
 ```
 
-A payload can contain its soft-expiration timestamp while the Redis key
-uses a longer hard TTL.
-
-``` json
-{
-  "data": {"id": 1001, "name": "example"},
-  "fresh_until": 1791400000
-}
-```
-
-## 13. Pattern 4 --- Negative Caching
-
-Repeated requests for nonexistent objects can also overload a source.
-
-``` text
-GET patient:999999 -> cache MISS -> DB NOT FOUND
-```
-
-Without negative caching, every request repeats the database lookup.
-
-A short-lived negative entry can absorb these requests:
-
-``` text
-patient:999999 -> NOT_FOUND
-TTL -> 30 seconds
-```
-
-Negative TTLs are normally shorter than normal data TTLs because the
-object may be created later.
-
-## 14. Pattern 5 --- Backoff and Jitter
-
-Avoid immediate or fixed synchronized retries.
-
-``` python
-import random
-import time
-
-def backoff(attempt):
-    maximum = min(0.1 * (2 ** attempt), 5.0)
-    time.sleep(random.uniform(0, maximum))
-```
-
-Jitter spreads retry attempts over time.
-
-## 15. Pattern 6 --- Global Source Protection
-
-Per-key locking protects against duplicate work for one key, but it does
-not protect the source when many different keys miss simultaneously.
-
-``` text
-key:1 -> MISS
-key:2 -> MISS
-...
-key:100000 -> MISS
-```
-
-Use another layer such as:
-
--   application semaphore;
--   bounded worker pool;
--   rate limiter;
--   queue;
--   bulkhead;
--   admission control.
-
-Architecture:
-
-``` text
-Requests
-   |
- Redis
-   |
- MISS
-   |
-per-key single flight
-   |
-global source concurrency limit
-   |
-Database / API
-```
-
-## 16. Redis Failure Must Not Become Database Failure
-
-If normal database traffic is 300 QPS but application traffic is 30,000
-QPS, unlimited fallback during a Redis outage can send all 30,000 QPS to
-the database.
-
-Possible protections include:
-
--   bounded source fallback;
--   stale local data where safe;
--   circuit breaking;
--   rate limiting;
--   controlled degradation;
--   local in-process caching;
--   disabling optional features;
--   queued refresh.
-
-## 17. Redis Enterprise Operational View
-
-Redis Enterprise can be healthy while the caching architecture is
-unhealthy.
-
-Correlate:
-
-``` text
-Redis latency
-Redis operations/sec
-Redis memory
-Redis evictions/expirations
-client connections
-
-WITH
-
-application hit ratio
-cache misses
-refresh attempts
-lock contention
-source QPS
-source latency
-source errors
-```
-
-A database CPU spike following a cache-hit-ratio drop can be a cache
-stampede even when Redis CPU and latency remain normal.
+The exact numbers must come from measurement, not assumption.
 
 ------------------------------------------------------------------------
 
-# Hands-On Lab --- Reproduce and Prevent a Cache Stampede
+# Part 23 --- Observability Model
+
+## 44. Cache Metrics
+
+``` text
+cache_hit_total
+cache_miss_total
+cache_hit_ratio
+cache_refresh_total
+cache_refresh_error_total
+stale_served_total
+negative_cache_hit_total
+```
+
+------------------------------------------------------------------------
+
+## 45. Coordination Metrics
+
+``` text
+loader_lock_acquired_total
+loader_lock_contended_total
+loader_wait_seconds
+loader_wait_timeout_total
+refresh_inflight
+```
+
+------------------------------------------------------------------------
+
+## 46. Source Metrics
+
+``` text
+source_request_total
+source_latency
+source_error_total
+source_timeout_total
+source_inflight
+source_rate_limited_total
+circuit_breaker_state
+```
+
+------------------------------------------------------------------------
+
+# Part 24 --- Alerting
+
+## 47. Useful Correlations
+
+Alerting should detect combinations such as:
+
+``` text
+cache hit ratio down
++
+source QPS up
++
+source latency up
+```
+
+or:
+
+``` text
+lock contention up
++
+refresh latency up
+```
+
+Do not alert only on Redis CPU.
+
+------------------------------------------------------------------------
+
+# Part 25 --- Source Amplification Ratio
+
+## 48. Concept
+
+For a defined miss population:
+
+``` text
+source regeneration calls / cache misses
+```
+
+A hot-key burst with:
+
+``` text
+100 misses
+100 source calls
+```
+
+shows no coalescing.
+
+If:
+
+``` text
+100 misses
+1 source call
+```
+
+single-flight protection is working.
+
+------------------------------------------------------------------------
+
+# Part 26 --- Hands-On Lab --- Reproduce and Prevent a Cache Stampede
 
 ## 18. Lab Objectives
 
@@ -551,8 +1016,8 @@ r = redis.Redis(
     decode_responses=True,
 )
 
-CACHE_KEY = "lab:chapter15:item:1001"
-LOCK_KEY = "lab:chapter15:lock:item:1001"
+CACHE_KEY = "tutorial:chapter15:item:1001"
+LOCK_KEY = "tutorial:chapter15:lock:item:1001"
 
 SOURCE_LATENCY = 0.30
 CACHE_TTL = 5
@@ -723,22 +1188,22 @@ same key.
 ## 24. Inspect the Hot Key
 
 ``` bash
-redis-cli GET lab:chapter15:item:1001
-redis-cli TTL lab:chapter15:item:1001
-redis-cli PTTL lab:chapter15:item:1001
+redis-cli GET tutorial:chapter15:item:1001
+redis-cli TTL tutorial:chapter15:item:1001
+redis-cli PTTL tutorial:chapter15:item:1001
 ```
 
 Inspect the lock while regeneration is active:
 
 ``` bash
-redis-cli GET lab:chapter15:lock:item:1001
-redis-cli PTTL lab:chapter15:lock:item:1001
+redis-cli GET tutorial:chapter15:lock:item:1001
+redis-cli PTTL tutorial:chapter15:lock:item:1001
 ```
 
 ## 25. Force the Hot-Key Miss
 
 ``` bash
-redis-cli DEL lab:chapter15:item:1001
+redis-cli DEL tutorial:chapter15:item:1001
 ```
 
 Immediately run the concurrent test again.
@@ -751,21 +1216,21 @@ invalidation.
 Create synchronized keys:
 
 ``` bash
-redis-cli SET lab:jitter:1 value EX 60
-redis-cli SET lab:jitter:2 value EX 60
-redis-cli SET lab:jitter:3 value EX 60
-redis-cli SET lab:jitter:4 value EX 60
-redis-cli SET lab:jitter:5 value EX 60
+redis-cli SET tutorial:chapter15:jitter:1 value EX 60
+redis-cli SET tutorial:chapter15:jitter:2 value EX 60
+redis-cli SET tutorial:chapter15:jitter:3 value EX 60
+redis-cli SET tutorial:chapter15:jitter:4 value EX 60
+redis-cli SET tutorial:chapter15:jitter:5 value EX 60
 ```
 
 Check:
 
 ``` bash
-redis-cli TTL lab:jitter:1
-redis-cli TTL lab:jitter:2
-redis-cli TTL lab:jitter:3
-redis-cli TTL lab:jitter:4
-redis-cli TTL lab:jitter:5
+redis-cli TTL tutorial:chapter15:jitter:1
+redis-cli TTL tutorial:chapter15:jitter:2
+redis-cli TTL tutorial:chapter15:jitter:3
+redis-cli TTL tutorial:chapter15:jitter:4
+redis-cli TTL tutorial:chapter15:jitter:5
 ```
 
 Now distribute expirations:
@@ -778,8 +1243,8 @@ r = redis.Redis(host="localhost", port=6379, decode_responses=True)
 
 for i in range(1, 11):
     ttl = 60 + random.randint(0, 30)
-    r.set(f"lab:jitter:{i}", "value", ex=ttl)
-    print(f"lab:jitter:{i} -> {ttl}s")
+    r.set(f"tutorial:chapter15:jitter:{i}", "value", ex=ttl)
+    print(f"tutorial:chapter15:jitter:{i} -> {ttl}s")
 ```
 
 The resulting TTLs should be spread over a range instead of expiring
@@ -787,7 +1252,7 @@ together.
 
 ------------------------------------------------------------------------
 
-# Stale-While-Revalidate Lab
+# Part 34 --- Stale-While-Revalidate Lab
 
 ## 27. Create `chapter15_stale_cache.py`
 
@@ -811,8 +1276,8 @@ r = redis.Redis(
     decode_responses=True,
 )
 
-CACHE_KEY = "lab:chapter15:stale:item:1001"
-LOCK_KEY = "lab:chapter15:stale:lock:item:1001"
+CACHE_KEY = "tutorial:chapter15:stale:item:1001"
+LOCK_KEY = "tutorial:chapter15:stale:lock:item:1001"
 
 SOFT_TTL = 10
 HARD_TTL = 30
@@ -938,7 +1403,7 @@ The stale value remains available while refresh is coordinated.
 
 ------------------------------------------------------------------------
 
-# Failure Injection
+# Part 40 --- Initial Failure Injection
 
 ## 28. Slow Source Test
 
@@ -997,14 +1462,14 @@ other business requirements require current data.
 Create a lock:
 
 ``` bash
-redis-cli SET lab:chapter15:testlock owner-1 NX EX 5
+redis-cli SET tutorial:chapter15:testlock owner-1 NX EX 5
 ```
 
 Verify:
 
 ``` bash
-redis-cli GET lab:chapter15:testlock
-redis-cli TTL lab:chapter15:testlock
+redis-cli GET tutorial:chapter15:testlock
+redis-cli TTL tutorial:chapter15:testlock
 ```
 
 Do not delete it.
@@ -1012,7 +1477,7 @@ Do not delete it.
 After expiration:
 
 ``` bash
-redis-cli EXISTS lab:chapter15:testlock
+redis-cli EXISTS tutorial:chapter15:testlock
 ```
 
 Expected:
@@ -1025,7 +1490,7 @@ The TTL prevents a crashed owner from leaving an indefinite lock.
 
 ------------------------------------------------------------------------
 
-# Observability
+# Part 41 --- Lab Observability
 
 ## 31. Application Metrics
 
@@ -1107,7 +1572,7 @@ objective is to detect redundant source work.
 
 ------------------------------------------------------------------------
 
-# Troubleshooting Runbook
+# Part 42 --- Initial Troubleshooting
 
 ## 35. Database/API Load Suddenly Increased
 
@@ -1240,192 +1705,649 @@ Measure whether the source remains within safe capacity.
 
 ------------------------------------------------------------------------
 
-# Production Checklist
+------------------------------------------------------------------------
 
-## 44. Readiness Checklist
+# Part 43 --- Load-Test Methodology
 
--   [ ] Cache hit ratio is observable.
--   [ ] Source request rate is observable.
--   [ ] Hot keys are understood.
--   [ ] TTLs match data semantics.
--   [ ] Large key populations do not share synchronized expiration
-    unnecessarily.
--   [ ] TTL jitter is applied where appropriate.
--   [ ] Hot-key regeneration is coalesced.
--   [ ] Lock owners use unique tokens.
--   [ ] Locks have bounded TTLs.
+## 90. Test Profiles
+
+Do not validate stampede protection with only one sequential client.
+
+Test:
+
+``` text
+warm-cache steady state
+single hot-key expiration
+many synchronized expirations
+cold cache
+slow source
+source errors
+Redis timeout
+application restart
+recovery after dependency outage
+```
+
+------------------------------------------------------------------------
+
+## 91. Measurements
+
+Capture:
+
+``` text
+request throughput
+p50/p95/p99 application latency
+cache hit ratio
+source QPS
+source p95/p99 latency
+source inflight
+lock contention
+waiter timeout
+errors
+stale responses
+```
+
+------------------------------------------------------------------------
+
+## 92. Pass Condition
+
+A test does not pass merely because all requests eventually return.
+
+It passes when:
+
+``` text
+source remains within sustainable capacity
+application behavior follows the defined degradation contract
+no uncontrolled retry amplification occurs
+recovery is stable
+```
+
+------------------------------------------------------------------------
+
+# Failure Injection
+
+## 93. Failure 1 --- Hot-Key Expiration
+
+Delete only the isolated lab key while concurrent callers are active.
+
+Expected:
+
+``` text
+one/few controlled regeneration operations
+not one source call per caller
+```
+
+------------------------------------------------------------------------
+
+## 94. Failure 2 --- Synchronized Expiration
+
+Populate many training keys with the same TTL.
+
+Expected in the unprotected case:
+
+``` text
+miss wave
+source load spike
+```
+
+Repeat with jitter.
+
+Expected:
+
+``` text
+expiration spread
+lower instantaneous source demand
+```
+
+------------------------------------------------------------------------
+
+## 95. Failure 3 --- Slow Source
+
+Increase simulated source latency beyond normal.
+
+Check:
+
+``` text
+lock TTL
+waiter timeout
+source inflight
+duplicate regeneration
+```
+
+------------------------------------------------------------------------
+
+## 96. Failure 4 --- Lock Owner Crash
+
+Allow the owner to disappear without explicit unlock.
+
+Expected:
+
+``` text
+lease expires
+future regeneration can proceed
+```
+
+------------------------------------------------------------------------
+
+## 97. Failure 5 --- Lock TTL Too Short
+
+Configure a refresh longer than the lock TTL.
+
+Expected:
+
+``` text
+second owner can appear
+duplicate source work becomes possible
+```
+
+This demonstrates why TTL sizing is a measured engineering decision.
+
+------------------------------------------------------------------------
+
+## 98. Failure 6 --- Source Error
+
+Return simulated source failures.
+
+Expected:
+
+``` text
+bounded retry
+no cache poisoning
+circuit/rate controls according to policy
+stale value only if permitted
+```
+
+------------------------------------------------------------------------
+
+## 99. Failure 7 --- Redis Unavailable
+
+Simulate Redis connectivity failure in an isolated test environment.
+
+Expected:
+
+``` text
+no unlimited source fall-through
+```
+
+Validate the application's degraded-mode contract.
+
+------------------------------------------------------------------------
+
+## 100. Failure 8 --- Retry Storm
+
+Configure many callers to retry simultaneously.
+
+Observe source amplification.
+
+Repeat with exponential backoff and jitter.
+
+------------------------------------------------------------------------
+
+## 101. Failure 9 --- Cold Cache
+
+Remove only the dedicated training key population.
+
+Generate representative concurrency.
+
+Expected:
+
+``` text
+source concurrency remains bounded
+```
+
+------------------------------------------------------------------------
+
+## 102. Failure 10 --- Recovery Storm
+
+Restore the simulated dependency after a failure period.
+
+Expected:
+
+``` text
+traffic ramps within source capacity
+not all waiting work released at once
+```
+
+------------------------------------------------------------------------
+
+# Troubleshooting
+
+## 103. Source QPS Suddenly High
+
+Check:
+
+``` text
+cache hit ratio
+recent invalidation
+expired-key behavior
+deployment/key namespace
+Redis errors
+retry volume
+hot keys
+```
+
+------------------------------------------------------------------------
+
+## 104. Redis Healthy but Database Slow
+
+Do not stop at Redis infrastructure metrics.
+
+Check:
+
+``` text
+cache misses
+source fallback
+loader concurrency
+lock contention
+source latency
+```
+
+Redis can be healthy while application cache behavior overloads the
+source.
+
+------------------------------------------------------------------------
+
+## 105. Lock Contention High
+
+Check:
+
+``` text
+key request rate
+refresh duration
+source latency
+cache TTL
+lock TTL
+cache-write success
+```
+
+High contention may be evidence of a hot key, not Redis saturation.
+
+------------------------------------------------------------------------
+
+## 106. Multiple Loaders Still Reach Source
+
+Check:
+
+``` text
+same lock-key construction
+NX result handling
+lock TTL
+ownership-safe release
+double-check after acquisition
+Redis error bypass path
+```
+
+------------------------------------------------------------------------
+
+## 107. Waiter Timeouts High
+
+Check:
+
+``` text
+refresh latency
+source health
+lock owner health
+poll interval
+wait timeout
+cache population errors
+```
+
+------------------------------------------------------------------------
+
+## 108. Source Recovers then Fails Again
+
+Suspect a recovery storm.
+
+Check:
+
+``` text
+retry synchronization
+backlog
+cache warming
+concurrency ramp
+circuit breaker
+rate limiter
+```
+
+------------------------------------------------------------------------
+
+# Production Runbooks
+
+## 109. Runbook --- Active Cache Stampede
+
+``` text
+1. Confirm cache-hit-ratio drop.
+2. Confirm source-QPS increase.
+3. Identify hot/missing keys or synchronized-expiration population.
+4. Measure source latency and saturation.
+5. Reduce uncontrolled retries.
+6. Apply source concurrency/rate limits.
+7. Serve bounded stale data only where approved.
+8. Prevent broad cache invalidation.
+9. Warm critical keys gradually.
+10. Monitor source recovery.
+11. Confirm cache hit ratio recovers.
+12. Confirm application latency recovers.
+13. Preserve incident metrics.
+14. Correct TTL/coalescing design.
+```
+
+------------------------------------------------------------------------
+
+## 110. Runbook --- Hot-Key Stampede
+
+``` text
+1. Identify the hot key.
+2. Measure requests/sec.
+3. Measure regeneration duration.
+4. Confirm single-flight behavior.
+5. Check lock TTL.
+6. Check ownership-safe release.
+7. Check double-read after acquisition.
+8. Enable/repair stale or refresh-ahead policy if approved.
+9. Validate source-call count.
+10. Validate request latency.
+```
+
+------------------------------------------------------------------------
+
+## 111. Runbook --- Cold Cache Recovery
+
+``` text
+1. Estimate hot working set.
+2. Measure source sustainable capacity.
+3. Set cache-fill concurrency budget.
+4. Prioritize hottest/critical objects.
+5. Warm gradually.
+6. Monitor source p95/p99 latency.
+7. Pause/rate-reduce if source degrades.
+8. Add jittered TTLs.
+9. Validate hit-ratio recovery.
+10. Confirm no synchronized future expiry was created.
+```
+
+------------------------------------------------------------------------
+
+## 112. Runbook --- Redis Failure With Source Fallback
+
+``` text
+1. Confirm Redis impairment.
+2. Measure fallback source QPS.
+3. Activate source protection.
+4. Disable unlimited retries.
+5. Apply controlled degradation.
+6. Use stale/local cache only where approved.
+7. Restore Redis connectivity.
+8. Ramp normal traffic.
+9. Validate source recovers.
+10. Validate cache repopulation does not create a new storm.
+```
+
+------------------------------------------------------------------------
+
+## 113. Runbook --- Recovery Storm
+
+``` text
+1. Confirm dependency has recovered.
+2. Keep concurrency bounded.
+3. Keep jittered retries enabled.
+4. Probe health gradually.
+5. Ramp cache fills in stages.
+6. Monitor source latency/errors.
+7. Stop ramp if saturation returns.
+8. Drain waiting work within capacity.
+9. Confirm stable steady state.
+10. Review recovery thresholds.
+```
+
+------------------------------------------------------------------------
+
+# Part 44 --- Capacity Review Template
+
+## 114. Workload Review
+
+``` text
+Service:
+Cache database:
+Source:
+Peak application QPS:
+Normal hit ratio:
+Expected degraded hit ratio:
+Source normal QPS:
+Source sustainable QPS:
+Source burst QPS:
+Source p95 latency:
+Source p99 latency:
+Hot keys:
+Base TTL:
+TTL jitter:
+Soft TTL:
+Hard TTL:
+Refresh-ahead threshold:
+Max loader concurrency:
+Rate limit:
+Retry attempts:
+Backoff:
+Circuit-breaker threshold:
+Cold-cache warming plan:
+Recovery ramp:
+Owner:
+```
+
+------------------------------------------------------------------------
+
+# Production Acceptance Checklist
+
+## 115. Stampede Protection
+
+-   [ ] Hot keys identified.
+-   [ ] Synchronized-expiration risk reviewed.
+-   [ ] TTL jitter defined where appropriate.
+-   [ ] Single-flight behavior implemented for expensive hot misses.
+-   [ ] Loader locks use unique owner tokens.
 -   [ ] Lock release validates ownership.
--   [ ] Cache is double-checked after lock acquisition.
--   [ ] Waiter behavior is bounded.
--   [ ] Retries use backoff and jitter.
--   [ ] Negative caching is considered for repeated not-found lookups.
--   [ ] Stale-while-revalidate is used only where stale data is
-    acceptable.
--   [ ] Source concurrency is bounded.
--   [ ] Redis failure does not create unlimited source fallback.
--   [ ] Cache flush procedures account for source capacity.
--   [ ] Cold-cache behavior is load tested.
--   [ ] Source slowdown and failure are tested.
--   [ ] Dashboards correlate Redis, application, and source metrics.
+-   [ ] Lock TTL is based on measured refresh latency.
+-   [ ] Cache is rechecked after lock acquisition.
+-   [ ] Waiter timeout is bounded.
+-   [ ] Waiter polling uses jitter.
+-   [ ] Refresh-ahead reviewed.
+-   [ ] Stale-serving policy documented.
+-   [ ] Negative-cache policy documented.
+-   [ ] Retry count bounded.
+-   [ ] Retry backoff/jitter implemented.
+-   [ ] Source concurrency bounded.
+-   [ ] Source rate limit documented.
+-   [ ] Circuit-breaker behavior reviewed.
+-   [ ] Redis-failure fallback bounded.
+-   [ ] Cold-cache behavior load tested.
+-   [ ] Cache warming rate limited.
+-   [ ] Recovery storm tested.
+-   [ ] Source-capacity model documented.
+-   [ ] Dashboards correlate cache and source behavior.
+-   [ ] Incident runbooks available.
 
 ------------------------------------------------------------------------
 
-# Acceptance Validation
+# Knowledge Validation
 
-## 45. Required Tests
+## 116. Questions
 
-### Test A --- Naive stampede
+You should be able to answer:
 
-Run concurrent requests against an empty cache.
+1.  What is a cache stampede?
+2.  How is it related to a thundering herd?
+3.  Why can Redis remain healthy during a stampede?
+4.  How does source amplification occur?
+5.  Why are synchronized TTLs dangerous?
+6.  What problem does TTL jitter solve?
+7.  Why does TTL jitter not fully protect one hot key?
+8.  What is single-flight/request coalescing?
+9.  Why must a loader lock have an expiration?
+10. Why must lock release verify ownership?
+11. Why should the cache be checked again after lock acquisition?
+12. What happens when lock TTL is shorter than refresh duration?
+13. Why must waiter behavior be bounded?
+14. What is refresh-ahead?
+15. What is stale-while-revalidate?
+16. What is the difference between soft and hard TTL?
+17. When is stale serving inappropriate?
+18. Why use negative caching?
+19. How can retries amplify an incident?
+20. Why is jitter important for retries?
+21. Why is per-key locking insufficient during a fully cold cache?
+22. What is a source concurrency budget?
+23. How does a circuit breaker protect a failing source?
+24. Why can Redis failure overload a database?
+25. What is a recovery storm?
+26. How should cache warming be rate limited?
+27. Which metrics prove single-flight is working?
+28. Why should cold-cache behavior be load tested?
+29. What determines safe fallback QPS?
+30. What conditions must be met before declaring stampede protection
+    production-ready?
 
-Expected:
+------------------------------------------------------------------------
 
-``` text
-multiple source lookups
+# Hands-On Acceptance Checklist
+
+## 117. Lab Completion
+
+-   [ ] Reproduced naive hot-key stampede.
+-   [ ] Measured source-call amplification.
+-   [ ] Implemented TTL jitter.
+-   [ ] Implemented single-flight protection.
+-   [ ] Used unique lock owner token.
+-   [ ] Used ownership-safe Lua release.
+-   [ ] Verified double-check behavior.
+-   [ ] Increased concurrent clients.
+-   [ ] Tested lock owner expiration.
+-   [ ] Tested too-short lock TTL concept.
+-   [ ] Implemented stale-while-revalidate lab.
+-   [ ] Tested soft expiration.
+-   [ ] Tested hard expiration behavior.
+-   [ ] Simulated slow source.
+-   [ ] Simulated source failure.
+-   [ ] Reviewed negative caching.
+-   [ ] Reviewed retry backoff/jitter.
+-   [ ] Reviewed source concurrency controls.
+-   [ ] Reviewed rate limiting.
+-   [ ] Reviewed circuit breaking.
+-   [ ] Tested cold-cache behavior.
+-   [ ] Reviewed recovery-storm behavior.
+-   [ ] Completed all failure scenarios.
+-   [ ] Reviewed all production runbooks.
+-   [ ] Completed production acceptance checklist.
+
+------------------------------------------------------------------------
+
+# 118. Lab Cleanup
+
+Find chapter keys first:
+
+``` redis
+SCAN 0 MATCH 'tutorial:chapter15:*' COUNT 100
 ```
 
-### Test B --- Single flight
+Delete only exact isolated lab keys:
 
-Run the same workload using the protected implementation.
-
-Expected:
-
-``` text
-approximately one source lookup for the hot key
+``` redis
+UNLINK tutorial:chapter15:item:1001
+UNLINK tutorial:chapter15:lock:item:1001
+UNLINK tutorial:chapter15:stale:item:1001
+UNLINK tutorial:chapter15:stale:lock:item:1001
+UNLINK tutorial:chapter15:testlock
 ```
 
-### Test C --- TTL jitter
+Delete jitter keys only after confirming they belong to this lab.
 
-Create a population of jittered keys.
+Do not use:
 
-Expected:
-
-``` text
-expiration times distributed across a range
-```
-
-### Test D --- Lock recovery
-
-Allow a test lock owner to disappear.
-
-Expected:
-
-``` text
-lock automatically expires
-```
-
-### Test E --- Stale serving
-
-Pass the soft TTL while remaining within the hard TTL.
-
-Expected:
-
-``` text
-stale value can be served
-refresh is coordinated
-```
-
-### Test F --- Source slowdown
-
-Increase source latency.
-
-Expected:
-
-``` text
-duplicate source work remains controlled
-```
-
-### Test G --- Source failure
-
-Inject a source exception.
-
-Expected:
-
-``` text
-failure follows the defined bounded fallback policy
-no uncontrolled retry storm
-```
-
-## 46. Cleanup
-
-``` bash
-redis-cli DEL lab:chapter15:item:1001
-redis-cli DEL lab:chapter15:lock:item:1001
-redis-cli DEL lab:chapter15:stale:item:1001
-redis-cli DEL lab:chapter15:stale:lock:item:1001
-redis-cli DEL lab:chapter15:testlock
-```
-
-Remove jitter keys:
-
-``` bash
-redis-cli DEL \
-  lab:jitter:1 \
-  lab:jitter:2 \
-  lab:jitter:3 \
-  lab:jitter:4 \
-  lab:jitter:5 \
-  lab:jitter:6 \
-  lab:jitter:7 \
-  lab:jitter:8 \
-  lab:jitter:9 \
-  lab:jitter:10
+``` redis
+FLUSHDB
+FLUSHALL
 ```
 
 ------------------------------------------------------------------------
 
-# Key Takeaways
+# 119. Key Takeaways
 
-## 47. Production Lessons
-
-1.  Do not synchronize large populations of TTLs.
-2.  Use TTL jitter to spread expiration.
-3.  Coordinate regeneration for hot keys.
-4.  Use unique lock tokens and ownership-safe release.
-5.  Give regeneration locks a bounded TTL.
-6.  Double-check the cache after obtaining a lock.
-7.  Use stale-while-revalidate only where bounded staleness is
-    acceptable.
-8.  Consider short negative caching for repeated not-found requests.
-9.  Use exponential backoff with jitter.
-10. Bound total source concurrency, not only per-key concurrency.
-11. Do not turn Redis failure into unlimited database fallback.
-12. Observe cache and downstream source behavior together.
-13. Load-test cold-cache and expiration scenarios before production.
-
-A successful caching architecture is not measured only by Redis latency.
-It is measured by whether the complete system remains stable when the
-cache is cold, keys expire, Redis is impaired, or the source becomes
-slow.
+1.  A cache stampede is a source-protection failure, not necessarily a
+    Redis infrastructure failure.
+2.  Synchronized expiration can transfer large request bursts to the
+    source.
+3.  TTL jitter spreads expiration but does not by itself protect one hot
+    key.
+4.  Single-flight/request coalescing prevents duplicate regeneration for
+    the same object.
+5.  Loader locks require unique ownership tokens, bounded TTLs, and
+    ownership-safe release.
+6.  Refresh latency must drive lock-TTL engineering.
+7.  Waiters must have bounded behavior.
+8.  Refresh-ahead can prevent predictable hot keys from becoming fully
+    missing.
+9.  Stale-while-revalidate can protect latency and source capacity when
+    bounded staleness is acceptable.
+10. Negative caching can absorb repeated requests for missing entities.
+11. Retries can multiply load and must use bounds, backoff, and jitter.
+12. Per-key locking does not protect against many unique misses.
+13. Source concurrency and rate limits must reflect measured source
+    capacity.
+14. Circuit breakers can reduce pressure on an already failing source.
+15. Redis failure must not automatically become unlimited database
+    fallback.
+16. Cold-cache and recovery behavior must be load tested.
+17. Cache warming must be gradual and source-aware.
+18. Recovery storms can cause a second outage after the original
+    dependency recovers.
+19. Cache, application, and source metrics must be correlated.
+20. Production acceptance requires proving the source stays within
+    capacity during degraded cache conditions.
 
 ------------------------------------------------------------------------
 
-# Chapter Completion Checklist
+# 120. References
 
-## 48. Completion Status
+Validate commands and behavior against the exact Redis/Redis Enterprise
+and client versions deployed.
 
--   [x] Cache stampede explained
--   [x] Thundering herd explained
--   [x] Source amplification explained
--   [x] Synchronized expiration covered
--   [x] Hot-key expiration covered
--   [x] TTL jitter implemented
--   [x] Request coalescing implemented
--   [x] Redis locking implemented
--   [x] Safe lock release implemented
--   [x] Lock TTL behavior tested
--   [x] Double-check pattern covered
--   [x] Stale-while-revalidate implemented
--   [x] Soft/hard TTL covered
--   [x] Negative caching covered
--   [x] Retry backoff/jitter covered
--   [x] Source concurrency protection covered
--   [x] Redis-failure fallback risk covered
--   [x] Observability included
--   [x] Troubleshooting runbook included
--   [x] Failure injection included
--   [x] Full hands-on lab included
--   [x] Acceptance validation included
--   [x] Cleanup included
+Recommended official documentation areas:
 
-**Chapter 15 status: COMPLETE**
+-   Redis `GET`
+-   Redis `SET`
+-   `NX`
+-   key expiration and TTL
+-   `DEL`
+-   `UNLINK`
+-   Lua scripting / atomic server-side execution
+-   Redis client connection behavior
+-   Redis Enterprise database availability
+-   Redis Enterprise observability
+-   Redis persistence and replication
+-   caching architecture and invalidation patterns
+
+Single-flight, stale-while-revalidate, refresh-ahead, rate limiting, and
+circuit breaking are application architecture patterns. Their exact
+implementation depends on the application framework, Redis client,
+source system, consistency contract, and failure model.
+
+------------------------------------------------------------------------
+
+# Next Chapter
+
+**Chapter 16 --- Cache Warming, Refresh-Ahead & Cold-Start Engineering**
+
+Chapter 16 will go deeply into:
+
+-   cold-cache mechanics
+-   working-set discovery
+-   cache preloading
+-   demand-driven warming
+-   refresh-ahead scheduling
+-   hot-key prioritization
+-   source-aware warm rates
+-   deployment warming
+-   failover warming
+-   regional recovery
+-   TTL distribution
+-   warming observability
+-   failure injection
+-   production runbooks
