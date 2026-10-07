@@ -1,5 +1,11 @@
 # Snowflake
 
-Production-oriented Snowflake tutorials, hands-on labs, runbooks, and practical use cases for administrators, DBREs, SREs, and data-platform engineers.
+**Status: COMPLETE — 90/90 chapters**
 
-Planned areas include architecture, access control, object ownership, warehouses, performance, cost management, data loading, sharing, security, monitoring, troubleshooting, migrations, and production operations.
+Production-oriented Snowflake tutorials, hands-on labs, runbooks, and practical use cases for administrators, DBREs, SREs, data-platform engineers, and developers.
+
+The curriculum contains Chapters **01–90**, progressing from Snowflake fundamentals through ingestion, data engineering, security, performance, observability, FinOps, recovery, sharing, disaster recovery, automation, troubleshooting, production operations, and end-to-end projects.
+
+- [Master curriculum](MASTER-LAYOUT.md)
+- [Completion status](STATUS.md)
+- Final chapter: [90 — Snowflake Production Pipeline Reliability & Recovery Project](90-snowflake-production-pipeline-reliability-recovery-project.md)
