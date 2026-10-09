@@ -1,43 +1,20 @@
-# Databricks Production Tutorials
+# Databricks Tutorials
 
-Production-focused Databricks learning track for developers, data engineers, analysts, DBRE/SRE, and platform engineers.
+A production-focused, hands-on curriculum with 100 planned chapters across 20 parts. The first five chapters are authored. Platform lab validation remains pending; Chapter 005’s local simulation passed.
 
-## Learning workflow
+- [Master plan](MASTER-PLAN.md)
+- [Progress tracker](PROGRESS-TRACKER.md)
 
-Each tutorial progresses through:
+## Part 01 — Foundations & Architecture
 
-`Draft → Technical + Vendor Source Review → Production + Safety + Copyright Review → Revised Final / Canonical → Merge`
+- [Chapter 001 — What Is Databricks?](chapters/001-what-is-databricks.md)
+- [Chapter 002 — Data Lakes, Warehouses & Lakehouses](chapters/002-data-lakes-warehouses-lakehouses.md)
+- [Chapter 003 — Control Plane, Compute Plane & Cloud Storage](chapters/003-control-plane-compute-plane-cloud-storage.md)
+- [Chapter 004 — Spark, Delta Lake, Unity Catalog & MLflow](chapters/004-spark-delta-lake-unity-catalog-mlflow.md)
+- [Chapter 005 — Databricks, Snowflake, Kubernetes & TrueFoundry](chapters/005-databricks-snowflake-kubernetes-truefoundry.md)
 
-Hands-on exercises are designed to be safe by default. Read-only labs use the marker `[TUTORIAL-ACCEPTANCE — SAFE-READ]`.
+Next: Chapter 006 — Workspace Navigation & Environment Inventory.
 
-## Curriculum
+Each chapter contains prerequisites, explanations, a lab, expected results, acceptance criteria, troubleshooting, cleanup, and official references. Keep authoring, execution validation, and publication status separate. Finish and publish one chapter before starting the next.
 
-1. **Fundamentals** — Databricks, lakehouse architecture, platform architecture, workspace, compute, notebooks
-2. **Delta Lake & Data Fundamentals**
-3. **Unity Catalog & Governance**
-4. **Data Engineering**
-5. **Databricks SQL**
-6. **Performance & Cost**
-7. **Production Operations**
-8. **Security & Administration**
-9. **CI/CD & Automation**
-10. **Real-World Project**
-
-## Part 1 — Fundamentals
-
-| Tutorial | Status |
-|---|---|
-| 1.1 — What Is Databricks? | Canonical |
-| 1.2 — Lakehouse Architecture Fundamentals | Planned |
-| 1.3 — Databricks Platform Architecture | Planned |
-| 1.4 — Workspace Fundamentals | Planned |
-| 1.5 — Compute Fundamentals | Planned |
-| 1.6 — Notebook Fundamentals | Planned |
-
-## Safety principles
-
-- Use approved development/training environments.
-- Use synthetic or approved non-production data.
-- Never place credentials, tokens, PHI, or PII in tutorial artifacts.
-- Use approved compute and follow organizational cost controls.
-- Validate cloud- and feature-specific behavior against current Databricks documentation before production implementation.
+The earlier Databricks track has been replaced by this curriculum. Its prior files remain recoverable in Git history.
