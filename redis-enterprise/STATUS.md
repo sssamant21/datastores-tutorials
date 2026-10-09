@@ -1,74 +1,77 @@
 # Redis Enterprise Production Engineering — Status
 
-**Updated:** 2026-10-07  
-**Curriculum target:** 80 chapters  
-**Rebuild progress:** 2/80  
-**Current chapter:** 03 — Redis Data Types, Key Design & Memory-Aware Data Modeling
+**Updated:** 2026-10-09
+**Curriculum target:** 80 chapters
+**Content progress:** 51/80
+**Remaining:** 29
+**Current chapter:** 52 — Redis Enterprise Data Migration, Import/Export & Cutover Engineering
 
-## Current Rebuild
+## Reconciliation Completed
 
-| # | Chapter | Rebuild Status | Repository State |
-|---|---|---|---|
-| 01 | Redis Enterprise Fundamentals & Architecture | Rebuilt | Canonical replacement prepared |
-| 02 | Connecting to Redis Enterprise — Clients, Endpoints, TLS & Connection Management | Rebuilt | Canonical replacement prepared |
-| 03 | Redis Data Types, Key Design & Memory-Aware Data Modeling | Next | Legacy source retained |
-| 04–36 | Existing legacy tutorials | Pending rebuild | Retained as source material |
-| 37–80 | New production curriculum | Planned | Defined in MASTER-LAYOUT.md |
+The curriculum was reconciled against the actual repository sequence on 2026-10-09.
+
+Structural corrections completed:
+
+- Chapter 42 restored as **Upgrades, Maintenance & Change Engineering**.
+- Duplicate Chapter 44 security content replaced by **Governance, Standards & Operational Readiness Engineering**.
+- Duplicate/overlapping Chapter 47 capacity content replaced by **Database Lifecycle, Provisioning & Configuration Engineering**.
+- Chapter 51 added as the **End-to-End Production Engineering Project**.
+- MASTER-LAYOUT.md replaced with the authoritative 01–80 roadmap.
+- Chapters 52–80 now cover remaining advanced topics rather than repeating completed subjects.
+
+## Current State
+
+| Range | State |
+|---|---|
+| 01–20 | Content present |
+| 21–30 | Content present; Chapter 21/27 overlap flagged for final deduplication review |
+| 31–38 | Content present |
+| 39–44 | Content present and structurally reconciled |
+| 45–51 | Content present and structurally reconciled |
+| 52–80 | Planned in MASTER-LAYOUT.md |
 
 ## Authoritative Curriculum
 
-The authoritative roadmap is [MASTER-LAYOUT.md](MASTER-LAYOUT.md).
+MASTER-LAYOUT.md is the authoritative roadmap.
 
-The former 36-chapter curriculum is retired as the curriculum definition. Existing Chapter 03–36 files remain temporarily because useful commands, examples, and operational material may be incorporated into their new replacement chapters.
-
-They must not be interpreted as canonical chapters in the new 80-chapter track.
-
-## Cleanup Policy
-
-For each chapter:
-
-1. Review any relevant legacy chapter.
-2. Preserve useful technical material.
-3. Rebuild to the production chapter standard.
-4. Validate against current Redis documentation.
-5. Add hands-on labs and safe failure injection where applicable.
-6. Add troubleshooting and operational runbooks.
-7. Replace the legacy chapter.
-8. Verify repository links and tracker status.
-9. Mark the new chapter canonical.
-
-Legacy material is removed only after its replacement has been completed and verified.
+Do not use the earlier 2/80 tracker state or the former 36-chapter layout as the curriculum definition.
 
 ## Canonical Standard
 
-A production-grade chapter should include, where applicable:
+Where applicable, chapters should include:
 
-- concepts
-- architecture
-- internal behavior
-- operational commands
-- hands-on lab
-- expected results
-- failure injection
-- troubleshooting
-- production considerations
-- operational runbook
-- validation questions
-- acceptance checklist
-- current Redis documentation validation
+- concepts;
+- architecture/internal behavior;
+- operational commands/examples;
+- hands-on lab;
+- expected results;
+- safe failure injection;
+- troubleshooting;
+- production considerations;
+- operational runbooks;
+- validation questions/checklists;
+- cleanup;
+- exact-version vendor-documentation validation.
+
+## Validation Status
+
+Repository content presence is not the same as live production validation.
+
+Environment-specific validation still requires the exact deployed Redis Enterprise version/topology, client versions, supported staging endpoint, certificates, scoped identity, and approval for failover/restore/upgrade/failure exercises.
+
+## Known Final-Review Item
+
+Chapters 21 and 27 both cover pipelining/batching. They are intentionally retained during the build because Chapter 27 contains high-throughput engineering material, but they require a final content-deduplication pass before 80/80 completion.
 
 ## Progress
 
 ```text
-Rebuilt:  02 / 80
-Next:     03
-Target:   80 / 80 canonical
+Content present: 51 / 80
+Remaining:       29
+Next:            52
+Target:          80 / 80
 ```
-
-## Legacy Validation Artifacts
-
-`REVIEW.md` and `tools/validate_tutorials.py` originated with the former 36-chapter track. Keep them during the rebuild until their useful checks are incorporated into the new curriculum validation process.
 
 ## Next
 
-**Chapter 03 — Redis Data Types, Key Design & Memory-Aware Data Modeling**
+**Chapter 52 — Redis Enterprise Data Migration, Import/Export & Cutover Engineering**
