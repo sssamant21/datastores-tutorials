@@ -1,10 +1,10 @@
 # MongoDB Enterprise — Rebuild Status
 
 **Updated:** 2026-10-10  
-**Written:** 34/80  
+**Written:** 35/80  
 **Runtime validated:** 0/80  
 **Canonical:** 0/80  
-**Next:** Chapter 35 — Build a Sharded Lab Cluster
+**Next:** Chapter 36 — Chunk Distribution Balancing and Zones
 
 The previous 28-chapter track was removed from the active folder in this rebuild. Its contents remain recoverable through the parent Git commit. No old completion status carries forward.
 
@@ -44,7 +44,7 @@ The previous 28-chapter track was removed from the active folder in this rebuild
 | 32 | Replica Set Failure and Recovery Lab | Written | Reviewed | Pending |
 | 33 | Sharded Cluster Architecture | Written | Reviewed | Pending |
 | 34 | Shard Key Selection and Workload Analysis | Written | Reviewed | Pending |
-| 35 | Build a Sharded Lab Cluster | Planned | Pending | Pending |
+| 35 | Build a Sharded Lab Cluster | Written | Reviewed | Pending |
 | 36 | Chunk Distribution Balancing and Zones | Planned | Pending | Pending |
 | 37 | Targeted Queries Scatter Gather and Hot Shards | Planned | Pending | Pending |
 | 38 | Resharding and Shard Key Refinement | Planned | Pending | Pending |
