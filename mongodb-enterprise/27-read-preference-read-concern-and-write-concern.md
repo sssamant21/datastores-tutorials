@@ -350,4 +350,4 @@ The session was ended and no defaults or member configuration changed. Keep the 
 ---
 
 Previous: [Chapter 26 — Build a Three Member Replica Set](26-build-a-three-member-replica-set.md)  
-Next: **Chapter 28 — Elections Stepdown and Planned Maintenance** (planned).
+Next: [Chapter 28 — Elections Stepdown and Planned Maintenance](28-elections-stepdown-and-planned-maintenance.md).

@@ -2,7 +2,7 @@
 
 **Audience:** Developers, Data Engineers, DBREs, SREs and Platform Engineers  
 **Workflow:** Planned → Draft → Technical review → Lab validated → Canonical  
-**Progress:** 27/80 written; 0/80 runtime validated.  
+**Progress:** 28/80 written; 0/80 runtime validated.  
 **Lab baseline:** MongoDB 8.0 syntax; record exact server, mongosh, driver, tool and operator versions in every lab. Existing 7.0 deployments require their own compatibility review. Enterprise-only exercises require authorized Enterprise binaries and entitlements; Community labs must not claim Enterprise feature validation.
 
 ## Part 1 — Foundations and Architecture
@@ -51,7 +51,7 @@
 | 25 | [Replica Set Architecture and Oplog](25-replica-set-architecture-and-oplog.md) | Inventory roles/votes, measure retained history and trace scoped writes into oplog evidence | Written; runtime validation pending |
 | 26 | [Build a Three Member Replica Set](26-build-a-three-member-replica-set.md) | Build isolated three-member topology and verify discovery, majority writes and member convergence | Written; runtime validation pending |
 | 27 | [Read Preference Read Concern and Write Concern](27-read-preference-read-concern-and-write-concern.md) | Verify routing/visibility/acknowledgement, causal secondary reads and concern-error reconciliation | Written; runtime validation pending |
-| 28 | Elections Stepdown and Planned Maintenance | Demonstrate elections stepdown and planned maintenance with evidence and cleanup | Planned |
+| 28 | [Elections Stepdown and Planned Maintenance](28-elections-stepdown-and-planned-maintenance.md) | Rehearse sequential restarts, non-forced handoff and per-member data/readiness verification | Written; runtime validation pending |
 | 29 | Replication Lag and Oplog Sizing | Demonstrate replication lag and oplog sizing with evidence and cleanup | Planned |
 | 30 | Initial Sync Resync and Member Replacement | Demonstrate initial sync resync and member replacement with evidence and cleanup | Planned |
 | 31 | Network Partitions Rollback and Consistency | Demonstrate network partitions rollback and consistency with evidence and cleanup | Planned |
