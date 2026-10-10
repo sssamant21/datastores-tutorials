@@ -1,10 +1,10 @@
 # MongoDB Enterprise — Rebuild Status
 
 **Updated:** 2026-10-10  
-**Written:** 14/80  
+**Written:** 15/80  
 **Runtime validated:** 0/80  
 **Canonical:** 0/80  
-**Next:** Chapter 15 — Pagination and API Query Design
+**Next:** Chapter 16 — Transactions Sessions and Retry Semantics
 
 The previous 28-chapter track was removed from the active folder in this rebuild. Its contents remain recoverable through the parent Git commit. No old completion status carries forward.
 
@@ -24,7 +24,7 @@ The previous 28-chapter track was removed from the active folder in this rebuild
 | 12 | Updates Upserts and Bulk Writes | Written | Reviewed | Pending |
 | 13 | Aggregation Pipeline Fundamentals | Written | Reviewed | Pending |
 | 14 | Advanced Aggregations and Joins | Written | Reviewed | Pending |
-| 15 | Pagination and API Query Design | Planned | Pending | Pending |
+| 15 | Pagination and API Query Design | Written | Reviewed | Pending |
 | 16 | Transactions Sessions and Retry Semantics | Planned | Pending | Pending |
 | 17 | Single Field and Compound Indexes | Planned | Pending | Pending |
 | 18 | ESR Index Design and Covered Queries | Planned | Pending | Pending |

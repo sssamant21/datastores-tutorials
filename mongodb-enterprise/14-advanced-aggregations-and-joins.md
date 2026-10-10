@@ -296,5 +296,5 @@ Review questions:
 - [Aggregation limits — 8.0](https://www.mongodb.com/docs/v8.0/core/aggregation-pipeline-limits/)
 
 Previous: [Chapter 13 — Aggregation Pipeline Fundamentals](13-aggregation-pipeline-fundamentals.md).  
-Next: **Chapter 15 — Pagination and API Query Design** (planned).  
+Next: [Chapter 15 — Pagination and API Query Design](15-pagination-and-api-query-design.md).  
 Return to the [master layout](MASTER-LAYOUT.md).
