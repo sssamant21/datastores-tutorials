@@ -2,7 +2,7 @@
 
 **Audience:** Developers, Data Engineers, DBREs, SREs and Platform Engineers  
 **Workflow:** Planned → Draft → Technical review → Lab validated → Canonical  
-**Progress:** 15/80 written; 0/80 runtime validated.  
+**Progress:** 16/80 written; 0/80 runtime validated.  
 **Lab baseline:** MongoDB 8.0 syntax; record exact server, mongosh, driver, tool and operator versions in every lab. Existing 7.0 deployments require their own compatibility review. Enterprise-only exercises require authorized Enterprise binaries and entitlements; Community labs must not claim Enterprise feature validation.
 
 ## Part 1 — Foundations and Architecture
@@ -29,7 +29,7 @@
 | 13 | [Aggregation Pipeline Fundamentals](13-aggregation-pipeline-fundamentals.md) | Reconcile typed claims reports and repair stage-order/projection mistakes | Written; runtime validation pending |
 | 14 | [Advanced Aggregations and Joins](14-advanced-aggregations-and-joins.md) | Detect join/unwind inflation and reconcile facets, line totals and ordered windows | Written; runtime validation pending |
 | 15 | [Pagination and API Query Design](15-pagination-and-api-query-design.md) | Verify signed tenant-scoped seek cursors and reproduce offset instability under mutations | Written; runtime validation pending |
-| 16 | Transactions Sessions and Retry Semantics | Demonstrate transactions sessions and retry semantics with evidence and cleanup | Planned |
+| 16 | [Transactions Sessions and Retry Semantics](16-transactions-sessions-and-retry-semantics.md) | Execute atomic transfers, verify abort/isolation and distinguish transaction/commit retries | Written; runtime validation pending |
 
 ## Part 3 — Indexes and Performance
 

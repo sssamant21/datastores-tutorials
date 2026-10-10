@@ -317,5 +317,5 @@ Review questions:
 - [Node.js crypto](https://nodejs.org/api/crypto.html)
 
 Previous: [Chapter 14 — Advanced Aggregations and Joins](14-advanced-aggregations-and-joins.md).  
-Next: **Chapter 16 — Transactions Sessions and Retry Semantics** (planned).  
+Next: [Chapter 16 — Transactions Sessions and Retry Semantics](16-transactions-sessions-and-retry-semantics.md).  
 Return to the [master layout](MASTER-LAYOUT.md).

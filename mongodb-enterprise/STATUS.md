@@ -1,10 +1,10 @@
 # MongoDB Enterprise — Rebuild Status
 
 **Updated:** 2026-10-10  
-**Written:** 15/80  
+**Written:** 16/80  
 **Runtime validated:** 0/80  
 **Canonical:** 0/80  
-**Next:** Chapter 16 — Transactions Sessions and Retry Semantics
+**Next:** Chapter 17 — Single Field and Compound Indexes
 
 The previous 28-chapter track was removed from the active folder in this rebuild. Its contents remain recoverable through the parent Git commit. No old completion status carries forward.
 
@@ -25,7 +25,7 @@ The previous 28-chapter track was removed from the active folder in this rebuild
 | 13 | Aggregation Pipeline Fundamentals | Written | Reviewed | Pending |
 | 14 | Advanced Aggregations and Joins | Written | Reviewed | Pending |
 | 15 | Pagination and API Query Design | Written | Reviewed | Pending |
-| 16 | Transactions Sessions and Retry Semantics | Planned | Pending | Pending |
+| 16 | Transactions Sessions and Retry Semantics | Written | Reviewed | Pending |
 | 17 | Single Field and Compound Indexes | Planned | Pending | Pending |
 | 18 | ESR Index Design and Covered Queries | Planned | Pending | Pending |
 | 19 | Multikey Partial Sparse and Unique Indexes | Planned | Pending | Pending |
