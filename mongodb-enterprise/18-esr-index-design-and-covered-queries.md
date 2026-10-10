@@ -429,4 +429,4 @@ No server settings or external application indexes changed, so no configuration 
 ---
 
 Previous: [Chapter 17 — Single Field and Compound Indexes](17-single-field-and-compound-indexes.md)  
-Next: **Chapter 19 — Multikey Partial Sparse and Unique Indexes** (planned).
+Next: [Chapter 19 — Multikey Partial Sparse and Unique Indexes](19-multikey-partial-sparse-and-unique-indexes.md).
