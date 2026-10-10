@@ -2,7 +2,7 @@
 
 **Audience:** Developers, Data Engineers, DBREs, SREs and Platform Engineers  
 **Workflow:** Planned → Draft → Technical review → Lab validated → Canonical  
-**Progress:** 16/80 written; 0/80 runtime validated.  
+**Progress:** 17/80 written; 0/80 runtime validated.  
 **Lab baseline:** MongoDB 8.0 syntax; record exact server, mongosh, driver, tool and operator versions in every lab. Existing 7.0 deployments require their own compatibility review. Enterprise-only exercises require authorized Enterprise binaries and entitlements; Community labs must not claim Enterprise feature validation.
 
 ## Part 1 — Foundations and Architecture
@@ -35,7 +35,7 @@
 
 | # | Chapter | Lab outcome | Status |
 |---|---|---|---|
-| 17 | Single Field and Compound Indexes | Demonstrate single field and compound indexes with evidence and cleanup | Planned |
+| 17 | [Single Field and Compound Indexes](17-single-field-and-compound-indexes.md) | Compare scan/index work, verify sort support and rehearse reversible index hiding | Written; runtime validation pending |
 | 18 | ESR Index Design and Covered Queries | Demonstrate esr index design and covered queries with evidence and cleanup | Planned |
 | 19 | Multikey Partial Sparse and Unique Indexes | Demonstrate multikey partial sparse and unique indexes with evidence and cleanup | Planned |
 | 20 | TTL Retention and Index Lifecycle | Demonstrate ttl retention and index lifecycle with evidence and cleanup | Planned |
