@@ -225,7 +225,7 @@ Exit mongosh. Stop and remove only the chapter container:
 
 ```bash
 docker stop --time 30 mongodb-ch05
-docker rm mongodb-ch05
+docker rm --volumes mongodb-ch05
 ```
 
 Recreate it with the retained volume. For reproducibility, use the previously recorded repository digest instead of the mutable tag when needed; substitute the actual digest value, never a guessed one.
@@ -324,7 +324,7 @@ Exit, then remove only the chapter's container and volume:
 
 ```bash
 docker stop --time 30 mongodb-ch05
-docker rm mongodb-ch05
+docker rm --volumes mongodb-ch05
 docker volume rm mongodb-ch05-data
 ```
 
