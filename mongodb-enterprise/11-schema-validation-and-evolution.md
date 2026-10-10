@@ -336,5 +336,5 @@ Review questions:
 - [collMod — 8.0](https://www.mongodb.com/docs/v8.0/reference/command/collMod/)
 
 Previous: [Chapter 10 — Embedding Versus Referencing](10-embedding-versus-referencing.md).  
-Next: **Chapter 12 — Updates Upserts and Bulk Writes** (planned).  
+Next: [Chapter 12 — Updates Upserts and Bulk Writes](12-updates-upserts-and-bulk-writes.md).  
 Return to the [master layout](MASTER-LAYOUT.md).
