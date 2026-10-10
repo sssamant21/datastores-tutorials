@@ -2,7 +2,7 @@
 
 **Audience:** Developers, Data Engineers, DBREs, SREs and Platform Engineers  
 **Workflow:** Planned → Draft → Technical review → Lab validated → Canonical  
-**Progress:** 39/80 written; 0/80 runtime validated.  
+**Progress:** 40/80 written; 0/80 runtime validated.  
 **Lab baseline:** MongoDB 8.0 syntax; record exact server, mongosh, driver, tool and operator versions in every lab. Existing 7.0 deployments require their own compatibility review. Enterprise-only exercises require authorized Enterprise binaries and entitlements; Community labs must not claim Enterprise feature validation.
 
 ## Part 1 — Foundations and Architecture
@@ -68,7 +68,7 @@
 | 37 | [Targeted Queries Scatter Gather and Hot Shards](37-targeted-queries-scatter-gather-and-hot-shards.md) | Verify real query fan-out, distinguish local indexing, compare tenant/document demand and restore scoped placement | Written; runtime validation pending |
 | 38 | [Resharding and Shard Key Refinement](38-resharding-and-shard-key-refinement.md) | Refine a key suffix, reshard to a hashed key, verify routing and data, and restore cluster policy | Written; runtime validation pending |
 | 39 | [Sharded Cluster Administration and Recovery](39-sharded-cluster-administration-and-recovery.md) | Inventory topology, recover controlled member/shard outages, reconcile data and metadata, and clean up | Written; runtime validation pending |
-| 40 | Scaling and Sharding Acceptance Lab | Demonstrate scaling and sharding acceptance lab with evidence and cleanup | Planned |
+| 40 | [Scaling and Sharding Acceptance Lab](40-scaling-and-sharding-acceptance-lab.md) | Verify one-to-two-shard distribution, repeat reconciled workloads, recover a router, and assemble acceptance evidence | Written; runtime validation pending |
 
 ## Part 6 — Enterprise Security and Governance
 
