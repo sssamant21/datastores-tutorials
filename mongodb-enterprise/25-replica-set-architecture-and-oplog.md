@@ -461,4 +461,4 @@ No replica configuration, oplog size or concern defaults changed. No topology ro
 ---
 
 Previous: [Chapter 24 — CPU Memory Storage IOPS and Capacity](24-cpu-memory-storage-iops-and-capacity.md)  
-Next: **Chapter 26 — Build a Three Member Replica Set** (planned).
+Next: [Chapter 26 — Build a Three Member Replica Set](26-build-a-three-member-replica-set.md).
