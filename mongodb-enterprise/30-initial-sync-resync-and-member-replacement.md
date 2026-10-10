@@ -436,4 +436,4 @@ Remove `compose.ch30.yaml` only after successful restoration and detached-volume
 ---
 
 Previous: [Chapter 29 — Replication Lag and Oplog Sizing](29-replication-lag-and-oplog-sizing.md)  
-Next: **Chapter 31 — Network Partitions Rollback and Consistency** (planned).
+Next: [Chapter 31 — Network Partitions Rollback and Consistency](31-network-partitions-rollback-and-consistency.md).
