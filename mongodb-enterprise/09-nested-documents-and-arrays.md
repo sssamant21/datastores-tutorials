@@ -372,5 +372,5 @@ Review questions:
 - [$elemMatch — 8.0](https://www.mongodb.com/docs/v8.0/reference/operator/query/elemMatch/)
 
 Previous: [Chapter 08 — CRUD Filters Projections and Sorting](08-crud-filters-projections-and-sorting.md).  
-Next: **Chapter 10 — Embedding Versus Referencing** (planned).  
+Next: [Chapter 10 — Embedding Versus Referencing](10-embedding-versus-referencing.md).  
 Return to the [master layout](MASTER-LAYOUT.md).

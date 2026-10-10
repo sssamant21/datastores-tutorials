@@ -1,10 +1,10 @@
 # MongoDB Enterprise — Rebuild Status
 
 **Updated:** 2026-10-10  
-**Written:** 9/80  
+**Written:** 10/80  
 **Runtime validated:** 0/80  
 **Canonical:** 0/80  
-**Next:** Chapter 10 — Embedding Versus Referencing
+**Next:** Chapter 11 — Schema Validation and Evolution
 
 The previous 28-chapter track was removed from the active folder in this rebuild. Its contents remain recoverable through the parent Git commit. No old completion status carries forward.
 
@@ -19,7 +19,7 @@ The previous 28-chapter track was removed from the active folder in this rebuild
 | 07 | Databases Collections and Namespaces | Written | Reviewed | Pending |
 | 08 | CRUD Filters Projections and Sorting | Written | Reviewed | Pending |
 | 09 | Nested Documents and Arrays | Written | Reviewed | Pending |
-| 10 | Embedding Versus Referencing | Planned | Pending | Pending |
+| 10 | Embedding Versus Referencing | Written | Reviewed | Pending |
 | 11 | Schema Validation and Evolution | Planned | Pending | Pending |
 | 12 | Updates Upserts and Bulk Writes | Planned | Pending | Pending |
 | 13 | Aggregation Pipeline Fundamentals | Planned | Pending | Pending |
