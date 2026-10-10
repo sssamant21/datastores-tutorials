@@ -362,5 +362,5 @@ Review questions:
 - [Docker volumes](https://docs.docker.com/engine/storage/volumes/)
 
 Previous: [Chapter 04 — Community Enterprise Advanced and Atlas](04-community-enterprise-advanced-and-atlas.md).  
-Next: **Chapter 06 — mongosh Connections TLS and Authentication** (planned).  
+Next: [Chapter 06 — mongosh Connections TLS and Authentication](06-mongosh-connections-tls-and-authentication.md).  
 Return to the [master layout](MASTER-LAYOUT.md).

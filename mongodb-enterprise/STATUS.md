@@ -1,10 +1,10 @@
 # MongoDB Enterprise — Rebuild Status
 
 **Updated:** 2026-10-10  
-**Written:** 5/80  
+**Written:** 6/80  
 **Runtime validated:** 0/80  
 **Canonical:** 0/80  
-**Next:** Chapter 06 — mongosh Connections TLS and Authentication
+**Next:** Chapter 07 — Databases Collections and Namespaces
 
 The previous 28-chapter track was removed from the active folder in this rebuild. Its contents remain recoverable through the parent Git commit. No old completion status carries forward.
 
@@ -15,7 +15,7 @@ The previous 28-chapter track was removed from the active folder in this rebuild
 | 03 | Server Architecture and WiredTiger | Written | Reviewed | Pending |
 | 04 | Community Enterprise Advanced and Atlas | Written | Reviewed | Pending |
 | 05 | Lab Setup and Version Inventory | Written | Reviewed | Pending |
-| 06 | mongosh Connections TLS and Authentication | Planned | Pending | Pending |
+| 06 | mongosh Connections TLS and Authentication | Written | Reviewed | Pending |
 | 07 | Databases Collections and Namespaces | Planned | Pending | Pending |
 | 08 | CRUD Filters Projections and Sorting | Planned | Pending | Pending |
 | 09 | Nested Documents and Arrays | Planned | Pending | Pending |
