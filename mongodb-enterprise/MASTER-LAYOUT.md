@@ -2,7 +2,7 @@
 
 **Audience:** Developers, Data Engineers, DBREs, SREs and Platform Engineers  
 **Workflow:** Planned → Draft → Technical review → Lab validated → Canonical  
-**Progress:** 31/80 written; 0/80 runtime validated.  
+**Progress:** 32/80 written; 0/80 runtime validated.  
 **Lab baseline:** MongoDB 8.0 syntax; record exact server, mongosh, driver, tool and operator versions in every lab. Existing 7.0 deployments require their own compatibility review. Enterprise-only exercises require authorized Enterprise binaries and entitlements; Community labs must not claim Enterprise feature validation.
 
 ## Part 1 — Foundations and Architecture
@@ -55,7 +55,7 @@
 | 29 | [Replication Lag and Oplog Sizing](29-replication-lag-and-oplog-sizing.md) | Measure lag/history, recover a bounded secondary outage and verify sizing/member-local resize | Written; runtime validation pending |
 | 30 | [Initial Sync Resync and Member Replacement](30-initial-sync-resync-and-member-replacement.md) | Replace one secondary on fresh storage, reconcile clone/metadata and restore original volumes | Written; runtime validation pending |
 | 31 | [Network Partitions Rollback and Consistency](31-network-partitions-rollback-and-consistency.md) | Partition one primary, reconcile majority history and classify rollback evidence after healing | Written; runtime validation pending |
-| 32 | Replica Set Failure and Recovery Lab | Demonstrate replica set failure and recovery lab with evidence and cleanup | Planned |
+| 32 | [Replica Set Failure and Recovery Lab](32-replica-set-failure-and-recovery-lab.md) | Reconcile bounded traffic through primary crash, quorum loss and full original-member recovery | Written; runtime validation pending |
 
 ## Part 5 — Sharding and Scale
 
