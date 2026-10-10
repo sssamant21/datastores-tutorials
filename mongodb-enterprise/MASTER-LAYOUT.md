@@ -2,7 +2,7 @@
 
 **Audience:** Developers, Data Engineers, DBREs, SREs and Platform Engineers  
 **Workflow:** Planned → Draft → Technical review → Lab validated → Canonical  
-**Progress:** 29/80 written; 0/80 runtime validated.  
+**Progress:** 30/80 written; 0/80 runtime validated.  
 **Lab baseline:** MongoDB 8.0 syntax; record exact server, mongosh, driver, tool and operator versions in every lab. Existing 7.0 deployments require their own compatibility review. Enterprise-only exercises require authorized Enterprise binaries and entitlements; Community labs must not claim Enterprise feature validation.
 
 ## Part 1 — Foundations and Architecture
@@ -53,7 +53,7 @@
 | 27 | [Read Preference Read Concern and Write Concern](27-read-preference-read-concern-and-write-concern.md) | Verify routing/visibility/acknowledgement, causal secondary reads and concern-error reconciliation | Written; runtime validation pending |
 | 28 | [Elections Stepdown and Planned Maintenance](28-elections-stepdown-and-planned-maintenance.md) | Rehearse sequential restarts, non-forced handoff and per-member data/readiness verification | Written; runtime validation pending |
 | 29 | [Replication Lag and Oplog Sizing](29-replication-lag-and-oplog-sizing.md) | Measure lag/history, recover a bounded secondary outage and verify sizing/member-local resize | Written; runtime validation pending |
-| 30 | Initial Sync Resync and Member Replacement | Demonstrate initial sync resync and member replacement with evidence and cleanup | Planned |
+| 30 | [Initial Sync Resync and Member Replacement](30-initial-sync-resync-and-member-replacement.md) | Replace one secondary on fresh storage, reconcile clone/metadata and restore original volumes | Written; runtime validation pending |
 | 31 | Network Partitions Rollback and Consistency | Demonstrate network partitions rollback and consistency with evidence and cleanup | Planned |
 | 32 | Replica Set Failure and Recovery Lab | Demonstrate replica set failure and recovery lab with evidence and cleanup | Planned |
 
