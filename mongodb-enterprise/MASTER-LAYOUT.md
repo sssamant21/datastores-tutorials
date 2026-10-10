@@ -2,7 +2,7 @@
 
 **Audience:** Developers, Data Engineers, DBREs, SREs and Platform Engineers  
 **Workflow:** Planned → Draft → Technical review → Lab validated → Canonical  
-**Progress:** 4/80 written; 0/80 runtime validated.  
+**Progress:** 5/80 written; 0/80 runtime validated.  
 **Lab baseline:** MongoDB 8.0 syntax; record exact server, mongosh, driver, tool and operator versions in every lab. Existing 7.0 deployments require their own compatibility review. Enterprise-only exercises require authorized Enterprise binaries and entitlements; Community labs must not claim Enterprise feature validation.
 
 ## Part 1 — Foundations and Architecture
@@ -13,7 +13,7 @@
 | 02 | [Document Model and BSON Types](02-document-model-and-bson-types.md) | Inspect BSON types, repair mismatches, verify EJSON and reject invalid documents | Written; runtime validation pending |
 | 03 | [Server Architecture and WiredTiger](03-server-architecture-and-wiredtiger.md) | Collect WiredTiger snapshots, verify a bounded workload and distinguish storage sizes | Written; runtime validation pending |
 | 04 | [Community Enterprise Advanced and Atlas](04-community-enterprise-advanced-and-atlas.md) | Inventory build/topology, verify a common contract and separate entitlement evidence | Written; runtime validation pending |
-| 05 | Lab Setup and Version Inventory | Demonstrate lab setup and version inventory with evidence and cleanup | Planned |
+| 05 | [Lab Setup and Version Inventory](05-lab-setup-and-version-inventory.md) | Build authenticated persistent training server, inventory versions and test scoped access | Written; runtime validation pending |
 | 06 | mongosh Connections TLS and Authentication | Demonstrate mongosh connections tls and authentication with evidence and cleanup | Planned |
 | 07 | Databases Collections and Namespaces | Demonstrate databases collections and namespaces with evidence and cleanup | Planned |
 | 08 | CRUD Filters Projections and Sorting | Demonstrate crud filters projections and sorting with evidence and cleanup | Planned |

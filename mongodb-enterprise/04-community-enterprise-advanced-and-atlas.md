@@ -280,5 +280,5 @@ No deployment, subscription, role or server setting was changed.
 - [Lifecycle schedules](https://www.mongodb.com/legal/support-policy/lifecycles)
 
 Previous: [Chapter 03 — Server Architecture and WiredTiger](03-server-architecture-and-wiredtiger.md).  
-Next: **Chapter 05 — Lab Setup and Version Inventory** (planned).  
+Next: [Chapter 05 — Lab Setup and Version Inventory](05-lab-setup-and-version-inventory.md).  
 Return to the [master layout](MASTER-LAYOUT.md).
