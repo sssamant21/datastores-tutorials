@@ -1,10 +1,10 @@
 # MongoDB Enterprise — Rebuild Status
 
 **Updated:** 2026-10-10  
-**Written:** 28/80  
+**Written:** 29/80  
 **Runtime validated:** 0/80  
 **Canonical:** 0/80  
-**Next:** Chapter 29 — Replication Lag and Oplog Sizing
+**Next:** Chapter 30 — Initial Sync Resync and Member Replacement
 
 The previous 28-chapter track was removed from the active folder in this rebuild. Its contents remain recoverable through the parent Git commit. No old completion status carries forward.
 
@@ -38,7 +38,7 @@ The previous 28-chapter track was removed from the active folder in this rebuild
 | 26 | Build a Three Member Replica Set | Written | Reviewed | Pending |
 | 27 | Read Preference Read Concern and Write Concern | Written | Reviewed | Pending |
 | 28 | Elections Stepdown and Planned Maintenance | Written | Reviewed | Pending |
-| 29 | Replication Lag and Oplog Sizing | Planned | Pending | Pending |
+| 29 | Replication Lag and Oplog Sizing | Written | Reviewed | Pending |
 | 30 | Initial Sync Resync and Member Replacement | Planned | Pending | Pending |
 | 31 | Network Partitions Rollback and Consistency | Planned | Pending | Pending |
 | 32 | Replica Set Failure and Recovery Lab | Planned | Pending | Pending |
