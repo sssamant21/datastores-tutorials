@@ -348,5 +348,5 @@ Review questions:
 - [Atomicity — 8.0](https://www.mongodb.com/docs/v8.0/core/write-operations-atomicity/)
 
 Previous: [Chapter 11 — Schema Validation and Evolution](11-schema-validation-and-evolution.md).  
-Next: **Chapter 13 — Aggregation Pipeline Fundamentals** (planned).  
+Next: [Chapter 13 — Aggregation Pipeline Fundamentals](13-aggregation-pipeline-fundamentals.md).  
 Return to the [master layout](MASTER-LAYOUT.md).

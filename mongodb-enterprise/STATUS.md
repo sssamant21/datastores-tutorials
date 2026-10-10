@@ -1,10 +1,10 @@
 # MongoDB Enterprise — Rebuild Status
 
 **Updated:** 2026-10-10  
-**Written:** 12/80  
+**Written:** 13/80  
 **Runtime validated:** 0/80  
 **Canonical:** 0/80  
-**Next:** Chapter 13 — Aggregation Pipeline Fundamentals
+**Next:** Chapter 14 — Advanced Aggregations and Joins
 
 The previous 28-chapter track was removed from the active folder in this rebuild. Its contents remain recoverable through the parent Git commit. No old completion status carries forward.
 
@@ -22,7 +22,7 @@ The previous 28-chapter track was removed from the active folder in this rebuild
 | 10 | Embedding Versus Referencing | Written | Reviewed | Pending |
 | 11 | Schema Validation and Evolution | Written | Reviewed | Pending |
 | 12 | Updates Upserts and Bulk Writes | Written | Reviewed | Pending |
-| 13 | Aggregation Pipeline Fundamentals | Planned | Pending | Pending |
+| 13 | Aggregation Pipeline Fundamentals | Written | Reviewed | Pending |
 | 14 | Advanced Aggregations and Joins | Planned | Pending | Pending |
 | 15 | Pagination and API Query Design | Planned | Pending | Pending |
 | 16 | Transactions Sessions and Retry Semantics | Planned | Pending | Pending |
