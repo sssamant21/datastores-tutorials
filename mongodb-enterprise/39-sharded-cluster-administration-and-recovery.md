@@ -606,4 +606,4 @@ Keep the cluster, Chapter 35 fixture and evidence for Chapter 40. Do not run `do
 - [Chapter 35 — Build a Sharded Lab Cluster](35-build-a-sharded-lab-cluster.md)
 - [Chapter 38 — Resharding and Shard Key Refinement](38-resharding-and-shard-key-refinement.md)
 
-Next: **Chapter 40 — Scaling and Sharding Acceptance Lab** (planned).
+Next: **[Chapter 40 — Scaling and Sharding Acceptance Lab](40-scaling-and-sharding-acceptance-lab.md)**.
