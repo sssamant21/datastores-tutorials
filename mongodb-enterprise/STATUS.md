@@ -1,10 +1,10 @@
 # MongoDB Enterprise — Rebuild Status
 
 **Updated:** 2026-10-10  
-**Written:** 19/80  
+**Written:** 20/80  
 **Runtime validated:** 0/80  
 **Canonical:** 0/80  
-**Next:** Chapter 20 — TTL Retention and Index Lifecycle
+**Next:** Chapter 21 — Explain Plans and Query Optimization
 
 The previous 28-chapter track was removed from the active folder in this rebuild. Its contents remain recoverable through the parent Git commit. No old completion status carries forward.
 
@@ -29,7 +29,7 @@ The previous 28-chapter track was removed from the active folder in this rebuild
 | 17 | Single Field and Compound Indexes | Written | Reviewed | Pending |
 | 18 | ESR Index Design and Covered Queries | Written | Reviewed | Pending |
 | 19 | Multikey Partial Sparse and Unique Indexes | Written | Reviewed | Pending |
-| 20 | TTL Retention and Index Lifecycle | Planned | Pending | Pending |
+| 20 | TTL Retention and Index Lifecycle | Written | Reviewed | Pending |
 | 21 | Explain Plans and Query Optimization | Planned | Pending | Pending |
 | 22 | Profiling Slow Queries and Query Statistics | Planned | Pending | Pending |
 | 23 | WiredTiger Cache Eviction and Checkpoints | Planned | Pending | Pending |

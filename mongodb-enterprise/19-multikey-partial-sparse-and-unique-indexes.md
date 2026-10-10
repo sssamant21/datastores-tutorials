@@ -527,4 +527,4 @@ The named database owns every fixture and index in this chapter. Do not run a bl
 ---
 
 Previous: [Chapter 18 — ESR Index Design and Covered Queries](18-esr-index-design-and-covered-queries.md)  
-Next: **Chapter 20 — TTL Retention and Index Lifecycle** (planned).
+Next: [Chapter 20 — TTL Retention and Index Lifecycle](20-ttl-retention-and-index-lifecycle.md).
