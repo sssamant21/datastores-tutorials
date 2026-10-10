@@ -1,10 +1,10 @@
 # MongoDB Enterprise — Rebuild Status
 
 **Updated:** 2026-10-10  
-**Written:** 39/80  
+**Written:** 40/80  
 **Runtime validated:** 0/80  
 **Canonical:** 0/80  
-**Next:** Chapter 40 — Scaling and Sharding Acceptance Lab
+**Next:** Chapter 41 — Users Roles and Least Privilege
 
 The previous 28-chapter track was removed from the active folder in this rebuild. Its contents remain recoverable through the parent Git commit. No old completion status carries forward.
 
@@ -49,7 +49,7 @@ The previous 28-chapter track was removed from the active folder in this rebuild
 | 37 | Targeted Queries Scatter Gather and Hot Shards | Written | Reviewed | Pending |
 | 38 | Resharding and Shard Key Refinement | Written | Reviewed | Pending |
 | 39 | Sharded Cluster Administration and Recovery | Written | Reviewed | Pending |
-| 40 | Scaling and Sharding Acceptance Lab | Planned | Pending | Pending |
+| 40 | Scaling and Sharding Acceptance Lab | Written | Reviewed | Pending |
 | 41 | Users Roles and Least Privilege | Planned | Pending | Pending |
 | 42 | TLS Certificates and x509 Authentication | Planned | Pending | Pending |
 | 43 | Enterprise External Authentication Compatibility | Planned | Pending | Pending |
