@@ -464,4 +464,4 @@ If writes failed, reconcile stable IDs and recover topology before adapting clea
 ---
 
 Previous: [Chapter 28 — Elections Stepdown and Planned Maintenance](28-elections-stepdown-and-planned-maintenance.md)  
-Next: **Chapter 30 — Initial Sync Resync and Member Replacement** (planned).
+Next: [Chapter 30 — Initial Sync Resync and Member Replacement](30-initial-sync-resync-and-member-replacement.md).
