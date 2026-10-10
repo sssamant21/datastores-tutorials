@@ -1,10 +1,10 @@
 # MongoDB Enterprise — Rebuild Status
 
 **Updated:** 2026-10-10  
-**Written:** 37/80  
+**Written:** 38/80  
 **Runtime validated:** 0/80  
 **Canonical:** 0/80  
-**Next:** Chapter 38 — Resharding and Shard Key Refinement
+**Next:** Chapter 39 — Sharded Cluster Administration and Recovery
 
 The previous 28-chapter track was removed from the active folder in this rebuild. Its contents remain recoverable through the parent Git commit. No old completion status carries forward.
 
@@ -47,7 +47,7 @@ The previous 28-chapter track was removed from the active folder in this rebuild
 | 35 | Build a Sharded Lab Cluster | Written | Reviewed | Pending |
 | 36 | Chunk Distribution Balancing and Zones | Written | Reviewed | Pending |
 | 37 | Targeted Queries Scatter Gather and Hot Shards | Written | Reviewed | Pending |
-| 38 | Resharding and Shard Key Refinement | Planned | Pending | Pending |
+| 38 | Resharding and Shard Key Refinement | Written | Reviewed | Pending |
 | 39 | Sharded Cluster Administration and Recovery | Planned | Pending | Pending |
 | 40 | Scaling and Sharding Acceptance Lab | Planned | Pending | Pending |
 | 41 | Users Roles and Least Privilege | Planned | Pending | Pending |
