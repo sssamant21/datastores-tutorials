@@ -353,5 +353,5 @@ Review questions:
 - [OpenSSL s_client](https://docs.openssl.org/3.0/man1/openssl-s_client/)
 
 Previous: [Chapter 05 — Lab Setup and Version Inventory](05-lab-setup-and-version-inventory.md).  
-Next: **Chapter 07 — Databases Collections and Namespaces** (planned).  
+Next: [Chapter 07 — Databases Collections and Namespaces](07-databases-collections-and-namespaces.md).  
 Return to the [master layout](MASTER-LAYOUT.md).
