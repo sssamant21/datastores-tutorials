@@ -446,4 +446,4 @@ If capture ended abruptly, run the saved recovery command first and verify statu
 ---
 
 Previous: [Chapter 21 — Explain Plans and Query Optimization](21-explain-plans-and-query-optimization.md)  
-Next: **Chapter 23 — WiredTiger Cache Eviction and Checkpoints** (planned).
+Next: [Chapter 23 — WiredTiger Cache Eviction and Checkpoints](23-wiredtiger-cache-eviction-and-checkpoints.md).
