@@ -420,4 +420,4 @@ Leave Chapter 26's original set intact. Close the optional router shell without 
 ---
 
 Previous: [Chapter 32 — Replica Set Failure and Recovery Lab](32-replica-set-failure-and-recovery-lab.md)  
-Next: **Chapter 34 — Shard Key Selection and Workload Analysis** (planned).
+Next: **[Chapter 34 — Shard Key Selection and Workload Analysis](34-shard-key-selection-and-workload-analysis.md)**.
