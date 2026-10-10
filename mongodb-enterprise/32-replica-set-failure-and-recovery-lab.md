@@ -528,4 +528,4 @@ No process-wide settings changed. Crashed/restarted member leadership may differ
 ---
 
 Previous: [Chapter 31 — Network Partitions Rollback and Consistency](31-network-partitions-rollback-and-consistency.md)  
-Next: **Chapter 33 — Sharded Cluster Architecture** (planned).
+Next: [Chapter 33 — Sharded Cluster Architecture](33-sharded-cluster-architecture.md).
