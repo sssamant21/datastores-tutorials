@@ -2,7 +2,7 @@
 
 **Audience:** Developers, Data Engineers, DBREs, SREs and Platform Engineers  
 **Workflow:** Planned → Draft → Technical review → Lab validated → Canonical  
-**Progress:** 10/80 written; 0/80 runtime validated.  
+**Progress:** 11/80 written; 0/80 runtime validated.  
 **Lab baseline:** MongoDB 8.0 syntax; record exact server, mongosh, driver, tool and operator versions in every lab. Existing 7.0 deployments require their own compatibility review. Enterprise-only exercises require authorized Enterprise binaries and entitlements; Community labs must not claim Enterprise feature validation.
 
 ## Part 1 — Foundations and Architecture
@@ -24,7 +24,7 @@
 |---|---|---|---|
 | 09 | [Nested Documents and Arrays](09-nested-documents-and-arrays.md) | Verify precise nested/array updates, duplicate semantics, bounded summaries and shape repair | Written; runtime validation pending |
 | 10 | [Embedding Versus Referencing](10-embedding-versus-referencing.md) | Compare equivalent models, reconcile copied data and detect cross-document consistency gaps | Written; runtime validation pending |
-| 11 | Schema Validation and Evolution | Demonstrate schema validation and evolution with evidence and cleanup | Planned |
+| 11 | [Schema Validation and Evolution](11-schema-validation-and-evolution.md) | Preview conversions, quarantine unresolved data, enforce versioned schema and restore lab originals | Written; runtime validation pending |
 | 12 | Updates Upserts and Bulk Writes | Demonstrate updates upserts and bulk writes with evidence and cleanup | Planned |
 | 13 | Aggregation Pipeline Fundamentals | Demonstrate aggregation pipeline fundamentals with evidence and cleanup | Planned |
 | 14 | Advanced Aggregations and Joins | Demonstrate advanced aggregations and joins with evidence and cleanup | Planned |

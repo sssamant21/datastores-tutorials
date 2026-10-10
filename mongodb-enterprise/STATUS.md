@@ -1,10 +1,10 @@
 # MongoDB Enterprise — Rebuild Status
 
 **Updated:** 2026-10-10  
-**Written:** 10/80  
+**Written:** 11/80  
 **Runtime validated:** 0/80  
 **Canonical:** 0/80  
-**Next:** Chapter 11 — Schema Validation and Evolution
+**Next:** Chapter 12 — Updates Upserts and Bulk Writes
 
 The previous 28-chapter track was removed from the active folder in this rebuild. Its contents remain recoverable through the parent Git commit. No old completion status carries forward.
 
@@ -20,7 +20,7 @@ The previous 28-chapter track was removed from the active folder in this rebuild
 | 08 | CRUD Filters Projections and Sorting | Written | Reviewed | Pending |
 | 09 | Nested Documents and Arrays | Written | Reviewed | Pending |
 | 10 | Embedding Versus Referencing | Written | Reviewed | Pending |
-| 11 | Schema Validation and Evolution | Planned | Pending | Pending |
+| 11 | Schema Validation and Evolution | Written | Reviewed | Pending |
 | 12 | Updates Upserts and Bulk Writes | Planned | Pending | Pending |
 | 13 | Aggregation Pipeline Fundamentals | Planned | Pending | Pending |
 | 14 | Advanced Aggregations and Joins | Planned | Pending | Pending |
