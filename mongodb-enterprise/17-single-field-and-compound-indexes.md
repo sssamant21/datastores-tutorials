@@ -414,4 +414,4 @@ Dropping the named lab database removes its data and experimental indexes. Keep 
 ---
 
 Previous: [Chapter 16 — Transactions Sessions and Retry Semantics](16-transactions-sessions-and-retry-semantics.md)  
-Next: **Chapter 18 — ESR Index Design and Covered Queries** (planned).
+Next: [Chapter 18 — ESR Index Design and Covered Queries](18-esr-index-design-and-covered-queries.md).
