@@ -447,4 +447,4 @@ Expected: no chapter-project containers, volumes or network remain. Do not use d
 ---
 
 Previous: [Chapter 25 — Replica Set Architecture and Oplog](25-replica-set-architecture-and-oplog.md)  
-Next: **Chapter 27 — Read Preference Read Concern and Write Concern** (planned).
+Next: [Chapter 27 — Read Preference Read Concern and Write Concern](27-read-preference-read-concern-and-write-concern.md).

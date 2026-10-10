@@ -1,10 +1,10 @@
 # MongoDB Enterprise — Rebuild Status
 
 **Updated:** 2026-10-10  
-**Written:** 26/80  
+**Written:** 27/80  
 **Runtime validated:** 0/80  
 **Canonical:** 0/80  
-**Next:** Chapter 27 — Read Preference Read Concern and Write Concern
+**Next:** Chapter 28 — Elections Stepdown and Planned Maintenance
 
 The previous 28-chapter track was removed from the active folder in this rebuild. Its contents remain recoverable through the parent Git commit. No old completion status carries forward.
 
@@ -36,7 +36,7 @@ The previous 28-chapter track was removed from the active folder in this rebuild
 | 24 | CPU Memory Storage IOPS and Capacity | Written | Reviewed | Pending |
 | 25 | Replica Set Architecture and Oplog | Written | Reviewed | Pending |
 | 26 | Build a Three Member Replica Set | Written | Reviewed | Pending |
-| 27 | Read Preference Read Concern and Write Concern | Planned | Pending | Pending |
+| 27 | Read Preference Read Concern and Write Concern | Written | Reviewed | Pending |
 | 28 | Elections Stepdown and Planned Maintenance | Planned | Pending | Pending |
 | 29 | Replication Lag and Oplog Sizing | Planned | Pending | Pending |
 | 30 | Initial Sync Resync and Member Replacement | Planned | Pending | Pending |
