@@ -514,4 +514,4 @@ The out-and-back migration reverses the measured hot-range owner before normal c
 ---
 
 Previous: [Chapter 36 — Chunk Distribution Balancing and Zones](36-chunk-distribution-balancing-and-zones.md)  
-Next: **Chapter 38 — Resharding and Shard Key Refinement** (planned).
+Next: **[Chapter 38 — Resharding and Shard Key Refinement](38-resharding-and-shard-key-refinement.md)**.
