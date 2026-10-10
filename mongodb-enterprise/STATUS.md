@@ -1,10 +1,10 @@
 # MongoDB Enterprise — Rebuild Status
 
 **Updated:** 2026-10-10  
-**Written:** 31/80  
+**Written:** 32/80  
 **Runtime validated:** 0/80  
 **Canonical:** 0/80  
-**Next:** Chapter 32 — Replica Set Failure and Recovery Lab
+**Next:** Chapter 33 — Sharded Cluster Architecture
 
 The previous 28-chapter track was removed from the active folder in this rebuild. Its contents remain recoverable through the parent Git commit. No old completion status carries forward.
 
@@ -41,7 +41,7 @@ The previous 28-chapter track was removed from the active folder in this rebuild
 | 29 | Replication Lag and Oplog Sizing | Written | Reviewed | Pending |
 | 30 | Initial Sync Resync and Member Replacement | Written | Reviewed | Pending |
 | 31 | Network Partitions Rollback and Consistency | Written | Reviewed | Pending |
-| 32 | Replica Set Failure and Recovery Lab | Planned | Pending | Pending |
+| 32 | Replica Set Failure and Recovery Lab | Written | Reviewed | Pending |
 | 33 | Sharded Cluster Architecture | Planned | Pending | Pending |
 | 34 | Shard Key Selection and Workload Analysis | Planned | Pending | Pending |
 | 35 | Build a Sharded Lab Cluster | Planned | Pending | Pending |
