@@ -603,4 +603,4 @@ If resharding was never launched, omit worker inspection/removal and use the pre
 ---
 
 Previous: [Chapter 37 — Targeted Queries Scatter Gather and Hot Shards](37-targeted-queries-scatter-gather-and-hot-shards.md)  
-Next: **Chapter 39 — Sharded Cluster Administration and Recovery** (planned).
+Next: **[Chapter 39 — Sharded Cluster Administration and Recovery](39-sharded-cluster-administration-and-recovery.md)**.
