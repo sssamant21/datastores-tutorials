@@ -575,4 +575,4 @@ There is no in-place “unshard everything” rollback for this setup. Rollback 
 ---
 
 Previous: [Chapter 34 — Shard Key Selection and Workload Analysis](34-shard-key-selection-and-workload-analysis.md)  
-Next: **Chapter 36 — Chunk Distribution Balancing and Zones** (planned).
+Next: **[Chapter 36 — Chunk Distribution Balancing and Zones](36-chunk-distribution-balancing-and-zones.md)**.
