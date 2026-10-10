@@ -292,5 +292,5 @@ Review questions:
 - [Explain — 8.0](https://www.mongodb.com/docs/v8.0/reference/method/db.collection.explain/)
 
 Previous: [Chapter 12 — Updates Upserts and Bulk Writes](12-updates-upserts-and-bulk-writes.md).  
-Next: **Chapter 14 — Advanced Aggregations and Joins** (planned).  
+Next: [Chapter 14 — Advanced Aggregations and Joins](14-advanced-aggregations-and-joins.md).  
 Return to the [master layout](MASTER-LAYOUT.md).
