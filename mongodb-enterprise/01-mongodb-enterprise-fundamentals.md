@@ -322,4 +322,4 @@ Keep application connection handling, data modeling, security, availability and 
 - [Encryption at rest](https://www.mongodb.com/docs/manual/core/security-encryption-at-rest/)
 - [Replica sets](https://www.mongodb.com/docs/manual/replication/)
 
-Next: **Chapter 02 — Document Model and BSON Types** (planned). Return to the [master layout](MASTER-LAYOUT.md).
+Next: [Chapter 02 — Document Model and BSON Types](02-document-model-and-bson-types.md). Return to the [master layout](MASTER-LAYOUT.md).

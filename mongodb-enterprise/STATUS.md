@@ -1,17 +1,17 @@
 # MongoDB Enterprise — Rebuild Status
 
 **Updated:** 2026-10-10  
-**Written:** 1/80  
+**Written:** 2/80  
 **Runtime validated:** 0/80  
 **Canonical:** 0/80  
-**Next:** Chapter 02 — Document Model and BSON Types
+**Next:** Chapter 03 — Server Architecture and WiredTiger
 
 The previous 28-chapter track was removed from the active folder in this rebuild. Its contents remain recoverable through the parent Git commit. No old completion status carries forward.
 
 | # | Chapter | Content | Static review | Runtime lab |
 |---|---|---|---|---|
 | 01 | MongoDB Enterprise Fundamentals | Written | Reviewed | Pending |
-| 02 | Document Model and BSON Types | Planned | Pending | Pending |
+| 02 | Document Model and BSON Types | Written | Reviewed | Pending |
 | 03 | Server Architecture and WiredTiger | Planned | Pending | Pending |
 | 04 | Community Enterprise Advanced and Atlas | Planned | Pending | Pending |
 | 05 | Lab Setup and Version Inventory | Planned | Pending | Pending |
