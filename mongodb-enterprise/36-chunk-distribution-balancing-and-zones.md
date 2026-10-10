@@ -489,4 +489,4 @@ Dropping the fixture reverses this lab's data/configuration footprint; it does n
 ---
 
 Previous: [Chapter 35 — Build a Sharded Lab Cluster](35-build-a-sharded-lab-cluster.md)  
-Next: **Chapter 37 — Targeted Queries Scatter Gather and Hot Shards** (planned).
+Next: **[Chapter 37 — Targeted Queries Scatter Gather and Hot Shards](37-targeted-queries-scatter-gather-and-hot-shards.md)**.
