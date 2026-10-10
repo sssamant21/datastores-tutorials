@@ -421,4 +421,4 @@ No process-wide settings changed. A failed member restart requires restoring tha
 ---
 
 Previous: [Chapter 27 — Read Preference Read Concern and Write Concern](27-read-preference-read-concern-and-write-concern.md)  
-Next: **Chapter 29 — Replication Lag and Oplog Sizing** (planned).
+Next: [Chapter 29 — Replication Lag and Oplog Sizing](29-replication-lag-and-oplog-sizing.md).
