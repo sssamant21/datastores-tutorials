@@ -431,4 +431,4 @@ All data and indexes belong to the named chapter database. No shared settings or
 ---
 
 Previous: [Chapter 20 — TTL Retention and Index Lifecycle](20-ttl-retention-and-index-lifecycle.md)  
-Next: **Chapter 22 — Profiling Slow Queries and Query Statistics** (planned).
+Next: [Chapter 22 — Profiling Slow Queries and Query Statistics](22-profiling-slow-queries-and-query-statistics.md).

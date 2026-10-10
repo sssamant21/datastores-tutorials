@@ -2,7 +2,7 @@
 
 **Audience:** Developers, Data Engineers, DBREs, SREs and Platform Engineers  
 **Workflow:** Planned → Draft → Technical review → Lab validated → Canonical  
-**Progress:** 21/80 written; 0/80 runtime validated.  
+**Progress:** 22/80 written; 0/80 runtime validated.  
 **Lab baseline:** MongoDB 8.0 syntax; record exact server, mongosh, driver, tool and operator versions in every lab. Existing 7.0 deployments require their own compatibility review. Enterprise-only exercises require authorized Enterprise binaries and entitlements; Community labs must not claim Enterprise feature validation.
 
 ## Part 1 — Foundations and Architecture
@@ -40,7 +40,7 @@
 | 19 | [Multikey Partial Sparse and Unique Indexes](19-multikey-partial-sparse-and-unique-indexes.md) | Verify array semantics, index membership, scoped uniqueness and failed-write state | Written; runtime validation pending |
 | 20 | [TTL Retention and Index Lifecycle](20-ttl-retention-and-index-lifecycle.md) | Observe TTL cleanup, repair dates, change retention and rehearse index lifecycle reversals | Written; runtime validation pending |
 | 21 | [Explain Plans and Query Optimization](21-explain-plans-and-query-optimization.md) | Diagnose completed query work, interpret candidate trials and verify optimization correctness | Written; runtime validation pending |
-| 22 | Profiling Slow Queries and Query Statistics | Demonstrate profiling slow queries and query statistics with evidence and cleanup | Planned |
+| 22 | [Profiling Slow Queries and Query Statistics](22-profiling-slow-queries-and-query-statistics.md) | Capture tagged operations, compare real query work, restore profiling and assess statistics availability | Written; runtime validation pending |
 | 23 | WiredTiger Cache Eviction and Checkpoints | Demonstrate wiredtiger cache eviction and checkpoints with evidence and cleanup | Planned |
 | 24 | CPU Memory Storage IOPS and Capacity | Demonstrate cpu memory storage iops and capacity with evidence and cleanup | Planned |
 
