@@ -438,4 +438,4 @@ No server parameters, cache limits or profiler settings changed, so no configura
 ---
 
 Previous: [Chapter 22 — Profiling Slow Queries and Query Statistics](22-profiling-slow-queries-and-query-statistics.md)  
-Next: **Chapter 24 — CPU Memory Storage IOPS and Capacity** (planned).
+Next: [Chapter 24 — CPU Memory Storage IOPS and Capacity](24-cpu-memory-storage-iops-and-capacity.md).
