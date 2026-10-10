@@ -1,77 +1,94 @@
 # Redis Enterprise Production Engineering — Status
 
-**Updated:** 2026-10-09
+**Updated:** 2026-10-10
 **Curriculum target:** 80 chapters
-**Content progress:** 51/80
-**Remaining:** 29
-**Current chapter:** 52 — Redis Enterprise Data Migration, Import/Export & Cutover Engineering
+**Content progress:** 80/80
+**Repository progress:** 80/80
+**Remaining:** 0
+**Status:** COMPLETE
 
-## Reconciliation Completed
+## Completion State
 
-The curriculum was reconciled against the actual repository sequence on 2026-10-09.
-
-Structural corrections completed:
-
-- Chapter 42 restored as **Upgrades, Maintenance & Change Engineering**.
-- Duplicate Chapter 44 security content replaced by **Governance, Standards & Operational Readiness Engineering**.
-- Duplicate/overlapping Chapter 47 capacity content replaced by **Database Lifecycle, Provisioning & Configuration Engineering**.
-- Chapter 51 added as the **End-to-End Production Engineering Project**.
-- MASTER-LAYOUT.md replaced with the authoritative 01–80 roadmap.
-- Chapters 52–80 now cover remaining advanced topics rather than repeating completed subjects.
-
-## Current State
+The Redis Enterprise Production Engineering curriculum is complete through Chapter 80.
 
 | Range | State |
 |---|---|
-| 01–20 | Content present |
-| 21–30 | Content present; Chapter 21/27 overlap flagged for final deduplication review |
-| 31–38 | Content present |
-| 39–44 | Content present and structurally reconciled |
-| 45–51 | Content present and structurally reconciled |
-| 52–80 | Planned in MASTER-LAYOUT.md |
+| 01–10 | COMPLETE — Foundations & Architecture |
+| 11–20 | COMPLETE — Caching & Application Engineering |
+| 21–30 | COMPLETE — Application Reliability & Command Engineering |
+| 31–38 | COMPLETE — Messaging, Persistence, HA, Geo & Security |
+| 39–44 | COMPLETE — Observability, Reliability, Change & Governance |
+| 45–47 | COMPLETE — Platform, Cloud & Database Service Operations |
+| 48–51 | COMPLETE — Production Operations & Integrated Project |
+| 52–60 | COMPLETE — Migration, Data Services & Advanced Capabilities |
+| 61–68 | COMPLETE — Advanced Kubernetes, Active-Active & Platform Engineering |
+| 69–75 | COMPLETE — Advanced Operations, FinOps & Resilience |
+| 76–80 | COMPLETE — Production Projects & Final Acceptance |
 
-## Authoritative Curriculum
+## Repository Reconciliation
 
-MASTER-LAYOUT.md is the authoritative roadmap.
+Repository sequence verified through Chapter 80.
 
-Do not use the earlier 2/80 tracker state or the former 36-chapter layout as the curriculum definition.
+Final missing repository gaps were closed on 2026-10-10:
+- Chapter 73 — Redis Enterprise Cost Optimization & FinOps Engineering
+- Chapter 77 — Redis Enterprise Security Hardening & Credential-Rotation Project
+- Chapter 78 — Redis Enterprise Kubernetes Production Operations Project
+
+Previously reconciled structural corrections remain in place:
+- Chapter 42 — Upgrades, Maintenance & Change Engineering
+- Chapter 44 — Governance, Standards & Operational Readiness Engineering
+- Chapter 47 — Database Lifecycle, Provisioning & Configuration Engineering
+- Chapter 51 — End-to-End Production Engineering Project
 
 ## Canonical Standard
 
-Where applicable, chapters should include:
+The tutorial uses the production-engineering pattern established by the canonical chapters:
 
-- concepts;
-- architecture/internal behavior;
-- operational commands/examples;
-- hands-on lab;
+- concepts and architecture;
+- internal/operational behavior;
+- commands and examples;
+- hands-on labs;
 - expected results;
-- safe failure injection;
+- controlled failure scenarios;
 - troubleshooting;
 - production considerations;
 - operational runbooks;
-- validation questions/checklists;
-- cleanup;
+- validation questions and acceptance checklists;
+- safe cleanup;
 - exact-version vendor-documentation validation.
 
-## Validation Status
+## Lab Safety
 
-Repository content presence is not the same as live production validation.
+Use development, test, staging, or dedicated training databases for write/failure exercises. Production exercises should be read-only unless explicitly reviewed and approved.
 
-Environment-specific validation still requires the exact deployed Redis Enterprise version/topology, client versions, supported staging endpoint, certificates, scoped identity, and approval for failover/restore/upgrade/failure exercises.
+Routine tutorial cleanup must not use `FLUSHDB` or `FLUSHALL` on shared environments. Use isolated namespaces and controlled `SCAN` + `UNLINK` where appropriate.
 
-## Known Final-Review Item
+## Validation Note
 
-Chapters 21 and 27 both cover pipelining/batching. They are intentionally retained during the build because Chapter 27 contains high-throughput engineering material, but they require a final content-deduplication pass before 80/80 completion.
+Tutorial completion does not mean every exercise has been executed against every production environment. Environment-specific production validation still requires the exact deployed Redis Enterprise version/topology, supported client versions, certificates, scoped identities, change approval, and approved maintenance/failure-testing windows.
+
+## Maintenance Review Notes
+
+The curriculum is complete. Future maintenance may still improve overlap and depth without changing the 80-chapter completion state. Known review candidates include:
+
+- Chapters 11 and 19 — TTL/expiration topics;
+- Chapters 13 and 20 — invalidation/consistency topics;
+- Chapters 21 and 27 — pipelining/batching topics;
+- selected shorter chapters may be expanded during future editorial review.
+
+These are editorial optimization items, not missing chapters.
 
 ## Progress
 
 ```text
-Content present: 51 / 80
-Remaining:       29
-Next:            52
-Target:          80 / 80
+Content complete:    80 / 80
+Repository complete: 80 / 80
+Remaining:            0
+Status:               COMPLETE
 ```
 
-## Next
+## Final Chapter
 
-**Chapter 52 — Redis Enterprise Data Migration, Import/Export & Cutover Engineering**
+**Chapter 80 — Redis Enterprise Final Production Readiness & Acceptance Project**
+
+The curriculum now ends with an evidence-based production go/no-go framework covering architecture, workload design, clients, performance, capacity, HA, backup/recovery, DR, Kubernetes, security, observability, incident readiness, FinOps, governance, failure testing, exceptions, and operational sign-off.
