@@ -2,7 +2,7 @@
 
 **Audience:** Developers, Data Engineers, DBREs, SREs and Platform Engineers  
 **Workflow:** Planned → Draft → Technical review → Lab validated → Canonical  
-**Progress:** 7/80 written; 0/80 runtime validated.  
+**Progress:** 8/80 written; 0/80 runtime validated.  
 **Lab baseline:** MongoDB 8.0 syntax; record exact server, mongosh, driver, tool and operator versions in every lab. Existing 7.0 deployments require their own compatibility review. Enterprise-only exercises require authorized Enterprise binaries and entitlements; Community labs must not claim Enterprise feature validation.
 
 ## Part 1 — Foundations and Architecture
@@ -16,7 +16,7 @@
 | 05 | [Lab Setup and Version Inventory](05-lab-setup-and-version-inventory.md) | Build authenticated persistent training server, inventory versions and test scoped access | Written; runtime validation pending |
 | 06 | [mongosh Connections TLS and Authentication](06-mongosh-connections-tls-and-authentication.md) | Build verified TLS/SCRAM lab and distinguish transport, authentication and permission failures | Written; runtime validation pending |
 | 07 | [Databases Collections and Namespaces](07-databases-collections-and-namespaces.md) | Inspect namespace metadata, reproduce a typo, verify read-only views and reverse a controlled rename | Written; runtime validation pending |
-| 08 | CRUD Filters Projections and Sorting | Demonstrate crud filters projections and sorting with evidence and cleanup | Planned |
+| 08 | [CRUD Filters Projections and Sorting](08-crud-filters-projections-and-sorting.md) | Verify bounded query contracts, guarded state transitions, upserts, bulk counts and scoped deletion | Written; runtime validation pending |
 
 ## Part 2 — Data Modeling and Application Development
 

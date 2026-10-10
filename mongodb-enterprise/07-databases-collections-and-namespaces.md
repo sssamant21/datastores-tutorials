@@ -363,5 +363,5 @@ Drop the view before its source. No dropDatabase or broad system-collection dele
 - [Limits and naming restrictions — 8.0](https://www.mongodb.com/docs/v8.0/reference/limits/)
 
 Previous: [Chapter 06 — mongosh Connections TLS and Authentication](06-mongosh-connections-tls-and-authentication.md).  
-Next: **Chapter 08 — CRUD Filters Projections and Sorting** (planned).  
+Next: [Chapter 08 — CRUD Filters Projections and Sorting](08-crud-filters-projections-and-sorting.md).  
 Return to the [master layout](MASTER-LAYOUT.md).
