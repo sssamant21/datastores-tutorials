@@ -457,4 +457,4 @@ Retain the original replica set and preserve analysis outputs. Internal sample r
 ---
 
 Previous: [Chapter 33 — Sharded Cluster Architecture](33-sharded-cluster-architecture.md)  
-Next: **Chapter 35 — Build a Sharded Lab Cluster** (planned).
+Next: **[Chapter 35 — Build a Sharded Lab Cluster](35-build-a-sharded-lab-cluster.md)**.
