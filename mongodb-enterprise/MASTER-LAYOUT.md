@@ -2,7 +2,7 @@
 
 **Audience:** Developers, Data Engineers, DBREs, SREs and Platform Engineers  
 **Workflow:** Planned → Draft → Technical review → Lab validated → Canonical  
-**Progress:** 32/80 written; 0/80 runtime validated.  
+**Progress:** 33/80 written; 0/80 runtime validated.  
 **Lab baseline:** MongoDB 8.0 syntax; record exact server, mongosh, driver, tool and operator versions in every lab. Existing 7.0 deployments require their own compatibility review. Enterprise-only exercises require authorized Enterprise binaries and entitlements; Community labs must not claim Enterprise feature validation.
 
 ## Part 1 — Foundations and Architecture
@@ -61,7 +61,7 @@
 
 | # | Chapter | Lab outcome | Status |
 |---|---|---|---|
-| 33 | Sharded Cluster Architecture | Demonstrate sharded cluster architecture with evidence and cleanup | Planned |
+| 33 | [Sharded Cluster Architecture](33-sharded-cluster-architecture.md) | Inspect deployment identity, verify synthetic routing boundaries/skew and optionally inventory a real router | Written; runtime validation pending |
 | 34 | Shard Key Selection and Workload Analysis | Demonstrate shard key selection and workload analysis with evidence and cleanup | Planned |
 | 35 | Build a Sharded Lab Cluster | Demonstrate build a sharded lab cluster with evidence and cleanup | Planned |
 | 36 | Chunk Distribution Balancing and Zones | Demonstrate chunk distribution balancing and zones with evidence and cleanup | Planned |
