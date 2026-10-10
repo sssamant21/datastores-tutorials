@@ -439,5 +439,5 @@ print("PASS: Chapter 08 collections removed");
 - [deleteOne — 8.0](https://www.mongodb.com/docs/v8.0/reference/method/db.collection.deleteOne/)
 
 Previous: [Chapter 07 — Databases Collections and Namespaces](07-databases-collections-and-namespaces.md).  
-Next: **Chapter 09 — Nested Documents and Arrays** (planned).  
+Next: [Chapter 09 — Nested Documents and Arrays](09-nested-documents-and-arrays.md).  
 Return to the [master layout](MASTER-LAYOUT.md).
