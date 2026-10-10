@@ -440,4 +440,4 @@ Leave all three members running on original storage for Chapter 32. Do not use `
 ---
 
 Previous: [Chapter 30 — Initial Sync Resync and Member Replacement](30-initial-sync-resync-and-member-replacement.md)  
-Next: **Chapter 32 — Replica Set Failure and Recovery Lab** (planned).
+Next: [Chapter 32 — Replica Set Failure and Recovery Lab](32-replica-set-failure-and-recovery-lab.md).
