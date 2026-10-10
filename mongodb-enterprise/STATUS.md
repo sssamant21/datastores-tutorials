@@ -1,10 +1,10 @@
 # MongoDB Enterprise — Rebuild Status
 
 **Updated:** 2026-10-10  
-**Written:** 3/80  
+**Written:** 4/80  
 **Runtime validated:** 0/80  
 **Canonical:** 0/80  
-**Next:** Chapter 04 — Community Enterprise Advanced and Atlas
+**Next:** Chapter 05 — Lab Setup and Version Inventory
 
 The previous 28-chapter track was removed from the active folder in this rebuild. Its contents remain recoverable through the parent Git commit. No old completion status carries forward.
 
@@ -13,7 +13,7 @@ The previous 28-chapter track was removed from the active folder in this rebuild
 | 01 | MongoDB Enterprise Fundamentals | Written | Reviewed | Pending |
 | 02 | Document Model and BSON Types | Written | Reviewed | Pending |
 | 03 | Server Architecture and WiredTiger | Written | Reviewed | Pending |
-| 04 | Community Enterprise Advanced and Atlas | Planned | Pending | Pending |
+| 04 | Community Enterprise Advanced and Atlas | Written | Reviewed | Pending |
 | 05 | Lab Setup and Version Inventory | Planned | Pending | Pending |
 | 06 | mongosh Connections TLS and Authentication | Planned | Pending | Pending |
 | 07 | Databases Collections and Namespaces | Planned | Pending | Pending |

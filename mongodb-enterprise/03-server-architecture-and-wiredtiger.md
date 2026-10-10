@@ -359,5 +359,5 @@ Use multiple signals to diagnose a database bottleneck. Separate query cost, sto
 - [Collection statistics — 8.0](https://www.mongodb.com/docs/v8.0/reference/command/collStats/)
 
 Previous: [Chapter 02 — Document Model and BSON Types](02-document-model-and-bson-types.md).  
-Next: **Chapter 04 — Community Enterprise Advanced and Atlas** (planned).  
+Next: [Chapter 04 — Community Enterprise Advanced and Atlas](04-community-enterprise-advanced-and-atlas.md).  
 Return to the [master layout](MASTER-LAYOUT.md).
