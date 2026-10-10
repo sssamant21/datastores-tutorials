@@ -662,5 +662,5 @@ Use the versioned manual matching the server you operate.
 - [Aggregation $bsonSize — 8.0](https://www.mongodb.com/docs/v8.0/reference/operator/aggregation/bsonSize/)
 
 Previous: [Chapter 01 — MongoDB Enterprise Fundamentals](01-mongodb-enterprise-fundamentals.md).  
-Next: **Chapter 03 — Server Architecture and WiredTiger** (planned).  
+Next: [Chapter 03 — Server Architecture and WiredTiger](03-server-architecture-and-wiredtiger.md).  
 Return to the [master layout](MASTER-LAYOUT.md).

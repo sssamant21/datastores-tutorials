@@ -2,7 +2,7 @@
 
 **Audience:** Developers, Data Engineers, DBREs, SREs and Platform Engineers  
 **Workflow:** Planned → Draft → Technical review → Lab validated → Canonical  
-**Progress:** 2/80 written; 0/80 runtime validated.  
+**Progress:** 3/80 written; 0/80 runtime validated.  
 **Lab baseline:** MongoDB 8.0 syntax; record exact server, mongosh, driver, tool and operator versions in every lab. Existing 7.0 deployments require their own compatibility review. Enterprise-only exercises require authorized Enterprise binaries and entitlements; Community labs must not claim Enterprise feature validation.
 
 ## Part 1 — Foundations and Architecture
@@ -11,7 +11,7 @@
 |---|---|---|---|
 | 01 | [MongoDB Enterprise Fundamentals](01-mongodb-enterprise-fundamentals.md) | Create, query, update and verify a synthetic document collection | Written; runtime validation pending |
 | 02 | [Document Model and BSON Types](02-document-model-and-bson-types.md) | Inspect BSON types, repair mismatches, verify EJSON and reject invalid documents | Written; runtime validation pending |
-| 03 | Server Architecture and WiredTiger | Demonstrate server architecture and wiredtiger with evidence and cleanup | Planned |
+| 03 | [Server Architecture and WiredTiger](03-server-architecture-and-wiredtiger.md) | Collect WiredTiger snapshots, verify a bounded workload and distinguish storage sizes | Written; runtime validation pending |
 | 04 | Community Enterprise Advanced and Atlas | Demonstrate community enterprise advanced and atlas with evidence and cleanup | Planned |
 | 05 | Lab Setup and Version Inventory | Demonstrate lab setup and version inventory with evidence and cleanup | Planned |
 | 06 | mongosh Connections TLS and Authentication | Demonstrate mongosh connections tls and authentication with evidence and cleanup | Planned |
