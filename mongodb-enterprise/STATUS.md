@@ -1,43 +1,94 @@
-# MongoDB Enterprise — Status
+# MongoDB Enterprise — Rebuild Status
 
-Updated: 2026-10-04
+**Updated:** 2026-10-10  
+**Written:** 1/80  
+**Runtime validated:** 0/80  
+**Canonical:** 0/80  
+**Next:** Chapter 02 — Document Model and BSON Types
 
-**Progress:** 28/28 drafted; 0/28 canonical.
+The previous 28-chapter track was removed from the active folder in this rebuild. Its contents remain recoverable through the parent Git commit. No old completion status carries forward.
 
-| # | Tutorial | Draft | Technical review | Live lab |
+| # | Chapter | Content | Static review | Runtime lab |
 |---|---|---|---|---|
-| 01 | MongoDB Enterprise Fundamentals | Written | Pending | Not run |
-| 02 | Connecting Securely with mongosh | Written | Pending | Not run |
-| 03 | Databases, Collections, Documents, and Schema Design | Written | Pending | Not run |
-| 04 | CRUD Operations and Upserts | Written | Pending | Not run |
-| 05 | Index Design and Management | Written | Pending | Not run |
-| 06 | Query Performance and explain() | Written | Pending | Not run |
-| 07 | Aggregation Pipeline Fundamentals | Written | Pending | Not run |
-| 08 | Replica Sets, Replication, and Read/Write Concerns | Written | Pending | Not run |
-| 09 | Users, Roles, Authentication, and TLS | Written | Pending | Not run |
-| 10 | Storage, WiredTiger, and Capacity Planning | Written | Pending | Not run |
-| 11 | Backup, Restore, and Recovery | Written | Pending | Not run |
-| 12 | Ops Manager and Enterprise Management | Written | Pending | Not run |
-| 13 | Monitoring, Dashboards, and Alerts | Written | Pending | Not run |
-| 14 | Step-by-Step Slowness Troubleshooting | Written | Pending | Not run |
-| 15 | Common Problems and Solutions | Written | Pending | Not run |
-| 16 | Upgrades and Maintenance | Written | Pending | Not run |
-| 17 | Production Readiness and Acceptance Lab | Written | Pending | Not run |
+| 01 | MongoDB Enterprise Fundamentals | Written | Reviewed | Pending |
+| 02 | Document Model and BSON Types | Planned | Pending | Pending |
+| 03 | Server Architecture and WiredTiger | Planned | Pending | Pending |
+| 04 | Community Enterprise Advanced and Atlas | Planned | Pending | Pending |
+| 05 | Lab Setup and Version Inventory | Planned | Pending | Pending |
+| 06 | mongosh Connections TLS and Authentication | Planned | Pending | Pending |
+| 07 | Databases Collections and Namespaces | Planned | Pending | Pending |
+| 08 | CRUD Filters Projections and Sorting | Planned | Pending | Pending |
+| 09 | Nested Documents and Arrays | Planned | Pending | Pending |
+| 10 | Embedding Versus Referencing | Planned | Pending | Pending |
+| 11 | Schema Validation and Evolution | Planned | Pending | Pending |
+| 12 | Updates Upserts and Bulk Writes | Planned | Pending | Pending |
+| 13 | Aggregation Pipeline Fundamentals | Planned | Pending | Pending |
+| 14 | Advanced Aggregations and Joins | Planned | Pending | Pending |
+| 15 | Pagination and API Query Design | Planned | Pending | Pending |
+| 16 | Transactions Sessions and Retry Semantics | Planned | Pending | Pending |
+| 17 | Single Field and Compound Indexes | Planned | Pending | Pending |
+| 18 | ESR Index Design and Covered Queries | Planned | Pending | Pending |
+| 19 | Multikey Partial Sparse and Unique Indexes | Planned | Pending | Pending |
+| 20 | TTL Retention and Index Lifecycle | Planned | Pending | Pending |
+| 21 | Explain Plans and Query Optimization | Planned | Pending | Pending |
+| 22 | Profiling Slow Queries and Query Statistics | Planned | Pending | Pending |
+| 23 | WiredTiger Cache Eviction and Checkpoints | Planned | Pending | Pending |
+| 24 | CPU Memory Storage IOPS and Capacity | Planned | Pending | Pending |
+| 25 | Replica Set Architecture and Oplog | Planned | Pending | Pending |
+| 26 | Build a Three Member Replica Set | Planned | Pending | Pending |
+| 27 | Read Preference Read Concern and Write Concern | Planned | Pending | Pending |
+| 28 | Elections Stepdown and Planned Maintenance | Planned | Pending | Pending |
+| 29 | Replication Lag and Oplog Sizing | Planned | Pending | Pending |
+| 30 | Initial Sync Resync and Member Replacement | Planned | Pending | Pending |
+| 31 | Network Partitions Rollback and Consistency | Planned | Pending | Pending |
+| 32 | Replica Set Failure and Recovery Lab | Planned | Pending | Pending |
+| 33 | Sharded Cluster Architecture | Planned | Pending | Pending |
+| 34 | Shard Key Selection and Workload Analysis | Planned | Pending | Pending |
+| 35 | Build a Sharded Lab Cluster | Planned | Pending | Pending |
+| 36 | Chunk Distribution Balancing and Zones | Planned | Pending | Pending |
+| 37 | Targeted Queries Scatter Gather and Hot Shards | Planned | Pending | Pending |
+| 38 | Resharding and Shard Key Refinement | Planned | Pending | Pending |
+| 39 | Sharded Cluster Administration and Recovery | Planned | Pending | Pending |
+| 40 | Scaling and Sharding Acceptance Lab | Planned | Pending | Pending |
+| 41 | Users Roles and Least Privilege | Planned | Pending | Pending |
+| 42 | TLS Certificates and x509 Authentication | Planned | Pending | Pending |
+| 43 | Enterprise External Authentication Compatibility | Planned | Pending | Pending |
+| 44 | Enterprise Audit Configuration and Analysis | Planned | Pending | Pending |
+| 45 | Encryption at Rest and Key Management | Planned | Pending | Pending |
+| 46 | Client Side and Queryable Encryption | Planned | Pending | Pending |
+| 47 | Secrets Rotation and Access Review | Planned | Pending | Pending |
+| 48 | Security Hardening Acceptance Lab | Planned | Pending | Pending |
+| 49 | Backup Architecture RPO and RTO | Planned | Pending | Pending |
+| 50 | mongodump mongorestore and Logical Recovery | Planned | Pending | Pending |
+| 51 | Consistent Snapshots and Restore Validation | Planned | Pending | Pending |
+| 52 | Ops Manager Backup and Point in Time Recovery | Planned | Pending | Pending |
+| 53 | Accidental Delete and Drop Recovery | Planned | Pending | Pending |
+| 54 | Replica Set Disaster Recovery | Planned | Pending | Pending |
+| 55 | Sharded Cluster Backup and Disaster Recovery | Planned | Pending | Pending |
+| 56 | Restore Drill and Recovery Acceptance Project | Planned | Pending | Pending |
+| 57 | Ops Manager Architecture and Prerequisites | Planned | Pending | Pending |
+| 58 | Ops Manager Automation Monitoring and Agents | Planned | Pending | Pending |
+| 59 | Linux Installation Configuration and Service Operations | Planned | Pending | Pending |
+| 60 | Kubernetes Operator Compatibility and Deployment | Planned | Pending | Pending |
+| 61 | Kubernetes Storage Scheduling and Maintenance | Planned | Pending | Pending |
+| 62 | Rolling Upgrades FCV and Rollback Constraints | Planned | Pending | Pending |
+| 63 | Drivers Connection Pools Timeouts and Retries | Planned | Pending | Pending |
+| 64 | Change Streams Resume Tokens and CDC | Planned | Pending | Pending |
+| 65 | Time Series Collections and Retention | Planned | Pending | Pending |
+| 66 | GridFS Capped Collections and Workload Boundaries | Planned | Pending | Pending |
+| 67 | MongoDB to Snowflake Direct Integration | Planned | Pending | Pending |
+| 68 | Import Export Migration and Data Reconciliation | Planned | Pending | Pending |
+| 69 | Metrics Logs FTDC and Dashboard Design | Planned | Pending | Pending |
+| 70 | Alert Thresholds SLOs and Capacity Forecasting | Planned | Pending | Pending |
+| 71 | Daily Administration and Maintenance Runbook | Planned | Pending | Pending |
+| 72 | Cost Optimization and Enterprise License Planning | Planned | Pending | Pending |
+| 73 | Query Slowness Investigation Runbook | Planned | Pending | Pending |
+| 74 | Connection Authentication and TLS Troubleshooting | Planned | Pending | Pending |
+| 75 | Disk Pressure Cache Pressure and Resource Incidents | Planned | Pending | Pending |
+| 76 | Replication Elections and Sharding Troubleshooting | Planned | Pending | Pending |
+| 77 | Production Data Modeling and Query Tuning Project | Planned | Pending | Pending |
+| 78 | HA Failover and Application Resilience Project | Planned | Pending | Pending |
+| 79 | Backup Restore and Disaster Recovery Project | Planned | Pending | Pending |
+| 80 | Production Readiness and Final Acceptance Project | Planned | Pending | Pending |
 
-| 18 | Transactions, Sessions, and Retries | Written | Pending | Not run |
-| 19 | Sharding and Shard-Key Design | Written | Pending | Not run |
-| 20 | Driver Integration and Connection Pools | Written | Pending | Not run |
-| 21 | Advanced Modeling and Schema Evolution | Written | Pending | Not run |
-| 22 | Advanced Indexes and Retention | Written | Pending | Not run |
-| 23 | Change Streams and Event Recovery | Written | Pending | Not run |
-| 24 | Time Series, Capped Collections, and GridFS | Written | Pending | Not run |
-| 25 | Enterprise Security and Key Management | Written | Pending | Not run |
-| 26 | Deployment and Kubernetes Administration | Written | Pending | Not run |
-| 27 | Advanced Incident Recovery | Written | Pending | Not run |
-| 28 | Extended Acceptance and Coverage | Written | Pending | Not run |
-
-Documentation references are included. Markdown/code syntax checks do not validate server semantics, permissions, TLS, or query performance.
-
-**Next:** Technical validation and production review of 01–28; live labs remain pending.
-
-
+Canonical requires a successful lab on a recorded compatible environment, expected results checked, cleanup tested, and production review. A written tutorial alone does not prove its lab passed.
