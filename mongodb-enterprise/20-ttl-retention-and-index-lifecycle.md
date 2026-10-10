@@ -491,4 +491,4 @@ Every affected collection belongs to this named database. No cluster settings, s
 ---
 
 Previous: [Chapter 19 — Multikey Partial Sparse and Unique Indexes](19-multikey-partial-sparse-and-unique-indexes.md)  
-Next: **Chapter 21 — Explain Plans and Query Optimization** (planned).
+Next: [Chapter 21 — Explain Plans and Query Optimization](21-explain-plans-and-query-optimization.md).
