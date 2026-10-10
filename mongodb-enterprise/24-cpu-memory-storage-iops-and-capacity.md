@@ -410,4 +410,4 @@ No infrastructure settings, limits or disk layouts changed. No configuration rol
 ---
 
 Previous: [Chapter 23 — WiredTiger Cache Eviction and Checkpoints](23-wiredtiger-cache-eviction-and-checkpoints.md)  
-Next: **Chapter 25 — Replica Set Architecture and Oplog** (planned).
+Next: [Chapter 25 — Replica Set Architecture and Oplog](25-replica-set-architecture-and-oplog.md).

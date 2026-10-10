@@ -2,7 +2,7 @@
 
 **Audience:** Developers, Data Engineers, DBREs, SREs and Platform Engineers  
 **Workflow:** Planned → Draft → Technical review → Lab validated → Canonical  
-**Progress:** 24/80 written; 0/80 runtime validated.  
+**Progress:** 25/80 written; 0/80 runtime validated.  
 **Lab baseline:** MongoDB 8.0 syntax; record exact server, mongosh, driver, tool and operator versions in every lab. Existing 7.0 deployments require their own compatibility review. Enterprise-only exercises require authorized Enterprise binaries and entitlements; Community labs must not claim Enterprise feature validation.
 
 ## Part 1 — Foundations and Architecture
@@ -48,7 +48,7 @@
 
 | # | Chapter | Lab outcome | Status |
 |---|---|---|---|
-| 25 | Replica Set Architecture and Oplog | Demonstrate replica set architecture and oplog with evidence and cleanup | Planned |
+| 25 | [Replica Set Architecture and Oplog](25-replica-set-architecture-and-oplog.md) | Inventory roles/votes, measure retained history and trace scoped writes into oplog evidence | Written; runtime validation pending |
 | 26 | Build a Three Member Replica Set | Demonstrate build a three member replica set with evidence and cleanup | Planned |
 | 27 | Read Preference Read Concern and Write Concern | Demonstrate read preference read concern and write concern with evidence and cleanup | Planned |
 | 28 | Elections Stepdown and Planned Maintenance | Demonstrate elections stepdown and planned maintenance with evidence and cleanup | Planned |

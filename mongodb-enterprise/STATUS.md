@@ -1,10 +1,10 @@
 # MongoDB Enterprise — Rebuild Status
 
 **Updated:** 2026-10-10  
-**Written:** 24/80  
+**Written:** 25/80  
 **Runtime validated:** 0/80  
 **Canonical:** 0/80  
-**Next:** Chapter 25 — Replica Set Architecture and Oplog
+**Next:** Chapter 26 — Build a Three Member Replica Set
 
 The previous 28-chapter track was removed from the active folder in this rebuild. Its contents remain recoverable through the parent Git commit. No old completion status carries forward.
 
@@ -34,7 +34,7 @@ The previous 28-chapter track was removed from the active folder in this rebuild
 | 22 | Profiling Slow Queries and Query Statistics | Written | Reviewed | Pending |
 | 23 | WiredTiger Cache Eviction and Checkpoints | Written | Reviewed | Pending |
 | 24 | CPU Memory Storage IOPS and Capacity | Written | Reviewed | Pending |
-| 25 | Replica Set Architecture and Oplog | Planned | Pending | Pending |
+| 25 | Replica Set Architecture and Oplog | Written | Reviewed | Pending |
 | 26 | Build a Three Member Replica Set | Planned | Pending | Pending |
 | 27 | Read Preference Read Concern and Write Concern | Planned | Pending | Pending |
 | 28 | Elections Stepdown and Planned Maintenance | Planned | Pending | Pending |
